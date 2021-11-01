@@ -240,8 +240,8 @@ class OnlineCollider(Node):
         self.tfListener = tf2_ros.TransformListener(self.tfBuffer,
                                                     self,
                                                     spin_thread=True,
-                                                    qos=60,
-                                                    static_qos=60)
+                                                    qos=30,
+                                                    static_qos=30)
         # rospy.Subscriber("/tf", TFMessage, self.tf_callback)
         # sub_tf = self.create_subscription(TFMessage,
         #                                   '/tf',
@@ -369,7 +369,7 @@ class OnlineCollider(Node):
 
         # t1 = time.time()
 
-        self.get_logger().warn("#############Started Lidar callback")
+        # self.get_logger().warn("#############Started Lidar callback")
 
         # Get the time stamps for all frames
         for f_i, data in enumerate(self.online_dataset.frame_queue):
@@ -386,27 +386,30 @@ class OnlineCollider(Node):
                 # if difftime > 1.0:
                 #     self.get_logger().error('difftime > 1.0')
 
-                if difftime < 1.0:
-                    while (pose is None) and (look_i < 5):
-                        try:
-                            duration = Duration(seconds=0.01)
-                            pose = self.tfBuffer.lookup_transform('map', 'velodyne', data[0])
-                            #pose = self.tfBuffer.lookup_transform('odom', 'base_link', data[0])
-                            sec1 = pose.header.stamp.sec
-                            nsec1 = pose.header.stamp.nanosec
-                            sec2, nsec2 = self.get_clock().now().seconds_nanoseconds()
-                            stamp1 = sec1 - self.sec0 + int((nsec1 - self.nsec0) * 1e-6) * 1e-3
-                            stamp2 = sec2 - self.sec0 + int((nsec2 - self.nsec0) * 1e-6) * 1e-3
-                            # logstr = 'pose {:.3f} read at {:.3f}'.format(stamp1, stamp2)
-                            # print('{:^35s}'.format(logstr), 35*' ', 35*' ')
+                #if difftime < 1.0:
+                while (pose is None) and (look_i < 5):
+                    try:
+                        duration = Duration(seconds=0.1)
+                        pose = self.tfBuffer.lookup_transform('map', 'velodyne', data[0])
+                        # self.get_logger().error("###### working")
+                        # print(data[0])
+                        #pose = self.tfBuffer.lookup_transform('odom', 'base_link', data[0])
+                        sec1 = pose.header.stamp.sec
+                        nsec1 = pose.header.stamp.nanosec
+                        sec2, nsec2 = self.get_clock().now().seconds_nanoseconds()
+                        stamp1 = sec1 - self.sec0 + int((nsec1 - self.nsec0) * 1e-6) * 1e-3
+                        stamp2 = sec2 - self.sec0 + int((nsec2 - self.nsec0) * 1e-6) * 1e-3
+                        # logstr = 'pose {:.3f} read at {:.3f}'.format(stamp1, stamp2)
+                        # print('{:^35s}'.format(logstr), 35*' ', 35*' ')
 
-                        except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
-                            # print("Iteration: {} error: {}".format(look_i, e))
-                            # print(data[0])
-                            time.sleep(0.001)
-                            pass
-        
-                        look_i += 1
+                    except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
+                        # self.get_logger().error("##### Not working")
+                        # print("Iteration: {} error: {}".format(look_i, e))
+                        # print(data[0])
+                        time.sleep(0.001)
+                        pass
+    
+                    look_i += 1
 
                 with self.online_dataset.worker_lock:
                     # if pose is None:
@@ -426,7 +429,7 @@ class OnlineCollider(Node):
         if len(self.online_dataset.frame_queue) > 0:
             #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
             if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
-                print('Same timestamp, pass')
+                # self.get_logger().warn('Same timestamp, pass')
                 return
 
 
@@ -483,7 +486,7 @@ class OnlineCollider(Node):
         # print('Finished lidar_callback in {:.1f}'.format(1000*(t2 - t1)))
         # self.last_t = time.time()
 
-        self.get_logger().warn("##############Ended one Lidar callback")
+        # self.get_logger().warn("##############Ended one Lidar callback")
         # print("")
 
         return
