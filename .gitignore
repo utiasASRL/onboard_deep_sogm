@@ -1,16 +1,17 @@
 
 nohup.txt
 
-build
-build/**
-install
-log
+/build
+/install
+/log
 
-# **/__pycache__
-# **/__init__.py
+**/build/**
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+**/__pycache__
+**/__init__.py
+
+# C extensions
 *.so
-*.pyc
-**/build
-
-
-.vscode
