@@ -1,15 +1,17 @@
 
+nohup.txt
+
+tmp_srcs
 ./build
 ./install
 ./log
 
-# **/__pycache__
+**/__pycache__
 # **/__init__.py
 *.so
+*.pyc
 **/build
 
-./tmp_srcs
 
 .vscode
 git_login.sh
-nohup.txt

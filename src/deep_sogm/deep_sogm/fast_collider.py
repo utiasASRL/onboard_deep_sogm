@@ -400,7 +400,6 @@ class OnlineCollider(Node):
                             # logstr = 'pose {:.3f} read at {:.3f}'.format(stamp1, stamp2)
                             # print('{:^35s}'.format(logstr), 35*' ', 35*' ')
 
-
                         except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
                             # print("Iteration: {} error: {}".format(look_i, e))
                             # print(data[0])
@@ -424,11 +423,11 @@ class OnlineCollider(Node):
         self.velo_frame_id = cloud.header.frame_id
 
         # Check if we already know this frame
-        if len(self.online_dataset.frame_queue) > 0:
-            #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
-            if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
-                # print('Same timestamp, pass')
-                return
+        # if len(self.online_dataset.frame_queue) > 0:
+        #     #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
+        #     if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
+        #         print('Same timestamp, pass')
+        #         return
 
 
         # convert PointCloud2 message to structured numpy array
@@ -471,7 +470,7 @@ class OnlineCollider(Node):
         # Update the frame list
         with self.online_dataset.worker_lock:
 
-            if len(self.online_dataset.frame_queue) >= 3 + self.config.n_frames:
+            if len(self.online_dataset.frame_queue) >= (3 + self.config.n_frames):
                 self.online_dataset.frame_queue.pop(0)
                 self.online_dataset.pose_queue.pop(0)
             self.online_dataset.frame_queue.append((cloud.header.stamp, xyz_points))
