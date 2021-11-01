@@ -1,0 +1,16 @@
+
+nohup.txt
+
+build
+build/**
+install
+log
+
+# **/__pycache__
+# **/__init__.py
+*.so
+*.pyc
+**/build
+
+
+.vscode
