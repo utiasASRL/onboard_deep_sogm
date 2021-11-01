@@ -1,3 +1,0 @@
-[console_scripts]
-collider = deep_sogm.fast_collider:main
-

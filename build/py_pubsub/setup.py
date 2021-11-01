@@ -1,1 +1,0 @@
-/home/administrator/eloquent_ws/src/py_pubsub/setup.py

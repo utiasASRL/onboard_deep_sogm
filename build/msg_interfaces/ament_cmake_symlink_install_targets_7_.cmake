@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/administrator/eloquent_ws/build/msg_interfaces/rosidl_generator_py/msg_interfaces/msg_interfaces_s__rosidl_typesupport_c.cpython-36m-aarch64-linux-gnu.so" "TARGETS" "msg_interfaces__rosidl_typesupport_c__pyext" "DESTINATION" "lib/python3.6/site-packages/msg_interfaces")
