@@ -1,14 +1,14 @@
 
-**/__pycache__
-**/__init__.py
+./build
+./install
+./log
+
+# **/__pycache__
+# **/__init__.py
 *.so
 **/build
 
-build
-install
-log
-
-tmp_srcs
+./tmp_srcs
 
 .vscode
 git_login.sh
