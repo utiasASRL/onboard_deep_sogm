@@ -1,0 +1,66 @@
+[0.000000] (-) TimerEvent: {}
+[0.001691] (-) JobUnselected: {'identifier': 'custom_msgs'}
+[0.002443] (-) JobUnselected: {'identifier': 'deep_sogm'}
+[0.003309] (-) JobUnselected: {'identifier': 'jackal_control'}
+[0.003505] (-) JobUnselected: {'identifier': 'jackal_description'}
+[0.003606] (-) JobUnselected: {'identifier': 'jackal_msgs'}
+[0.003861] (-) JobUnselected: {'identifier': 'jackal_navigation'}
+[0.004042] (-) JobUnselected: {'identifier': 'jackal_tutorials'}
+[0.004181] (-) JobUnselected: {'identifier': 'launch_delay'}
+[0.004264] (-) JobUnselected: {'identifier': 'msg_interfaces'}
+[0.004342] (-) JobUnselected: {'identifier': 'my_package'}
+[0.004492] (-) JobUnselected: {'identifier': 'pointcloud_to_laserscan'}
+[0.004617] (-) JobUnselected: {'identifier': 'src'}
+[0.004723] (-) JobUnselected: {'identifier': 'velo_repub'}
+[0.006364] (py_pubsub) JobQueued: {'identifier': 'py_pubsub', 'dependencies': OrderedDict()}
+[0.007083] (py_pubsub) JobStarted: {'identifier': 'py_pubsub'}
+[0.099261] (-) TimerEvent: {}
+[0.202147] (-) TimerEvent: {}
+[0.303308] (-) TimerEvent: {}
+[0.404427] (-) TimerEvent: {}
+[0.505201] (-) TimerEvent: {}
+[0.605924] (-) TimerEvent: {}
+[0.706732] (-) TimerEvent: {}
+[0.800441] (py_pubsub) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'develop', '--prefix', '/home/administrator/eloquent_ws/install/py_pubsub', '--editable', '--build-directory', '/home/administrator/eloquent_ws/build/py_pubsub/build', '--no-deps', 'install_data', '--install-dir', '/home/administrator/eloquent_ws/install/py_pubsub'], 'cwd': '/home/administrator/eloquent_ws/build/py_pubsub', 'env': {'PYTHONIOENCODING': 'utf-8', 'USER': 'administrator', 'HOSTNAME': 'cpr-tor59-xav01', 'ROS_PACKAGE_PATH': '/opt/ros/melodic/share', 'LD_LIBRARY_PATH': '/usr/lib/aarch64-linux-gnu/gazebo-9/plugins:/opt/ros/eloquent/opt/yaml_cpp_vendor/lib:/opt/ros/eloquent/opt/rviz_ogre_vendor/lib:/opt/ros/eloquent/lib/aarch64-linux-gnu:/opt/ros/eloquent/lib:/opt/ros/melodic/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda-10.2/targets/aarch64-linux/lib:', 'ROS_ETC_DIR': '/opt/ros/melodic/etc/ros', 'SHLVL': '1', 'HOME': '/home/administrator', 'ROS_PYTHON_VERSION': '3', 'ROS_DISTRO': 'eloquent', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'NVIDIA_DRIVER_CAPABILITIES': 'all', 'PKG_CONFIG_PATH': '/opt/ros/melodic/lib/pkgconfig', 'TERM': 'xterm', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/eloquent/bin:/opt/ros/melodic/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/cuda-10.2/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': 'localhost:12.0', 'LANG': 'en_US.UTF-8', 'ROS_ROOT': '/opt/ros/melodic/share/ros', 'XAUTHORITY': '/home/administrator/.Xauthority', 'AMENT_PREFIX_PATH': '/opt/ros/eloquent', 'DEBIAN_FRONTEND': 'noninteractive', 'SHELL': '/bin/bash', 'ROS_MASTER_URI': 'http://cpr-tor59-01:11311', 'PWD': '/home/administrator/eloquent_ws/build/py_pubsub', 'PYTHONPATH': '/home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages:/opt/ros/eloquent/lib/python3.6/site-packages:/opt/ros/melodic/lib/python2.7/dist-packages', 'NVIDIA_VISIBLE_DEVICES': 'all', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/melodic'}, 'shell': False}
+[0.809390] (-) TimerEvent: {}
+[0.917017] (-) TimerEvent: {}
+[1.018378] (-) TimerEvent: {}
+[1.119761] (-) TimerEvent: {}
+[1.220485] (-) TimerEvent: {}
+[1.321165] (-) TimerEvent: {}
+[1.422004] (-) TimerEvent: {}
+[1.523006] (-) TimerEvent: {}
+[1.563528] (py_pubsub) StdoutLine: {'line': b'running develop\n'}
+[1.623320] (-) TimerEvent: {}
+[1.724799] (-) TimerEvent: {}
+[1.825682] (-) TimerEvent: {}
+[1.876000] (py_pubsub) StdoutLine: {'line': b'running egg_info\n'}
+[1.877448] (py_pubsub) StdoutLine: {'line': b'creating py_pubsub.egg-info\n'}
+[1.878384] (py_pubsub) StdoutLine: {'line': b'writing py_pubsub.egg-info/PKG-INFO\n'}
+[1.879029] (py_pubsub) StdoutLine: {'line': b'writing dependency_links to py_pubsub.egg-info/dependency_links.txt\n'}
+[1.879627] (py_pubsub) StdoutLine: {'line': b'writing entry points to py_pubsub.egg-info/entry_points.txt\n'}
+[1.880168] (py_pubsub) StdoutLine: {'line': b'writing requirements to py_pubsub.egg-info/requires.txt\n'}
+[1.880504] (py_pubsub) StdoutLine: {'line': b'writing top-level names to py_pubsub.egg-info/top_level.txt\n'}
+[1.880863] (py_pubsub) StdoutLine: {'line': b"writing manifest file 'py_pubsub.egg-info/SOURCES.txt'\n"}
+[1.925873] (-) TimerEvent: {}
+[1.993404] (py_pubsub) StdoutLine: {'line': b"reading manifest file 'py_pubsub.egg-info/SOURCES.txt'\n"}
+[1.996069] (py_pubsub) StdoutLine: {'line': b"writing manifest file 'py_pubsub.egg-info/SOURCES.txt'\n"}
+[2.026027] (-) TimerEvent: {}
+[2.126786] (-) TimerEvent: {}
+[2.134840] (py_pubsub) StdoutLine: {'line': b'running build_ext\n'}
+[2.136012] (py_pubsub) StdoutLine: {'line': b'Creating /home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages/site.py\n'}
+[2.139257] (py_pubsub) StdoutLine: {'line': b'Creating /home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages/py-pubsub.egg-link (link to .)\n'}
+[2.142106] (py_pubsub) StdoutLine: {'line': b'Installing listener script to /home/administrator/eloquent_ws/install/py_pubsub/lib/py_pubsub\n'}
+[2.142661] (py_pubsub) StdoutLine: {'line': b'Installing talker script to /home/administrator/eloquent_ws/install/py_pubsub/lib/py_pubsub\n'}
+[2.143382] (py_pubsub) StdoutLine: {'line': b'\n'}
+[2.143860] (py_pubsub) StdoutLine: {'line': b'Installed /home/administrator/eloquent_ws/build/py_pubsub\n'}
+[2.144275] (py_pubsub) StdoutLine: {'line': b'running install_data\n'}
+[2.144774] (py_pubsub) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index\n'}
+[2.145162] (py_pubsub) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index\n'}
+[2.145521] (py_pubsub) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index/packages\n'}
+[2.145915] (py_pubsub) StdoutLine: {'line': b'copying resource/py_pubsub -> /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index/packages\n'}
+[2.146238] (py_pubsub) StdoutLine: {'line': b'copying package.xml -> /home/administrator/eloquent_ws/install/py_pubsub/share/py_pubsub\n'}
+[2.222083] (py_pubsub) CommandEnded: {'returncode': 0}
+[2.227131] (-) TimerEvent: {}
+[2.282755] (py_pubsub) JobEnded: {'identifier': 'py_pubsub', 'rc': 0}
+[2.285886] (-) EventReactorShutdown: {}

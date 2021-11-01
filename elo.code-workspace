@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../results"
+		}
+	],
+	"settings": {
+		"python.autoComplete.extraPaths": [
+			"src/deep_sogm/deep_sogm/cpp_wrappers/cpp_neighbors",
+			"src/deep_sogm/deep_sogm/cpp_wrappers/cpp_subsampling",
+			"src/deep_sogm/deep_sogm/cpp_wrappers",
+			"/opt/ros/eloquent/lib/python3.6/site-packages",
+			"install/msg_interfaces/lib/python3.6/site-packages"
+			// "/opt/ros/eloquent/lib/python3.6/site-packages/rclpy",
+			// "/opt/ros/eloquent/lib/**",
+			// "/opt/ros/eloquent/lib"
+		],
+		"files.associations": {
+			"random": "cpp",
+			"ostream": "cpp",
+			"*.tcc": "cpp"
+		},
+		"python.analysis.extraPaths": [
+			"src/deep_sogm/deep_sogm/cpp_wrappers/cpp_neighbors",
+			"src/deep_sogm/deep_sogm/cpp_wrappers/cpp_subsampling",
+			"src/deep_sogm/deep_sogm/cpp_wrappers",
+			"/opt/ros/eloquent/lib/python3.6/site-packages",
+			"install/msg_interfaces/lib/python3.6/site-packages"
+		]
+	}
+}

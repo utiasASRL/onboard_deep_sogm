@@ -1,0 +1,46 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from msg_interfaces/msg/VoxGrid.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+#include "std_msgs/msg/Header.idl"
+
+module msg_interfaces {
+  module msg {
+    @verbatim (language="comment", text=
+      " This represents a 3-D grid map, in which each cell represents the probability of" "\n"
+      " occupancy at different times.")
+    struct VoxGrid {
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        " Dimensions of the grid, depth for time.")
+      @unit (value="cells")
+      uint32 height;
+
+      uint32 width;
+
+      uint32 depth;
+
+      @verbatim (language="comment", text=
+        " The map resolutions in meters and seconds [m/cell] [s/cell]")
+      float dl;
+
+      float dt;
+
+      @verbatim (language="comment", text=
+        " Origin of the grid in the world: position of the corner of voxel and time origin of the first prediction (0,0,0). [m, m, s]")
+      geometry_msgs::msg::Point origin;
+
+      @verbatim (language="comment", text=
+        " Orientation of the map in the 2D plane")
+      @unit (value="rad")
+      float theta;
+
+      @verbatim (language="comment", text=
+        " The map data, in row-width-depth order, starting with (0,0,0).  Occupancy" "\n"
+        " probabilities are in the range [0,255].")
+      sequence<uint8> data;
+    };
+  };
+};

@@ -1,0 +1,26 @@
+[0.797s] Invoking command in '/home/administrator/eloquent_ws/build/py_pubsub': PYTHONPATH=/home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/administrator/eloquent_ws/install/py_pubsub --editable --build-directory /home/administrator/eloquent_ws/build/py_pubsub/build --no-deps install_data --install-dir /home/administrator/eloquent_ws/install/py_pubsub
+[1.557s] running develop
+[1.870s] running egg_info
+[1.871s] creating py_pubsub.egg-info
+[1.872s] writing py_pubsub.egg-info/PKG-INFO
+[1.872s] writing dependency_links to py_pubsub.egg-info/dependency_links.txt
+[1.873s] writing entry points to py_pubsub.egg-info/entry_points.txt
+[1.873s] writing requirements to py_pubsub.egg-info/requires.txt
+[1.874s] writing top-level names to py_pubsub.egg-info/top_level.txt
+[1.874s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[1.987s] reading manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[1.989s] writing manifest file 'py_pubsub.egg-info/SOURCES.txt'
+[2.128s] running build_ext
+[2.129s] Creating /home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages/site.py
+[2.133s] Creating /home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages/py-pubsub.egg-link (link to .)
+[2.135s] Installing listener script to /home/administrator/eloquent_ws/install/py_pubsub/lib/py_pubsub
+[2.136s] Installing talker script to /home/administrator/eloquent_ws/install/py_pubsub/lib/py_pubsub
+[2.137s] 
+[2.137s] Installed /home/administrator/eloquent_ws/build/py_pubsub
+[2.138s] running install_data
+[2.138s] creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index
+[2.138s] creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index
+[2.139s] creating /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index/packages
+[2.139s] copying resource/py_pubsub -> /home/administrator/eloquent_ws/install/py_pubsub/share/ament_index/resource_index/packages
+[2.139s] copying package.xml -> /home/administrator/eloquent_ws/install/py_pubsub/share/py_pubsub
+[2.216s] Invoked command in '/home/administrator/eloquent_ws/build/py_pubsub' returned '0': PYTHONPATH=/home/administrator/eloquent_ws/install/py_pubsub/lib/python3.6/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/administrator/eloquent_ws/install/py_pubsub --editable --build-directory /home/administrator/eloquent_ws/build/py_pubsub/build --no-deps install_data --install-dir /home/administrator/eloquent_ws/install/py_pubsub

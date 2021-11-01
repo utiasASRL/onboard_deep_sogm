@@ -1,0 +1,66 @@
+[0.000000] (-) TimerEvent: {}
+[0.000621] (-) JobUnselected: {'identifier': 'custom_msgs'}
+[0.001070] (-) JobUnselected: {'identifier': 'jackal_control'}
+[0.002010] (-) JobUnselected: {'identifier': 'jackal_description'}
+[0.002608] (-) JobUnselected: {'identifier': 'jackal_msgs'}
+[0.003411] (-) JobUnselected: {'identifier': 'jackal_navigation'}
+[0.003636] (-) JobUnselected: {'identifier': 'jackal_tutorials'}
+[0.003762] (-) JobUnselected: {'identifier': 'launch_delay'}
+[0.003938] (-) JobUnselected: {'identifier': 'msg_interfaces'}
+[0.005587] (-) JobUnselected: {'identifier': 'my_package'}
+[0.006338] (-) JobUnselected: {'identifier': 'pointcloud_to_laserscan'}
+[0.006614] (-) JobUnselected: {'identifier': 'py_pubsub'}
+[0.006723] (-) JobUnselected: {'identifier': 'src'}
+[0.006910] (-) JobUnselected: {'identifier': 'velo_repub'}
+[0.007108] (deep_sogm) JobQueued: {'identifier': 'deep_sogm', 'dependencies': OrderedDict()}
+[0.007249] (deep_sogm) JobStarted: {'identifier': 'deep_sogm'}
+[0.099601] (-) TimerEvent: {}
+[0.201690] (-) TimerEvent: {}
+[0.302439] (-) TimerEvent: {}
+[0.403133] (-) TimerEvent: {}
+[0.503825] (-) TimerEvent: {}
+[0.604618] (-) TimerEvent: {}
+[0.705312] (-) TimerEvent: {}
+[0.806035] (-) TimerEvent: {}
+[0.907430] (-) TimerEvent: {}
+[0.911980] (deep_sogm) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'develop', '--prefix', '/home/administrator/eloquent_ws/install/deep_sogm', '--editable', '--build-directory', '/home/administrator/eloquent_ws/build/deep_sogm/build', '--no-deps', 'install_data', '--install-dir', '/home/administrator/eloquent_ws/install/deep_sogm'], 'cwd': '/home/administrator/eloquent_ws/build/deep_sogm', 'env': {'PYTHONIOENCODING': 'utf-8', 'USER': 'administrator', 'HOSTNAME': 'cpr-tor59-xav01', 'ROS_PACKAGE_PATH': '/opt/ros/melodic/share', 'LD_LIBRARY_PATH': '/usr/lib/aarch64-linux-gnu/gazebo-9/plugins:/opt/ros/eloquent/opt/yaml_cpp_vendor/lib:/opt/ros/eloquent/opt/rviz_ogre_vendor/lib:/opt/ros/eloquent/lib/aarch64-linux-gnu:/opt/ros/eloquent/lib:/opt/ros/melodic/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda-10.2/targets/aarch64-linux/lib:', 'ROS_ETC_DIR': '/opt/ros/melodic/etc/ros', 'SHLVL': '1', 'HOME': '/home/administrator', 'ROS_PYTHON_VERSION': '3', 'ROS_DISTRO': 'eloquent', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'NVIDIA_DRIVER_CAPABILITIES': 'all', 'PKG_CONFIG_PATH': '/opt/ros/melodic/lib/pkgconfig', 'TERM': 'xterm', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/eloquent/bin:/opt/ros/melodic/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/cuda-10.2/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': 'localhost:10.0', 'LANG': 'en_US.UTF-8', 'ROS_ROOT': '/opt/ros/melodic/share/ros', 'XAUTHORITY': '/home/administrator/.Xauthority', 'AMENT_PREFIX_PATH': '/opt/ros/eloquent', 'DEBIAN_FRONTEND': 'noninteractive', 'SHELL': '/bin/bash', 'ROS_MASTER_URI': 'http://cpr-tor59-01:11311', 'PWD': '/home/administrator/eloquent_ws/build/deep_sogm', 'PYTHONPATH': '/home/administrator/eloquent_ws/install/deep_sogm/lib/python3.6/site-packages:/opt/ros/eloquent/lib/python3.6/site-packages:/opt/ros/melodic/lib/python2.7/dist-packages', 'NVIDIA_VISIBLE_DEVICES': 'all', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/melodic'}, 'shell': False}
+[1.007743] (-) TimerEvent: {}
+[1.109384] (-) TimerEvent: {}
+[1.210309] (-) TimerEvent: {}
+[1.311079] (-) TimerEvent: {}
+[1.411926] (-) TimerEvent: {}
+[1.513110] (-) TimerEvent: {}
+[1.614016] (-) TimerEvent: {}
+[1.680305] (deep_sogm) StdoutLine: {'line': b'running develop\n'}
+[1.714232] (-) TimerEvent: {}
+[1.815203] (-) TimerEvent: {}
+[1.917069] (-) TimerEvent: {}
+[1.994286] (deep_sogm) StdoutLine: {'line': b'running egg_info\n'}
+[1.994997] (deep_sogm) StdoutLine: {'line': b'creating deep_sogm.egg-info\n'}
+[1.995543] (deep_sogm) StdoutLine: {'line': b'writing deep_sogm.egg-info/PKG-INFO\n'}
+[1.996020] (deep_sogm) StdoutLine: {'line': b'writing dependency_links to deep_sogm.egg-info/dependency_links.txt\n'}
+[1.996409] (deep_sogm) StdoutLine: {'line': b'writing entry points to deep_sogm.egg-info/entry_points.txt\n'}
+[1.997070] (deep_sogm) StdoutLine: {'line': b'writing requirements to deep_sogm.egg-info/requires.txt\n'}
+[1.997545] (deep_sogm) StdoutLine: {'line': b'writing top-level names to deep_sogm.egg-info/top_level.txt\n'}
+[1.998069] (deep_sogm) StdoutLine: {'line': b"writing manifest file 'deep_sogm.egg-info/SOURCES.txt'\n"}
+[2.017198] (-) TimerEvent: {}
+[2.103289] (deep_sogm) StdoutLine: {'line': b"reading manifest file 'deep_sogm.egg-info/SOURCES.txt'\n"}
+[2.105959] (deep_sogm) StdoutLine: {'line': b"writing manifest file 'deep_sogm.egg-info/SOURCES.txt'\n"}
+[2.117544] (-) TimerEvent: {}
+[2.218261] (-) TimerEvent: {}
+[2.236385] (deep_sogm) StdoutLine: {'line': b'running build_ext\n'}
+[2.237237] (deep_sogm) StdoutLine: {'line': b'Creating /home/administrator/eloquent_ws/install/deep_sogm/lib/python3.6/site-packages/site.py\n'}
+[2.240345] (deep_sogm) StdoutLine: {'line': b'Creating /home/administrator/eloquent_ws/install/deep_sogm/lib/python3.6/site-packages/deep-sogm.egg-link (link to .)\n'}
+[2.242898] (deep_sogm) StdoutLine: {'line': b'Installing collider script to /home/administrator/eloquent_ws/install/deep_sogm/lib/deep_sogm\n'}
+[2.244370] (deep_sogm) StdoutLine: {'line': b'\n'}
+[2.245578] (deep_sogm) StdoutLine: {'line': b'Installed /home/administrator/eloquent_ws/build/deep_sogm\n'}
+[2.246662] (deep_sogm) StdoutLine: {'line': b'running install_data\n'}
+[2.247364] (deep_sogm) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/deep_sogm/share/ament_index\n'}
+[2.248052] (deep_sogm) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/deep_sogm/share/ament_index/resource_index\n'}
+[2.248946] (deep_sogm) StdoutLine: {'line': b'creating /home/administrator/eloquent_ws/install/deep_sogm/share/ament_index/resource_index/packages\n'}
+[2.249442] (deep_sogm) StdoutLine: {'line': b'copying resource/deep_sogm -> /home/administrator/eloquent_ws/install/deep_sogm/share/ament_index/resource_index/packages\n'}
+[2.250083] (deep_sogm) StdoutLine: {'line': b'copying package.xml -> /home/administrator/eloquent_ws/install/deep_sogm/share/deep_sogm\n'}
+[2.318571] (-) TimerEvent: {}
+[2.324386] (deep_sogm) CommandEnded: {'returncode': 0}
+[2.380153] (deep_sogm) JobEnded: {'identifier': 'deep_sogm', 'rc': 0}
+[2.385714] (-) EventReactorShutdown: {}

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="map_topic" default="map" />
+  <arg name="map_frame" default="map" />
+  <arg name="filter" default="false" />
+  <arg name="gt_classify" default="true" />
+
+  <node pkg="velo_repub" type="frame_repub" name="frame_repub" output="screen">
+  
+    <param name="odom_frame" value="odom"/>
+    <param name="base_frame" value="base_link"/>
+    <param name="map_topic" value="$(arg map_topic)"/>
+    <param name="map_frame" value="$(arg map_frame)"/>
+    
+  </node>
+
+</launch>

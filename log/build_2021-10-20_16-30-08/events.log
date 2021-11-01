@@ -1,0 +1,410 @@
+[0.000000] (-) TimerEvent: {}
+[0.002389] (-) JobUnselected: {'identifier': 'custom_msgs'}
+[0.002765] (-) JobUnselected: {'identifier': 'deep_sogm'}
+[0.002900] (-) JobUnselected: {'identifier': 'jackal_control'}
+[0.004994] (-) JobUnselected: {'identifier': 'jackal_description'}
+[0.005829] (-) JobUnselected: {'identifier': 'jackal_msgs'}
+[0.006204] (-) JobUnselected: {'identifier': 'jackal_navigation'}
+[0.006571] (-) JobUnselected: {'identifier': 'jackal_tutorials'}
+[0.006764] (-) JobUnselected: {'identifier': 'launch_delay'}
+[0.007115] (-) JobUnselected: {'identifier': 'my_package'}
+[0.007266] (-) JobUnselected: {'identifier': 'pointcloud_to_laserscan'}
+[0.007679] (-) JobUnselected: {'identifier': 'py_pubsub'}
+[0.007790] (-) JobUnselected: {'identifier': 'src'}
+[0.007921] (-) JobUnselected: {'identifier': 'velo_repub'}
+[0.008122] (msg_interfaces) JobQueued: {'identifier': 'msg_interfaces', 'dependencies': OrderedDict()}
+[0.008298] (msg_interfaces) JobStarted: {'identifier': 'msg_interfaces'}
+[0.039760] (msg_interfaces) JobProgress: {'identifier': 'msg_interfaces', 'progress': 'cmake'}
+[0.041713] (msg_interfaces) Command: {'cmd': ['/usr/bin/cmake', '/home/administrator/eloquent_ws/src/msg_interfaces', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/administrator/eloquent_ws/install/msg_interfaces'], 'cwd': '/home/administrator/eloquent_ws/build/msg_interfaces', 'env': OrderedDict([('PYTHONIOENCODING', 'utf-8'), ('USER', 'administrator'), ('HOSTNAME', 'cpr-tor59-xav01'), ('ROS_PACKAGE_PATH', '/opt/ros/melodic/share'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-9/plugins:/opt/ros/eloquent/opt/yaml_cpp_vendor/lib:/opt/ros/eloquent/opt/rviz_ogre_vendor/lib:/opt/ros/eloquent/lib/aarch64-linux-gnu:/opt/ros/eloquent/lib:/opt/ros/melodic/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda-10.2/targets/aarch64-linux/lib:'), ('ROS_ETC_DIR', '/opt/ros/melodic/etc/ros'), ('SHLVL', '1'), ('HOME', '/home/administrator'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'eloquent'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('PKG_CONFIG_PATH', '/opt/ros/melodic/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/eloquent/bin:/opt/ros/melodic/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/cuda-10.2/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'en_US.UTF-8'), ('ROS_ROOT', '/opt/ros/melodic/share/ros'), ('XAUTHORITY', '/home/administrator/.Xauthority'), ('AMENT_PREFIX_PATH', '/opt/ros/eloquent'), ('DEBIAN_FRONTEND', 'noninteractive'), ('SHELL', '/bin/bash'), ('ROS_MASTER_URI', 'http://cpr-tor59-01:11311'), ('PWD', '/home/administrator/eloquent_ws/build/msg_interfaces'), ('PYTHONPATH', '/opt/ros/eloquent/lib/python3.6/site-packages:/opt/ros/melodic/lib/python2.7/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/eloquent:/opt/ros/melodic')]), 'shell': False}
+[0.098570] (-) TimerEvent: {}
+[0.200757] (-) TimerEvent: {}
+[0.240166] (msg_interfaces) StdoutLine: {'line': b'-- The C compiler identification is GNU 7.5.0\n'}
+[0.300965] (-) TimerEvent: {}
+[0.395842] (msg_interfaces) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 7.5.0\n'}
+[0.401136] (-) TimerEvent: {}
+[0.407533] (msg_interfaces) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc\n'}
+[0.501372] (-) TimerEvent: {}
+[0.602447] (-) TimerEvent: {}
+[0.608872] (msg_interfaces) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc -- works\n'}
+[0.611569] (msg_interfaces) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.702555] (-) TimerEvent: {}
+[0.803655] (-) TimerEvent: {}
+[0.822679] (msg_interfaces) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.859448] (msg_interfaces) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.903855] (-) TimerEvent: {}
+[1.005031] (-) TimerEvent: {}
+[1.105968] (-) TimerEvent: {}
+[1.206805] (-) TimerEvent: {}
+[1.307836] (-) TimerEvent: {}
+[1.409499] (-) TimerEvent: {}
+[1.449822] (msg_interfaces) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[1.457973] (msg_interfaces) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++\n'}
+[1.509755] (-) TimerEvent: {}
+[1.611203] (-) TimerEvent: {}
+[1.668381] (msg_interfaces) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ -- works\n'}
+[1.670836] (msg_interfaces) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[1.711479] (-) TimerEvent: {}
+[1.813604] (-) TimerEvent: {}
+[1.881975] (msg_interfaces) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.901011] (msg_interfaces) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.913752] (-) TimerEvent: {}
+[2.015662] (-) TimerEvent: {}
+[2.117272] (-) TimerEvent: {}
+[2.218295] (-) TimerEvent: {}
+[2.320011] (-) TimerEvent: {}
+[2.420986] (-) TimerEvent: {}
+[2.522033] (-) TimerEvent: {}
+[2.624143] (-) TimerEvent: {}
+[2.725128] (-) TimerEvent: {}
+[2.828148] (-) TimerEvent: {}
+[2.843844] (msg_interfaces) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[2.851508] (msg_interfaces) StdoutLine: {'line': b'-- Found ament_cmake: 0.8.3 (/opt/ros/eloquent/share/ament_cmake/cmake)\n'}
+[2.928367] (-) TimerEvent: {}
+[2.940594] (msg_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.6.9", minimum required is "3") \n'}
+[2.941458] (msg_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[3.028641] (-) TimerEvent: {}
+[3.129859] (-) TimerEvent: {}
+[3.232317] (-) TimerEvent: {}
+[3.333274] (-) TimerEvent: {}
+[3.434875] (-) TimerEvent: {}
+[3.498256] (msg_interfaces) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[3.535077] (-) TimerEvent: {}
+[3.562908] (msg_interfaces) StdoutLine: {'line': b'-- Found rosidl_default_generators: 0.8.0 (/opt/ros/eloquent/share/rosidl_default_generators/cmake)\n'}
+[3.635269] (-) TimerEvent: {}
+[3.736491] (-) TimerEvent: {}
+[3.841063] (-) TimerEvent: {}
+[3.853247] (msg_interfaces) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "1.1.1") \n'}
+[3.914584] (msg_interfaces) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/eloquent/include  \n'}
+[3.941333] (-) TimerEvent: {}
+[3.963119] (msg_interfaces) StdoutLine: {'line': b'-- Found rosidl_adapter: 0.8.3 (/opt/ros/eloquent/share/rosidl_adapter/cmake)\n'}
+[4.041553] (-) TimerEvent: {}
+[4.143047] (-) TimerEvent: {}
+[4.181055] (msg_interfaces) StdoutLine: {'line': b'-- Found geometry_msgs: 0.8.1 (/opt/ros/eloquent/share/geometry_msgs/cmake)\n'}
+[4.243375] (-) TimerEvent: {}
+[4.324171] (msg_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found version "3.6.9") \n'}
+[4.343575] (-) TimerEvent: {}
+[4.444425] (-) TimerEvent: {}
+[4.545263] (-) TimerEvent: {}
+[4.648287] (-) TimerEvent: {}
+[4.749029] (-) TimerEvent: {}
+[4.850529] (-) TimerEvent: {}
+[4.936841] (msg_interfaces) StdoutLine: {'line': b'-- Using single matching rosidl_typesupport_c: rosidl_typesupport_fastrtps_c\n'}
+[4.950715] (-) TimerEvent: {}
+[5.052135] (-) TimerEvent: {}
+[5.073720] (msg_interfaces) StdoutLine: {'line': b'-- Using single matching rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp\n'}
+[5.152283] (-) TimerEvent: {}
+[5.253081] (-) TimerEvent: {}
+[5.354020] (-) TimerEvent: {}
+[5.454890] (-) TimerEvent: {}
+[5.556125] (-) TimerEvent: {}
+[5.657168] (-) TimerEvent: {}
+[5.757996] (-) TimerEvent: {}
+[5.858814] (-) TimerEvent: {}
+[5.959799] (-) TimerEvent: {}
+[6.057584] (msg_interfaces) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 0.8.1 (/opt/ros/eloquent/share/rmw_implementation_cmake/cmake)\n'}
+[6.060018] (-) TimerEvent: {}
+[6.132926] (msg_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.6.9", minimum required is "3.5") \n'}
+[6.137837] (msg_interfaces) StdoutLine: {'line': b'-- Found python_cmake_module: 0.8.0 (/opt/ros/eloquent/share/python_cmake_module/cmake)\n'}
+[6.160242] (-) TimerEvent: {}
+[6.223236] (msg_interfaces) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.6m.so (found suitable version "3.6.9", minimum required is "3.5") \n'}
+[6.224445] (msg_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[6.225175] (msg_interfaces) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.6m\n'}
+[6.225700] (msg_interfaces) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.6m.so\n'}
+[6.260455] (-) TimerEvent: {}
+[6.292548] (msg_interfaces) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[6.360673] (-) TimerEvent: {}
+[6.461553] (-) TimerEvent: {}
+[6.564627] (-) TimerEvent: {}
+[6.665396] (-) TimerEvent: {}
+[6.766163] (-) TimerEvent: {}
+[6.773482] (msg_interfaces) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.8.2 (/opt/ros/eloquent/share/ament_lint_auto/cmake)\n'}
+[6.848518] (msg_interfaces) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[6.852463] (msg_interfaces) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[6.866395] (-) TimerEvent: {}
+[6.868615] (msg_interfaces) StdoutLine: {'line': b'-- Configuring done\n'}
+[6.966661] (-) TimerEvent: {}
+[7.068006] (-) TimerEvent: {}
+[7.170453] (-) TimerEvent: {}
+[7.221158] (msg_interfaces) StdoutLine: {'line': b'-- Generating done\n'}
+[7.232493] (msg_interfaces) StdoutLine: {'line': b'-- Build files have been written to: /home/administrator/eloquent_ws/build/msg_interfaces\n'}
+[7.245540] (msg_interfaces) CommandEnded: {'returncode': 0}
+[7.252648] (msg_interfaces) JobProgress: {'identifier': 'msg_interfaces', 'progress': 'build'}
+[7.255773] (msg_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/administrator/eloquent_ws/build/msg_interfaces', '--', '-j8', '-l8'], 'cwd': '/home/administrator/eloquent_ws/build/msg_interfaces', 'env': OrderedDict([('PYTHONIOENCODING', 'utf-8'), ('USER', 'administrator'), ('HOSTNAME', 'cpr-tor59-xav01'), ('ROS_PACKAGE_PATH', '/opt/ros/melodic/share'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-9/plugins:/opt/ros/eloquent/opt/yaml_cpp_vendor/lib:/opt/ros/eloquent/opt/rviz_ogre_vendor/lib:/opt/ros/eloquent/lib/aarch64-linux-gnu:/opt/ros/eloquent/lib:/opt/ros/melodic/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda-10.2/targets/aarch64-linux/lib:'), ('ROS_ETC_DIR', '/opt/ros/melodic/etc/ros'), ('SHLVL', '1'), ('HOME', '/home/administrator'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'eloquent'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('PKG_CONFIG_PATH', '/opt/ros/melodic/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/eloquent/bin:/opt/ros/melodic/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/cuda-10.2/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'en_US.UTF-8'), ('ROS_ROOT', '/opt/ros/melodic/share/ros'), ('XAUTHORITY', '/home/administrator/.Xauthority'), ('AMENT_PREFIX_PATH', '/opt/ros/eloquent'), ('DEBIAN_FRONTEND', 'noninteractive'), ('SHELL', '/bin/bash'), ('ROS_MASTER_URI', 'http://cpr-tor59-01:11311'), ('PWD', '/home/administrator/eloquent_ws/build/msg_interfaces'), ('PYTHONPATH', '/opt/ros/eloquent/lib/python3.6/site-packages:/opt/ros/melodic/lib/python2.7/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/eloquent:/opt/ros/melodic')]), 'shell': False}
+[7.270694] (-) TimerEvent: {}
+[7.374857] (-) TimerEvent: {}
+[7.386165] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__cpp\x1b[0m\n'}
+[7.396210] (msg_interfaces) StdoutLine: {'line': b'[  3%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[7.422581] (msg_interfaces) StdoutLine: {'line': b'[  6%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[7.475081] (-) TimerEvent: {}
+[7.578517] (-) TimerEvent: {}
+[7.681831] (-) TimerEvent: {}
+[7.784311] (-) TimerEvent: {}
+[7.885394] (-) TimerEvent: {}
+[7.986454] (-) TimerEvent: {}
+[8.087621] (-) TimerEvent: {}
+[8.189437] (-) TimerEvent: {}
+[8.290248] (-) TimerEvent: {}
+[8.391549] (-) TimerEvent: {}
+[8.492480] (-) TimerEvent: {}
+[8.590770] (msg_interfaces) StdoutLine: {'line': b'[  6%] Built target msg_interfaces__cpp\n'}
+[8.592765] (-) TimerEvent: {}
+[8.628274] (msg_interfaces) StdoutLine: {'line': b'[ 13%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[8.629444] (msg_interfaces) StdoutLine: {'line': b'[ 13%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[8.685699] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_generator_c\x1b[0m\n'}
+[8.692953] (-) TimerEvent: {}
+[8.729751] (msg_interfaces) StdoutLine: {'line': b'[ 17%] \x1b[32mBuilding C object CMakeFiles/msg_interfaces__rosidl_generator_c.dir/rosidl_generator_c/msg_interfaces/msg/vox_grid__functions.c.o\x1b[0m\n'}
+[8.793075] (-) TimerEvent: {}
+[8.857184] (msg_interfaces) StdoutLine: {'line': b'[ 20%] \x1b[32m\x1b[1mLinking C shared library libmsg_interfaces__rosidl_generator_c.so\x1b[0m\n'}
+[8.893250] (-) TimerEvent: {}
+[8.984952] (msg_interfaces) StdoutLine: {'line': b'[ 20%] Built target msg_interfaces__rosidl_generator_c\n'}
+[8.993523] (-) TimerEvent: {}
+[9.028229] (msg_interfaces) StdoutLine: {'line': b'[ 24%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[9.093698] (-) TimerEvent: {}
+[9.194563] (-) TimerEvent: {}
+[9.295447] (-) TimerEvent: {}
+[9.396224] (-) TimerEvent: {}
+[9.497043] (-) TimerEvent: {}
+[9.597750] (-) TimerEvent: {}
+[9.702585] (-) TimerEvent: {}
+[9.804435] (-) TimerEvent: {}
+[9.851135] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_introspection_cpp\x1b[0m\n'}
+[9.888625] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_fastrtps_cpp\x1b[0m\n'}
+[9.898414] (msg_interfaces) StdoutLine: {'line': b'[ 27%] \x1b[32mBuilding CXX object CMakeFiles/msg_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/msg_interfaces/msg/vox_grid__type_support.cpp.o\x1b[0m\n'}
+[9.904692] (-) TimerEvent: {}
+[9.951205] (msg_interfaces) StdoutLine: {'line': b'[ 31%] \x1b[32mBuilding CXX object CMakeFiles/msg_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/msg_interfaces/msg/dds_fastrtps/vox_grid__type_support.cpp.o\x1b[0m\n'}
+[10.004868] (-) TimerEvent: {}
+[10.105630] (-) TimerEvent: {}
+[10.206439] (-) TimerEvent: {}
+[10.263504] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_introspection_c\x1b[0m\n'}
+[10.306685] (-) TimerEvent: {}
+[10.321964] (msg_interfaces) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding C object CMakeFiles/msg_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/msg_interfaces/msg/vox_grid__type_support.c.o\x1b[0m\n'}
+[10.407111] (-) TimerEvent: {}
+[10.433569] (msg_interfaces) StdoutLine: {'line': b'[ 37%] \x1b[32m\x1b[1mLinking C shared library libmsg_interfaces__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[10.507364] (-) TimerEvent: {}
+[10.557630] (msg_interfaces) StdoutLine: {'line': b'[ 37%] Built target msg_interfaces__rosidl_typesupport_introspection_c\n'}
+[10.607531] (-) TimerEvent: {}
+[10.708510] (-) TimerEvent: {}
+[10.809959] (-) TimerEvent: {}
+[10.881586] (msg_interfaces) StdoutLine: {'line': b'[ 41%] \x1b[32m\x1b[1mLinking CXX shared library libmsg_interfaces__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[10.910291] (-) TimerEvent: {}
+[11.015899] (-) TimerEvent: {}
+[11.074687] (msg_interfaces) StdoutLine: {'line': b'[ 41%] Built target msg_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[11.116270] (-) TimerEvent: {}
+[11.217241] (-) TimerEvent: {}
+[11.318323] (-) TimerEvent: {}
+[11.351139] (msg_interfaces) StdoutLine: {'line': b'[ 44%] \x1b[32m\x1b[1mLinking CXX shared library libmsg_interfaces__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[11.418606] (-) TimerEvent: {}
+[11.519786] (-) TimerEvent: {}
+[11.558239] (msg_interfaces) StdoutLine: {'line': b'[ 44%] Built target msg_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[11.596620] (msg_interfaces) StdoutLine: {'line': b'[ 48%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[11.598419] (msg_interfaces) StdoutLine: {'line': b'[ 51%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[11.619950] (-) TimerEvent: {}
+[11.721783] (-) TimerEvent: {}
+[11.822545] (-) TimerEvent: {}
+[11.923510] (-) TimerEvent: {}
+[12.024537] (-) TimerEvent: {}
+[12.125510] (-) TimerEvent: {}
+[12.226524] (-) TimerEvent: {}
+[12.328384] (-) TimerEvent: {}
+[12.429505] (-) TimerEvent: {}
+[12.531474] (-) TimerEvent: {}
+[12.633865] (-) TimerEvent: {}
+[12.670327] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_cpp\x1b[0m\n'}
+[12.717691] (msg_interfaces) StdoutLine: {'line': b'[ 55%] \x1b[32mBuilding CXX object CMakeFiles/msg_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/msg_interfaces/msg/vox_grid__type_support.cpp.o\x1b[0m\n'}
+[12.734057] (-) TimerEvent: {}
+[12.793153] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_fastrtps_c\x1b[0m\n'}
+[12.834314] (-) TimerEvent: {}
+[12.846761] (msg_interfaces) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/msg_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/msg_interfaces/msg/vox_grid__type_support_c.cpp.o\x1b[0m\n'}
+[12.934514] (-) TimerEvent: {}
+[13.037531] (-) TimerEvent: {}
+[13.138469] (-) TimerEvent: {}
+[13.239305] (-) TimerEvent: {}
+[13.340267] (-) TimerEvent: {}
+[13.441217] (-) TimerEvent: {}
+[13.542201] (-) TimerEvent: {}
+[13.643484] (-) TimerEvent: {}
+[13.745149] (-) TimerEvent: {}
+[13.847552] (-) TimerEvent: {}
+[13.853258] (msg_interfaces) StdoutLine: {'line': b'[ 62%] \x1b[32m\x1b[1mLinking CXX shared library libmsg_interfaces__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[13.883197] (msg_interfaces) StdoutLine: {'line': b'[ 65%] \x1b[32m\x1b[1mLinking CXX shared library libmsg_interfaces__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[13.948323] (-) TimerEvent: {}
+[14.049290] (-) TimerEvent: {}
+[14.103313] (msg_interfaces) StdoutLine: {'line': b'[ 65%] Built target msg_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[14.117256] (msg_interfaces) StdoutLine: {'line': b'[ 65%] Built target msg_interfaces__rosidl_typesupport_cpp\n'}
+[14.138521] (msg_interfaces) StdoutLine: {'line': b'[ 68%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[14.149466] (-) TimerEvent: {}
+[14.250322] (-) TimerEvent: {}
+[14.351115] (-) TimerEvent: {}
+[14.453522] (-) TimerEvent: {}
+[14.554440] (-) TimerEvent: {}
+[14.656583] (-) TimerEvent: {}
+[14.759002] (-) TimerEvent: {}
+[14.860187] (-) TimerEvent: {}
+[14.961147] (-) TimerEvent: {}
+[15.061990] (-) TimerEvent: {}
+[15.164668] (-) TimerEvent: {}
+[15.230529] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_c\x1b[0m\n'}
+[15.264892] (-) TimerEvent: {}
+[15.273709] (msg_interfaces) StdoutLine: {'line': b'[ 72%] \x1b[32mBuilding CXX object CMakeFiles/msg_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/msg_interfaces/msg/vox_grid__type_support.cpp.o\x1b[0m\n'}
+[15.363684] (msg_interfaces) StdoutLine: {'line': b'[ 75%] \x1b[32m\x1b[1mLinking CXX shared library libmsg_interfaces__rosidl_typesupport_c.so\x1b[0m\n'}
+[15.366357] (-) TimerEvent: {}
+[15.469235] (-) TimerEvent: {}
+[15.526655] (msg_interfaces) StdoutLine: {'line': b'[ 75%] Built target msg_interfaces__rosidl_typesupport_c\n'}
+[15.557605] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces\x1b[0m\n'}
+[15.569451] (-) TimerEvent: {}
+[15.590352] (msg_interfaces) StdoutLine: {'line': b'[ 75%] Built target msg_interfaces\n'}
+[15.625449] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__py\x1b[0m\n'}
+[15.664508] (msg_interfaces) StdoutLine: {'line': b'[ 79%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[15.669668] (-) TimerEvent: {}
+[15.770832] (-) TimerEvent: {}
+[15.872316] (-) TimerEvent: {}
+[15.973071] (-) TimerEvent: {}
+[16.073879] (-) TimerEvent: {}
+[16.176418] (-) TimerEvent: {}
+[16.279035] (-) TimerEvent: {}
+[16.380150] (-) TimerEvent: {}
+[16.481012] (-) TimerEvent: {}
+[16.583360] (-) TimerEvent: {}
+[16.685910] (-) TimerEvent: {}
+[16.790090] (-) TimerEvent: {}
+[16.890960] (-) TimerEvent: {}
+[16.996783] (-) TimerEvent: {}
+[17.097830] (-) TimerEvent: {}
+[17.199400] (-) TimerEvent: {}
+[17.301606] (-) TimerEvent: {}
+[17.404188] (-) TimerEvent: {}
+[17.506370] (-) TimerEvent: {}
+[17.607916] (-) TimerEvent: {}
+[17.710935] (-) TimerEvent: {}
+[17.738463] (msg_interfaces) StdoutLine: {'line': b'[ 79%] Built target msg_interfaces__py\n'}
+[17.776003] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__python\x1b[0m\n'}
+[17.811135] (-) TimerEvent: {}
+[17.858685] (msg_interfaces) StdoutLine: {'line': b'[ 82%] \x1b[32mBuilding C object CMakeFiles/msg_interfaces__python.dir/rosidl_generator_py/msg_interfaces/msg/_vox_grid_s.c.o\x1b[0m\n'}
+[17.911354] (-) TimerEvent: {}
+[18.012564] (-) TimerEvent: {}
+[18.113588] (-) TimerEvent: {}
+[18.198001] (msg_interfaces) StdoutLine: {'line': b'[ 86%] \x1b[32m\x1b[1mLinking CXX shared library rosidl_generator_py/msg_interfaces/libmsg_interfaces__python.so\x1b[0m\n'}
+[18.213790] (-) TimerEvent: {}
+[18.314650] (-) TimerEvent: {}
+[18.387735] (msg_interfaces) StdoutLine: {'line': b'[ 86%] Built target msg_interfaces__python\n'}
+[18.415075] (-) TimerEvent: {}
+[18.420663] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_fastrtps_c__pyext\x1b[0m\n'}
+[18.423181] (msg_interfaces) StdoutLine: {'line': b'\x1b[35m\x1b[1mScanning dependencies of target msg_interfaces__rosidl_typesupport_c__pyext\x1b[0m\n'}
+[18.498908] (msg_interfaces) StdoutLine: {'line': b'[ 89%] \x1b[32mBuilding C object CMakeFiles/msg_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/msg_interfaces/_msg_interfaces_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[18.501196] (msg_interfaces) StdoutLine: {'line': b'[ 93%] \x1b[32mBuilding C object CMakeFiles/msg_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/msg_interfaces/_msg_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[18.515865] (-) TimerEvent: {}
+[18.617281] (-) TimerEvent: {}
+[18.718153] (-) TimerEvent: {}
+[18.728692] (msg_interfaces) StdoutLine: {'line': b'[ 96%] \x1b[32m\x1b[1mLinking CXX shared library rosidl_generator_py/msg_interfaces/msg_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-36m-aarch64-linux-gnu.so\x1b[0m\n'}
+[18.729864] (msg_interfaces) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX shared library rosidl_generator_py/msg_interfaces/msg_interfaces_s__rosidl_typesupport_c.cpython-36m-aarch64-linux-gnu.so\x1b[0m\n'}
+[18.818302] (-) TimerEvent: {}
+[18.919143] (-) TimerEvent: {}
+[18.965060] (msg_interfaces) StdoutLine: {'line': b'[100%] Built target msg_interfaces__rosidl_typesupport_c__pyext\n'}
+[18.969324] (msg_interfaces) StdoutLine: {'line': b'[100%] Built target msg_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[19.003021] (msg_interfaces) CommandEnded: {'returncode': 0}
+[19.019611] (-) TimerEvent: {}
+[19.121619] (-) TimerEvent: {}
+[19.160586] (msg_interfaces) JobProgress: {'identifier': 'msg_interfaces', 'progress': 'install'}
+[19.190443] (msg_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/administrator/eloquent_ws/build/msg_interfaces', '--target', 'install', '--', '-j8', '-l8'], 'cwd': '/home/administrator/eloquent_ws/build/msg_interfaces', 'env': OrderedDict([('PYTHONIOENCODING', 'utf-8'), ('USER', 'administrator'), ('HOSTNAME', 'cpr-tor59-xav01'), ('ROS_PACKAGE_PATH', '/opt/ros/melodic/share'), ('LD_LIBRARY_PATH', '/usr/lib/aarch64-linux-gnu/gazebo-9/plugins:/opt/ros/eloquent/opt/yaml_cpp_vendor/lib:/opt/ros/eloquent/opt/rviz_ogre_vendor/lib:/opt/ros/eloquent/lib/aarch64-linux-gnu:/opt/ros/eloquent/lib:/opt/ros/melodic/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda-10.2/targets/aarch64-linux/lib:'), ('ROS_ETC_DIR', '/opt/ros/melodic/etc/ros'), ('SHLVL', '1'), ('HOME', '/home/administrator'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'eloquent'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'all'), ('PKG_CONFIG_PATH', '/opt/ros/melodic/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/eloquent/bin:/opt/ros/melodic/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/cuda-10.2/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'en_US.UTF-8'), ('ROS_ROOT', '/opt/ros/melodic/share/ros'), ('XAUTHORITY', '/home/administrator/.Xauthority'), ('AMENT_PREFIX_PATH', '/opt/ros/eloquent'), ('DEBIAN_FRONTEND', 'noninteractive'), ('SHELL', '/bin/bash'), ('ROS_MASTER_URI', 'http://cpr-tor59-01:11311'), ('PWD', '/home/administrator/eloquent_ws/build/msg_interfaces'), ('PYTHONPATH', '/opt/ros/eloquent/lib/python3.6/site-packages:/opt/ros/melodic/lib/python2.7/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/eloquent:/opt/ros/melodic')]), 'shell': False}
+[19.221980] (-) TimerEvent: {}
+[19.323146] (-) TimerEvent: {}
+[19.368613] (msg_interfaces) StdoutLine: {'line': b'[  3%] Built target msg_interfaces__cpp\n'}
+[19.389801] (msg_interfaces) StdoutLine: {'line': b'[ 13%] Built target msg_interfaces__rosidl_generator_c\n'}
+[19.423329] (-) TimerEvent: {}
+[19.449371] (msg_interfaces) StdoutLine: {'line': b'[ 24%] Built target msg_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[19.468235] (msg_interfaces) StdoutLine: {'line': b'[ 34%] Built target msg_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[19.480284] (msg_interfaces) StdoutLine: {'line': b'[ 44%] Built target msg_interfaces__rosidl_typesupport_introspection_c\n'}
+[19.526232] (-) TimerEvent: {}
+[19.562981] (msg_interfaces) StdoutLine: {'line': b'[ 65%] Built target msg_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[19.563760] (msg_interfaces) StdoutLine: {'line': b'[ 65%] Built target msg_interfaces__rosidl_typesupport_cpp\n'}
+[19.626456] (-) TimerEvent: {}
+[19.651568] (msg_interfaces) StdoutLine: {'line': b'[ 75%] Built target msg_interfaces__rosidl_typesupport_c\n'}
+[19.714892] (msg_interfaces) StdoutLine: {'line': b'[ 75%] Built target msg_interfaces\n'}
+[19.726635] (-) TimerEvent: {}
+[19.783014] (msg_interfaces) StdoutLine: {'line': b'[ 79%] Built target msg_interfaces__py\n'}
+[19.826851] (-) TimerEvent: {}
+[19.866815] (msg_interfaces) StdoutLine: {'line': b'[ 86%] Built target msg_interfaces__python\n'}
+[19.927082] (-) TimerEvent: {}
+[19.955716] (msg_interfaces) StdoutLine: {'line': b'[ 93%] Built target msg_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[19.956700] (msg_interfaces) StdoutLine: {'line': b'[100%] Built target msg_interfaces__rosidl_typesupport_c__pyext\n'}
+[20.014631] (msg_interfaces) StdoutLine: {'line': b'\x1b[36mInstall the project...\x1b[0m\n'}
+[20.027267] (-) TimerEvent: {}
+[20.040897] (msg_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[20.042800] (msg_interfaces) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[20.044439] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/ament_index/resource_index/rosidl_interfaces/msg_interfaces\n'}
+[20.072900] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_c.so\n'}
+[20.100806] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/library_path.sh\n'}
+[20.127478] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/library_path.dsv\n'}
+[20.128940] (-) TimerEvent: {}
+[20.155103] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_cpp.so\n'}
+[20.185456] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[20.211767] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__rosidl_typesupport_fastrtps_c.h\n'}
+[20.229164] (-) TimerEvent: {}
+[20.241246] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[20.268417] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[20.294697] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid.h\n'}
+[20.323358] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__functions.h\n'}
+[20.329361] (-) TimerEvent: {}
+[20.346877] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__struct.h\n'}
+[20.373753] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__type_support.h\n'}
+[20.401559] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_generator_c.so\n'}
+[20.429559] (-) TimerEvent: {}
+[20.431215] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[20.458143] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[20.486158] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[20.515309] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid.hpp\n'}
+[20.529790] (-) TimerEvent: {}
+[20.544627] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__struct.hpp\n'}
+[20.572549] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__traits.hpp\n'}
+[20.601563] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[20.628771] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__rosidl_typesupport_introspection_c.h\n'}
+[20.629924] (-) TimerEvent: {}
+[20.655727] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[20.683413] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/include/msg_interfaces/msg/vox_grid__rosidl_typesupport_introspection_cpp.hpp\n'}
+[20.709580] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[20.730124] (-) TimerEvent: {}
+[20.736520] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/pythonpath.sh\n'}
+[20.764846] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/pythonpath.dsv\n'}
+[20.794924] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/__init__.py\n'}
+[20.823719] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/msg/__init__.py\n'}
+[20.831310] (-) TimerEvent: {}
+[20.850728] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/msg/_vox_grid.py\n'}
+[20.878053] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/msg_interfaces_s__rosidl_typesupport_c.cpython-36m-aarch64-linux-gnu.so\n'}
+[20.906044] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/msg_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-36m-aarch64-linux-gnu.so\n'}
+[20.932713] (-) TimerEvent: {}
+[20.934547] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/lib/libmsg_interfaces__python.so\n'}
+[20.960164] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/msg/VoxGrid.idl\n'}
+[20.987107] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/msg/VoxGrid.msg\n'}
+[21.013297] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/ament_index/resource_index/package_run_dependencies/msg_interfaces\n'}
+[21.032955] (-) TimerEvent: {}
+[21.040563] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/ament_index/resource_index/parent_prefix_path/msg_interfaces\n'}
+[21.066864] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/ament_prefix_path.sh\n'}
+[21.093339] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/ament_prefix_path.dsv\n'}
+[21.119985] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/path.sh\n'}
+[21.133376] (-) TimerEvent: {}
+[21.146940] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/environment/path.dsv\n'}
+[21.172806] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/local_setup.bash\n'}
+[21.200507] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/local_setup.sh\n'}
+[21.227406] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/local_setup.zsh\n'}
+[21.233339] (-) TimerEvent: {}
+[21.254390] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/local_setup.dsv\n'}
+[21.280584] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/package.dsv\n'}
+[21.309299] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/ament_index/resource_index/packages/msg_interfaces\n'}
+[21.333599] (-) TimerEvent: {}
+[21.336248] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[21.362741] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[21.391124] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[21.415738] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[21.433845] (-) TimerEvent: {}
+[21.442374] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/msg_interfacesConfig.cmake\n'}
+[21.470261] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/cmake/msg_interfacesConfig-version.cmake\n'}
+[21.497036] (msg_interfaces) StdoutLine: {'line': b'-- Symlinking: /home/administrator/eloquent_ws/install/msg_interfaces/share/msg_interfaces/package.xml\n'}
+[21.534012] (-) TimerEvent: {}
+[21.634550] (msg_interfaces) StdoutLine: {'line': b"Compiling '/home/administrator/eloquent_ws/install/msg_interfaces/lib/python3.6/site-packages/msg_interfaces/__init__.py'...\n"}
+[21.635237] (-) TimerEvent: {}
+[21.659525] (msg_interfaces) CommandEnded: {'returncode': 0}
+[21.735760] (-) TimerEvent: {}
+[21.837433] (-) TimerEvent: {}
+[21.934110] (msg_interfaces) JobEnded: {'identifier': 'msg_interfaces', 'rc': 0}
+[21.941266] (-) TimerEvent: {}
+[21.941748] (-) EventReactorShutdown: {}

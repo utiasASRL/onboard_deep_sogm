@@ -1,0 +1,9 @@
+source;share/deep_sogm/hook/pythonpath.ps1
+source;share/deep_sogm/hook/pythonpath.dsv
+source;share/deep_sogm/hook/pythonpath.sh
+source;share/deep_sogm/hook/ament_prefix_path.ps1
+source;share/deep_sogm/hook/ament_prefix_path.dsv
+source;share/deep_sogm/hook/ament_prefix_path.sh
+source;../../build/deep_sogm/share/deep_sogm/hook/pythonpath_develop.ps1
+source;../../build/deep_sogm/share/deep_sogm/hook/pythonpath_develop.dsv
+source;../../build/deep_sogm/share/deep_sogm/hook/pythonpath_develop.sh

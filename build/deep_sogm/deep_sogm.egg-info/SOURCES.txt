@@ -1,0 +1,14 @@
+package.xml
+setup.cfg
+setup.py
+deep_sogm/__init__.py
+deep_sogm/fast_collider.py
+deep_sogm/fast_collider_data.py
+deep_sogm.egg-info/PKG-INFO
+deep_sogm.egg-info/SOURCES.txt
+deep_sogm.egg-info/dependency_links.txt
+deep_sogm.egg-info/entry_points.txt
+deep_sogm.egg-info/requires.txt
+deep_sogm.egg-info/top_level.txt
+deep_sogm.egg-info/zip-safe
+resource/deep_sogm
