@@ -6,12 +6,12 @@ tmp_srcs
 ./install
 ./log
 
-**/__pycache__
+# **/__pycache__
 # **/__init__.py
 *.so
 *.pyc
-**/build
+# **/build
 
 
 .vscode
-git_login.sh
+.gitignore
