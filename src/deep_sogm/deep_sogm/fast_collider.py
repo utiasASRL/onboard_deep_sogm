@@ -369,7 +369,7 @@ class OnlineCollider(Node):
 
         # t1 = time.time()
 
-        # self.get_logger().warn("#############Started Lidar callback")
+        self.get_logger().warn("#############Started Lidar callback")
 
         # Get the time stamps for all frames
         for f_i, data in enumerate(self.online_dataset.frame_queue):
@@ -423,11 +423,11 @@ class OnlineCollider(Node):
         self.velo_frame_id = cloud.header.frame_id
 
         # Check if we already know this frame
-        # if len(self.online_dataset.frame_queue) > 0:
-        #     #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
-        #     if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
-        #         print('Same timestamp, pass')
-        #         return
+        if len(self.online_dataset.frame_queue) > 0:
+            #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
+            if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
+                print('Same timestamp, pass')
+                return
 
 
         # convert PointCloud2 message to structured numpy array
@@ -483,7 +483,7 @@ class OnlineCollider(Node):
         # print('Finished lidar_callback in {:.1f}'.format(1000*(t2 - t1)))
         # self.last_t = time.time()
 
-        # self.get_logger().warn("##############Ended one Lidar callback")
+        self.get_logger().warn("##############Ended one Lidar callback")
         # print("")
 
         return
