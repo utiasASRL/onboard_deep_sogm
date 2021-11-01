@@ -1,7 +1,6 @@
 
 nohup.txt
 
-tmp_srcs
 ./build
 ./install
 ./log
