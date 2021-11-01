@@ -1,5 +1,4 @@
 
-nohup.txt
 
 /build
 /install
@@ -15,3 +14,5 @@ __pycache__/
 
 # C extensions
 *.so
+
+nohup.txt
