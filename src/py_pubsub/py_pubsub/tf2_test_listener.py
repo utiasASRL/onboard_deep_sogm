@@ -17,41 +17,55 @@ import rclpy
 from rclpy.node import Node
 
 from tf2_ros import TransformException
-from tf2_ros.buffer import Buffer
-from tf2_ros.transform_listener import TransformListener
+from tf2_ros import Buffer
+from tf2_ros import TransformListener
 
 class FrameListener(Node):
     def __init__(self):
         super().__init__('tf2_test_listener')
 
         self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=False)
+        
+        # print('\nSubscribe to tf messages')
+        # self.tfBuffer = tf2_ros.Buffer(cache_time= CustomDuration(5.0, 0))
+        # self.tfListener = tf2_ros.TransformListener(self.tfBuffer,
+        #                                             self,
+        #                                             spin_thread=True,
+        #                                             qos=10,
+        #                                             static_qos=10)
 
-        self.start_listener_tf()
+        self.timer = self.create_timer(1.0, self.on_timer)
 
-    def start_listener_tf(self):
+    def on_timer(self):
         # Store frame names in variables that will be used to
         # compute transformations
         from_frame_rel = 'velodyne'
-        to_frame_rel = 'map'
+        to_frame_rel = 'odom'
 
-        while(True):
-            try:
-                sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
+        # rate = self.create_rate(2)
 
-                trans = self.tf_buffer.lookup_transform(
-                    to_frame_rel,
-                    from_frame_rel,
-                    rclpy.time.Time())
+        try:
+            sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
 
-                print("#### tf listner")
+            trans = self.tf_buffer.lookup_transform(
+                to_frame_rel,
+                from_frame_rel,
+                rclpy.time.Time())
 
-                sec2 = trans.header.stamp.sec
-                nsec2 = trans.header.stamp.nanosec
-                
-            except TransformException as ex:
-                self.get_logger().info(
-                f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
+            print("#### tf listner")
+
+            sec2 = trans.header.stamp.sec
+            nsec2 = trans.header.stamp.nanosec
+            timediff = sec2 - sec1 + int((nsec2 - nsec1) * 1e-6) * 1e-3
+
+            self.get_logger().warn('Current time {sec1}.{nsec1}, got tf at {sec2}.{nsec2}')
+            
+        except TransformException as ex:
+            self.get_logger().info(
+            f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
+            
+            # rate.sleep()
 
 def main(args=None):
     rclpy.init(args=args)

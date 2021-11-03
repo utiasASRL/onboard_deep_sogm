@@ -1,0 +1,9 @@
+Created 2 to 1 bridge for service /camera/ir/set_camera_info
+Created 2 to 1 bridge for service /camera/rgb/set_camera_info
+Created 2 to 1 bridge for service /diagnostics_agg/add_diagnostics
+Created 2 to 1 bridge for service /ekf_localization/enable
+created 1to2 bridge for topic '/tf' with ROS 1 type 'tf2_msgs/TFMessage' and ROS 2 type 'tf2_msgs/msg/TFMessage'
+created 1to2 bridge for topic '/tf_static' with ROS 1 type 'tf2_msgs/TFMessage' and ROS 2 type 'tf2_msgs/msg/TFMessage'
+created 2to1 bridge for topic '/rosout' with ROS 2 type 'rcl_interfaces/msg/Log' and ROS 1 type 'rosgraph_msgs/Log'
+[INFO] [ros_bridge]: Passing message from ROS 1 tf2_msgs/TFMessage to ROS 2 tf2_msgs/msg/TFMessage (showing msg only once per type)
+[INFO] [ros_bridge]: Passing message from ROS 2 rcl_interfaces/msg/Log to ROS 1 rosgraph_msgs/Log (showing msg only once per type)
