@@ -108,6 +108,19 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
+
+class CustomDuration():
+
+    def __init__(self, sec0=0, nanosec0=0):
+        self.sec = sec0
+        self.nanosec = nanosec0
+
+    def __init__(self, sec0):
+
+
+
+
 class OnlineCollider(Node):
 
     def __init__(self, training_path, chkp_name):
@@ -236,7 +249,8 @@ class OnlineCollider(Node):
 
         # Subsrcibe
         print('\nSubscribe to tf messages')
-        self.tfBuffer = tf2_ros.Buffer()
+        test = rclpy.duration.Duration(seconds = 1, nanoseconds = 100000000)
+        self.tfBuffer = tf2_ros.Buffer(cache_time=1)
         self.tfListener = tf2_ros.TransformListener(self.tfBuffer,
                                                     self,
                                                     spin_thread=True,
@@ -369,7 +383,7 @@ class OnlineCollider(Node):
 
         # t1 = time.time()
 
-        # self.get_logger().warn("#############Started Lidar callback")
+        self.get_logger().warn("#############Started Lidar callback")
 
         # Get the time stamps for all frames
         for f_i, data in enumerate(self.online_dataset.frame_queue):
@@ -404,7 +418,7 @@ class OnlineCollider(Node):
 
                     except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
                         # self.get_logger().error("##### Not working")
-                        # print("Iteration: {} error: {}".format(look_i, e))
+                        print("Iteration: {} error: {}".format(look_i, e))
                         # print(data[0])
                         time.sleep(0.001)
                         pass
@@ -429,7 +443,7 @@ class OnlineCollider(Node):
         if len(self.online_dataset.frame_queue) > 0:
             #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
             if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
-                # self.get_logger().warn('Same timestamp, pass')
+                self.get_logger().warn('Same timestamp, pass')
                 return
 
 
@@ -486,7 +500,7 @@ class OnlineCollider(Node):
         # print('Finished lidar_callback in {:.1f}'.format(1000*(t2 - t1)))
         # self.last_t = time.time()
 
-        # self.get_logger().warn("##############Ended one Lidar callback")
+        self.get_logger().warn("##############Ended one Lidar callback")
         # print("")
 
         return
