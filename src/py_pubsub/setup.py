@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'talker = py_pubsub.publisher_member_function:main',
             'listener = py_pubsub.subscriber_member_function:main',
+            'tf2_listener = py_pubsub.tf2_test_listener:main',
         ],
     },
 )

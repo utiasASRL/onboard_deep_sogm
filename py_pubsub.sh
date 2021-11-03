@@ -17,5 +17,4 @@ source "/opt/ros/eloquent/setup.bash"
 
 # echo "Go"
 
-ros2 run ros1_bridge dynamic_bridge & ros2 run py_pubsub listener
-
+ros2 run ros1_bridge dynamic_bridge & ros2 run py_pubsub tf2_listener

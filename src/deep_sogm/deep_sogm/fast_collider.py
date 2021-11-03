@@ -108,8 +108,6 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-
-
 class CustomDuration():
 
     def __init__(self, sec0=0, nanosec0=0):
@@ -121,9 +119,6 @@ class CustomDuration():
             return False
         else:
             return (self.sec == other.sec) and (self.nanosec == other.nanosec)
-
-
-
 
 class OnlineCollider(Node):
 
@@ -253,13 +248,12 @@ class OnlineCollider(Node):
 
         # Subsrcibe
         print('\nSubscribe to tf messages')
-        test = rclpy.duration.Duration(seconds = 1, nanoseconds = 100000000)
-        self.tfBuffer = tf2_ros.Buffer(cache_time=1)
+        self.tfBuffer = tf2_ros.Buffer(cache_time= CustomDuration(5.0, 0))
         self.tfListener = tf2_ros.TransformListener(self.tfBuffer,
                                                     self,
                                                     spin_thread=True,
-                                                    qos=30,
-                                                    static_qos=30)
+                                                    qos=10,
+                                                    static_qos=10)
         # rospy.Subscriber("/tf", TFMessage, self.tf_callback)
         # sub_tf = self.create_subscription(TFMessage,
         #                                   '/tf',
@@ -407,8 +401,12 @@ class OnlineCollider(Node):
                 #if difftime < 1.0:
                 while (pose is None) and (look_i < 5):
                     try:
-                        duration = Duration(seconds=0.1)
                         pose = self.tfBuffer.lookup_transform('map', 'velodyne', data[0])
+
+                        print('\n')
+                        print(self.tfBuffer.allFramesAsString())
+                        print('\n')
+                        
                         # self.get_logger().error("###### working")
                         # print(data[0])
                         #pose = self.tfBuffer.lookup_transform('odom', 'base_link', data[0])
