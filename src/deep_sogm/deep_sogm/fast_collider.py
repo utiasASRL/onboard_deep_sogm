@@ -116,7 +116,11 @@ class CustomDuration():
         self.sec = sec0
         self.nanosec = nanosec0
 
-    def __init__(self, sec0):
+    def __eq__(self, other):
+        if other is None:
+            return False
+        else:
+            return (self.sec == other.sec) and (self.nanosec == other.nanosec)
 
 
 
