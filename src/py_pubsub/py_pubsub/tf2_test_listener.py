@@ -39,15 +39,14 @@ class FrameListener(Node):
         # Store frame names in variables that will be used to
         # compute transformations
         from_frame_rel = 'velodyne'
-        to_frame_rel = 'map'
+        to_frame_rel = 'odom'
         mean_timediff = None
 
         while(True):
             try:
                 sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
 
-                trans = self.tf_buffer.lookup_transform(
-                    to_frame_rel,
+                trans = self.tf_buffer.lookup_transform(to_frame_rel,
                     from_frame_rel,
                     rclpy.time.Time())
 

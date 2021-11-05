@@ -88,7 +88,7 @@ from msg_interfaces.msg import VoxGrid
 import tf2_ros
 from tf2_msgs.msg import TFMessage
 
-from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.callback_groups import ReentrantCallbackGroup, MutuallyExclusiveCallbackGroup
 from rclpy.executors import SingleThreadedExecutor, MultiThreadedExecutor
 from rclpy.duration import Duration
 # from rclpy.time import Time
@@ -185,13 +185,14 @@ class OnlineCollider(Node):
         self.config.load(training_path)
 
         # Init data class
-        self.online_dataset = OnlineDataset(self.config)
+        self.queue_length = 5
+        self.online_dataset = OnlineDataset(self.config, self.queue_length)
         self.online_sampler = OnlineSampler(self.online_dataset)
         self.online_loader = DataLoader(self.online_dataset,
                                         batch_size=1,
                                         sampler=self.online_sampler,
                                         collate_fn=MyhalCollisionCollate,
-                                        num_workers=1,
+                                        num_workers=0,
                                         pin_memory=True)
 
         # Define network model
@@ -230,8 +231,9 @@ class OnlineCollider(Node):
         ###############
         # ROS sub/pub #
         ###############
-        
-        self.callback_group = ReentrantCallbackGroup()
+
+        self.callback_group1 = MutuallyExclusiveCallbackGroup()
+        self.callback_group2 = MutuallyExclusiveCallbackGroup()
 
         # Subscribe to the lidar topic
         print('\nSubscribe to /velodyne_points')
@@ -240,7 +242,7 @@ class OnlineCollider(Node):
                                                       '/velodyne_points',
                                                       self.lidar_callback,
                                                       10,
-                                                      callback_group=self.callback_group)
+                                                      callback_group=self.callback_group1)
 
         print('OK\n')
 
@@ -260,13 +262,13 @@ class OnlineCollider(Node):
                                           '/tf',
                                           self.tf_callback,
                                           10,
-                                          callback_group=self.callback_group)
+                                          callback_group=self.callback_group2)
                                                     
         self.tf_static_sub = self.create_subscription(TFMessage,
                                           '/tf_static',
                                           self.tf_static_callback,
                                           10,
-                                          callback_group=self.callback_group)
+                                          callback_group=self.callback_group2)
 
         print('OK\n')
 
@@ -327,28 +329,31 @@ class OnlineCollider(Node):
 
     def tf_callback(self, data):
 
-        
         t1 = time.time()
+        difft = 1000*(t1 - self.last_t_tf)
+        if difft > 200:
+            print(bcolors.WARNING + '{:.1f} --- TF DELAY'.format(difft) + bcolors.ENDC)
+        # else:
+        #     print('{:.1f} --- OK'.format(difft))
+
+        # Parameters
         got_map = False
         who = 'default_authority'
+
+        # Add new message info to the tf buffer
         for transform in data.transforms:
             # print(transform.header.frame_id, transform.child_frame_id)
             self.tfBuffer.set_transform(transform, who)
             if transform.header.frame_id == 'map' and transform.child_frame_id == 'odom':
                 got_map = True
-        
-        t2 = time.time()
+
+        # Just got a new map pose, update fifo
         if got_map:
-            print('--------- {:.1f} / {:.1f} --- new map pose OK'.format(1000*(t1 - self.last_t_tf), 1000*(t2 - t1)))
-        else:
-            print('--------- {:.1f} / {:.1f} --- new map pose NO'.format(1000*(t1 - self.last_t_tf), 1000*(t2 - t1)))
+            self.online_dataset.shared_fifo.update_poses(self.tfBuffer)
 
-        
+        self.last_t_tf = time.time()
 
-        self.last_t_tf = t2
-        
-        # TODO: DEBUG HEEEEEEEEEEEEEEEEREEEEEEEEEEEEEEE
-        #       IDEA: print delay btween current time and latest lidar frame timestamp, we do not compute frame queue fast enough
+        return
 
     def tf_static_callback(self, data):
         who = 'default_authority'
@@ -356,77 +361,28 @@ class OnlineCollider(Node):
             # print(transform.header.frame_id, transform.child_frame_id)
             self.tfBuffer.set_transform_static(transform, who)
 
+        return
+
         
     def lidar_callback(self, cloud):
-        
-        ########################
-        # Update the frame poses
-        ########################
-
-        t1 = time.time()
-        # print('\nGetting poses with lock')
-
-        # Get the time stamps for all frames
-        
-        with self.online_dataset.worker_lock:
-            for f_i, data in enumerate(self.online_dataset.frame_queue):
-
-                if self.online_dataset.pose_queue[f_i] is None:
-
-                    try:
-
-                        # tsec1, tnsec1 = self.get_clock().now().seconds_nanoseconds()
-                        # trans = self.tfBuffer.lookup_transform(
-                        # 'map',
-                        # 'velodyne',
-                        # rclpy.time.Time())
-
-                        # # print("#### tf listner")
-                        # tsec2 = trans.header.stamp.sec
-                        # tnsec2 = trans.header.stamp.nanosec
-                        # timediff = tsec2 - tsec1 + int((tnsec2 - tnsec1) * 1e-6) * 1e-3
-
-                        # self.get_logger().warn(f'Current time {tsec1}.{tnsec1}, got tf at {tsec2}.{tnsec2}, time difference {timediff}')
-                        
-                        pose = self.tfBuffer.lookup_transform('map', 'velodyne', data[0])
-                        #pose = self.tfBuffer.lookup_transform('odom', 'base_link', data[0])
-
-                        # sec1 = pose.header.stamp.sec
-                        # nsec1 = pose.header.stamp.nanosec
-                        # sec2, nsec2 = self.get_clock().now().seconds_nanoseconds()
-                        # stamp1 = sec1 - self.sec0 + int((nsec1 - self.nsec0) * 1e-6) * 1e-3
-                        # stamp2 = sec2 - self.sec0 + int((nsec2 - self.nsec0) * 1e-6) * 1e-3
-                        # logstr = 'pose {:.3f} read at {:.3f}'.format(stamp1, stamp2)
-                        # print('{:^35s}'.format(logstr), 35*' ', 35*' ')
-
-                    except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
-                        # self.get_logger().error("##### Not working")
-                        # print("Iteration: {} error: {}".format(look_i, e))
-                        # print(data[0])
-                        pose = None
-                        pass
-
-                    self.online_dataset.pose_queue[f_i] = pose
-
-        t2 = time.time()
-        # print('Done in {:.1f}ms'.format(1000* (t2 - t1)))
-        # print('\nGetting new frame')
 
         ###############
         # Add new frame
         ###############
 
-        # t1 = time.time()
-        # print('Starting lidar_callback after {:.1f}'.format(1000*(t1 - self.last_t)))
-        self.velo_frame_id = cloud.header.frame_id
+        t1 = time.time()
+        difft = 1000*(t1 - self.last_t)
+        if difft > 200:
+            print(bcolors.WARNING + '{:.1f} --- VELO DELAY'.format(difft) + bcolors.ENDC)
 
-        # Check if we already know this frame
-        if len(self.online_dataset.frame_queue) > 0:
-            #print(cloud.header.stamp, self.online_dataset.frame_queue[-1][0])
-            if (cloud.header.stamp == self.online_dataset.frame_queue[-1][0]):
-                self.get_logger().warn('Same timestamp, pass')
-                return
+        # self.velo_frame_id = cloud.header.frame_id
 
+        # # Check if we already know this frame
+        # if self.online_dataset.shared_fifo.len() > 0:
+        #     #print(cloud.header.stamp, self.online_dataset.stamp_queue[-1])
+        #     if (cloud.header.stamp == self.online_dataset.stamp_queue[-1]):
+        #         self.get_logger().warn('Same timestamp, pass')
+        #         return
 
         # convert PointCloud2 message to structured numpy array
         labeled_points = pointcloud2_to_array(cloud)
@@ -439,56 +395,23 @@ class OnlineCollider(Node):
             print('{:^35s}'.format('CPU 0 : Corrupted frame not added'), 35*' ', 35*' ')
             return
 
-        # # Convert to torch tensor and share memory
-        # xyz_tensor = torch.from_numpy(xyz_points)
-        # xyz_tensor.share_memory_()
-
-        # # Convert header info to shared tensor
-        # frame_t = torch.from_numpy(np.array([cloud.header.stamp.to_sec()], dtype=np.float64))
-        # frame_t.share_memory_()
-
-        # print('/-------------\\')
-        # print([data[1].shape[0] for f_i, data in enumerate(self.online_dataset.frame_queue)])
-        # print([pp is not None for pp in self.online_dataset.pose_queue])
-        # print('\\-------------/')
-
-        t3 = time.time()
-        #print('Done in {:.1f}ms'.format(1000* (t3 - t2)))
-        #print('\n frame FIFO')
+        #################
+        # Update the fifo
+        #################
         
-        pose_fifo = [pp is not None for pp in self.online_dataset.pose_queue]
-
-        logstr = ''
-        for pp_bool in pose_fifo:
-            logstr += ' '
-            if pp_bool:
-                logstr += bcolors.OKGREEN + 'X' + bcolors.ENDC
-            else:
-                logstr += bcolors.FAIL + '_' + bcolors.ENDC
-        logstr += ' '
-        print('{:^35s}'.format(logstr), 35*' ', 35*' ')
-            
         # Update the frame list
-        with self.online_dataset.worker_lock:
+        self.online_dataset.shared_fifo.add_points(xyz_points, cloud.header.stamp)
 
-            if len(self.online_dataset.frame_queue) >= (10 + self.config.n_frames):
-                self.online_dataset.frame_queue.pop(0)
-                self.online_dataset.pose_queue.pop(0)
-            self.online_dataset.frame_queue.append((cloud.header.stamp, xyz_points))
-            self.online_dataset.pose_queue.append(None)
-        
-        # logstr = 'CPU 0 : New frame {:d}'.format(xyz_points.shape[0])
-        # print('{:^35s}'.format(logstr), 35*' ', 35*' ')
+        # Display queue (with current frame delay)
+        logstr = self.online_dataset.shared_fifo.to_str()
+        sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
+        sec2 = cloud.header.stamp.sec
+        nsec2 = cloud.header.stamp.nanosec
+        timediff = (sec1 - sec2) * 1e3 + (nsec1 - nsec2) * 1e-6
+        logstr += '  {:6.1f}ms '.format(-timediff)
+        print('{:^35s}'.format(logstr), 35*' ', 35*' ')
 
-        # t2 = time.time()
-        # print('Finished lidar_callback in {:.1f}'.format(1000*(t2 - t1)))
-        # self.last_t = time.time()
-
-        # self.get_logger().warn("##############Ended one Lidar callback")
-        # print("")
-
-        t4 = time.time()
-        #print('Done in {:.1f}ms'.format(1000* (t4 - t3)))
+        self.last_t = time.time()
 
         return
 
@@ -584,7 +507,7 @@ class OnlineCollider(Node):
 
                 # Publish collision risk in a custom message
                 # self.publish_collisions(diffused_risk, stamp0, batch.p0, batch.q0)
-                self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
+                #self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
 
                 # Publish obstacles
                 #self.publish_obstacles(world_obst, batch.t0, batch.p0, batch.q0)
@@ -615,7 +538,7 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Publish pointcloud
-                self.publish_pointcloud(pred_points, predictions, batch.t0)
+                #self.publish_pointcloud(pred_points, predictions, batch.t0)
 
                 # Fake slowing pause
                 #time.sleep(2.5)
@@ -870,7 +793,7 @@ def main(args=None):
 
 
     # Spin in a separate thread
-    executor = SingleThreadedExecutor()
+    executor = MultiThreadedExecutor()
     def run_func():
         executor.add_node(tester)
         executor.spin()

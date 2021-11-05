@@ -1,0 +1,36 @@
+topics:
+  -
+    topic: /tf  # ROS1 topic name
+    type: tf2_msgs/msg/TFMessage  # ROS2 type name
+    queue_size: 100  # For the publisher back to ROS1
+  -
+    topic: /tf_static  # ROS1 topic name
+    type: tf2_msgs/msg/TFMessage  # ROS2 type name
+    queue_size: 100  # For the publisher back to ROS1
+  -
+    topic: /rosout  # ROS1 topic name
+    type: rcl_interfaces/msg/Log  # ROS1 type name
+    queue_size: 100  # For the publisher back to ROS1
+  -
+    topic: /velodyne_points  # ROS1 topic name
+    type: sensor_msgs/msg/PointCloud2  # ROS2 type name
+    queue_size: 1  # For the publisher back to ROS1
+
+# services_1_to_2:
+#   -
+#     service: /add_two_ints  # ROS1 service name
+#     type: example_interfaces/srv/AddTwoInts  # The ROS2 type name
+
+# services_2_to_1:
+#   -
+#     service: /camera/ir/set_camera_info  # ROS2 service name
+#     type: example_interfaces/srv/AddTwoInts  # The ROS2 type name
+#   -
+#     service: /camera/rgb/set_camera_info  # ROS2 service name
+#     type: example_interfaces/srv/AddTwoInts  # The ROS2 type name
+#   -
+#     service: /diagnostics_agg/add_diagnostics  # ROS2 service name
+#     type: example_interfaces/srv/AddTwoInts  # The ROS2 type name
+#   -
+#     service: /ekf_localization/enable  # ROS2 service name
+#     type: example_interfaces/srv/AddTwoInts  # The ROS2 type name

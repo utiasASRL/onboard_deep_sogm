@@ -71,12 +71,155 @@ from sensor_msgs.msg import LaserScan
 import cpp_wrappers.cpp_subsampling.grid_subsampling as cpp_subsampling
 import cpp_wrappers.cpp_neighbors.radius_neighbors as cpp_neighbors
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 #
 #           Utility functions
 #       \***********************/
 #
+
+class SharedFifo:
+
+    def __init__(self, qsize):
+        '''
+        TYPES = {'c': ctypes.c_char,
+            'b': ctypes.c_byte,
+            'B': ctypes.c_ubyte,
+            '?': ctypes.c_bool,
+            'h': ctypes.c_short,
+            'H': ctypes.c_ushort,
+            'i': ctypes.c_int,
+            'I': ctypes.c_uint,
+            'l': ctypes.c_long,
+            'L': ctypes.c_ulong,
+            'q': ctypes.c_longlong,
+            'Q': ctypes.c_ulonglong,
+            'f': ctypes.c_float,
+            'd': ctypes.c_double}
+        '''
+
+        # Size of the queue
+        self.qsize = qsize
+
+        # Lock
+        self.lock = mp.Lock()
+
+        self.manager = mp.Manager()
+        self.frames = self.manager.list()
+        self.stamps = self.manager.list()
+        self.poses = self.manager.list()
+
+        return
+
+    def add_points(self, frame_pts, stamp):
+
+        with self.lock:
+
+            if len(self.frames) >= self.qsize:
+                self.frames.pop(0)
+                self.stamps.pop(0)
+                self.poses.pop(0)
+
+            self.frames.append(frame_pts)
+            self.stamps.append(stamp)
+            self.poses.append(None)
+
+        return
+
+    def update_poses(self, tfBuffer):
+    
+        with self.lock:
+
+            # Loop on all frames
+            for f_i, stamp in enumerate(self.stamps):
+                if self.poses[f_i] is None:
+                    try:
+                        pose = tfBuffer.lookup_transform('map', 'velodyne', stamp)
+                        T_q = np.array([pose.transform.translation.x,
+                                        pose.transform.translation.y,
+                                        pose.transform.translation.z,
+                                        pose.transform.rotation.x,
+                                        pose.transform.rotation.y,
+                                        pose.transform.rotation.z,
+                                        pose.transform.rotation.w], dtype=np.float64)
+                        self.poses[f_i] = T_q
+
+                    except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
+                        pass
+                    
+
+        return
+
+    def to_str(self):
+    
+        with self.lock:
+            pose_fifo = [pp is not None for pp in self.poses]
+
+        logstr = ''
+        for pp_bool in pose_fifo:
+            logstr += ' '
+            if pp_bool:
+                logstr += bcolors.OKGREEN + 'X' + bcolors.ENDC
+            else:
+                logstr += bcolors.FAIL + '_' + bcolors.ENDC
+        logstr += ' '
+
+        return logstr
+
+    def len(self):
+        with self.lock:
+            l = len(self.stamps)
+        return l
+
+    def get_data(self, n_frames):
+
+        # Aquire lock
+        print(35*' ', '{:^35s}'.format('CPU 1 : Getting Data'), 35*' ')
+        t1 = time.time()
+        self.lock.acquire()
+
+        # Check if we have enough poses available
+        not_none_list = [int(pp is not None) for pp in self.poses]
+        if np.sum(not_none_list) < n_frames:
+            self.lock.release()
+            fmt_str = 'CPU 1 : Only {:d} poses'.format(np.sum(not_none_list))
+            print(35*' ', '{:^35s}'.format(fmt_str), 35*' ', '\n')
+            return [], [], []
+        
+        # Get the data, assuming poses list is well ordered without holes. Makes copies to ensureno data corruption
+        ind = len(self.stamps) - 1
+        filled = 0
+        current_frames = []
+        current_stamps = []
+        current_poses = []
+        while filled < n_frames and ind >= 0:
+            if not_none_list[ind]:
+                current_frames.append(np.copy(self.frames[ind]))
+                current_stamps.append(self.stamps[ind])
+                current_poses.append(np.copy(self.poses[ind]))
+                filled += 1
+            ind -= 1
+
+        # Return after releasing lock
+        self.lock.release()
+        t2 = time.time()
+
+        fmt_str = 'CPU 1 : Done in {:.1f}ms'.format(1000 * (t2 - t1))
+        print(35*' ', '{:^35s}'.format(fmt_str), 35*' ')
+        return current_frames, current_stamps, current_poses
+    
+
 
 
 def grid_subsampling(points, features=None, labels=None, sampleDl=0.1, verbose=0):
@@ -234,8 +377,6 @@ def batch_neighbors(queries, supports, q_batches, s_batches, radius):
     return cpp_neighbors.batch_query(queries, supports, q_batches, s_batches, radius=radius)
 
 
-
-
 # ----------------------------------------------------------------------------------------------------------------------
 #
 #           Online tester class
@@ -245,7 +386,7 @@ def batch_neighbors(queries, supports, q_batches, s_batches, radius):
 
 class OnlineDataset:
 
-    def __init__(self, config):
+    def __init__(self, config, fifo_size):
 
         # Dict from labels to names
         self.label_to_names = {0: 'uncertain',
@@ -296,13 +437,11 @@ class OnlineDataset:
             raise ValueError('The neighbors limits were not initialized')
 
         # Setup varaibles for parallelised input queue
-        self.manager = mp.Manager()
-        self.frame_queue = self.manager.list()
-        self.pose_queue = self.manager.list()
+        self.shared_fifo = SharedFifo(fifo_size)
+        
 
         #self.frame_queue = mp.Queue(maxsize=config.n_frames)
         self.config = config
-        self.worker_lock = mp.Lock()
 
         return
 
@@ -344,49 +483,30 @@ class OnlineDataset:
         current_poses = []
 
         print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for 3 frames'), 35*' ')
-        while len(self.frame_queue) < self.config.n_frames:
+        while self.shared_fifo.len() < self.config.n_frames:
             time.sleep(0.01)
+            
+        for _ in range (10):
+            time.sleep(0.5)
 
         print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for not None'), 35*' ')
-
-        not_none = False
-        while not not_none:
-            not_none_list = [int(pp is not None) for pp in self.pose_queue]
-            not_none =  np.sum(not_none_list) >= self.config.n_frames
-            time.sleep(0.001)
-        with self.worker_lock:
-            current_frames = list(self.frame_queue)
-            current_poses = list(self.pose_queue)
-
-        # Assumes poses list is well ordered witohut holes
-        current_frames = [ff for ff, pp in zip(current_frames, current_poses) if pp is not None][-self.config.n_frames:]
-        current_poses = [pp for pp in current_poses if pp is not None][-self.config.n_frames:]
+        while len(current_frames) == 0:
+            current_frames, current_stamps, current_poses = self.shared_fifo.get_data(self.config.n_frames)
+            time.sleep(0.1)
 
         print(35*' ', '{:^35s}'.format('CPU 1 : OK got 3 frames'), 35*' ')
-
-
-        # print('------------------------------------')
-        # print('Hello you')
-        # for f_i, (stamp, xyz) in enumerate(current_frames):
-        #     print(stamp.to_sec(), xyz.shape, xyz[18])
-        #     print(current_poses[f_i])
-        # print('------------------------------------')
 
         # Safe check
         if np.any([pose is None for pose in current_poses]):
             return self.dummy_batch()
 
-        if np.any([frame_pts.shape[0] < 100 for stamp, frame_pts in current_frames]):
+        if np.any([frame_pts.shape[0] < 100 for frame_pts in current_frames]):
             return self.dummy_batch()
 
         print(35*' ', '{:^35s}'.format('CPU 1 : Processing batch'), 35*' ')
 
         t += [time.time()]
 
-
-
-
-    
         #########################
         # Merge n_frames together
         #########################
@@ -398,17 +518,12 @@ class OnlineDataset:
         p0 = np.zeros((0,))
         q0 = np.zeros((0,))
         
-        # Loop in inverse order to start with most recent frame
-        for f_i, (pose, (stamp, frame_pts)) in enumerate(zip(current_poses[::-1], current_frames[::-1])):
+        # Loop (start with most recent frame)
+        for f_i, (pose, frame_pts) in enumerate(zip(current_poses, current_frames)):
 
             # Get translation and rotation matrices
-            T = np.array([pose.transform.translation.x,
-                          pose.transform.translation.y,
-                          pose.transform.translation.z])
-            q = np.array([pose.transform.rotation.x,
-                          pose.transform.rotation.y,
-                          pose.transform.rotation.z,
-                          pose.transform.rotation.w])
+            T = pose[:3] 
+            q = pose[3:]
             R = scipyR.from_quat(q).as_matrix()
 
             # Update p0 for the most recent frame
@@ -560,7 +675,7 @@ class OnlineDataset:
         # Add additionnal inputs
         input_list += [stacked_pools_2D]
         input_list += [stacked_features]
-        input_list += [p0, q0, current_frames[-1][0]]
+        input_list += [p0, q0, current_stamps[0]]
 
         # # Fake sleeping time
         # time.sleep(8.0)
