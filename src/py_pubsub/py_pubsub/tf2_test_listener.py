@@ -15,6 +15,7 @@ import math
 
 import rclpy
 from rclpy.node import Node
+import time
 
 from tf2_ros import TransformException
 from tf2_ros import Buffer
@@ -24,48 +25,52 @@ class FrameListener(Node):
     def __init__(self):
         super().__init__('tf2_test_listener')
 
+        print('\nSubscribe to tf messages')
         self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=False)
+        self.tf_listener = TransformListener(self.tf_buffer, 
+                                             self, 
+                                             spin_thread=True, 
+                                             qos=10,
+                                             static_qos=10)
         
-        # print('\nSubscribe to tf messages')
-        # self.tfBuffer = tf2_ros.Buffer(cache_time= CustomDuration(5.0, 0))
-        # self.tfListener = tf2_ros.TransformListener(self.tfBuffer,
-        #                                             self,
-        #                                             spin_thread=True,
-        #                                             qos=10,
-        #                                             static_qos=10)
+        self.call_tf2_listener()
 
-        self.timer = self.create_timer(1.0, self.on_timer)
-
-    def on_timer(self):
+    def call_tf2_listener(self):
         # Store frame names in variables that will be used to
         # compute transformations
         from_frame_rel = 'velodyne'
-        to_frame_rel = 'odom'
+        to_frame_rel = 'map'
+        mean_timediff = None
 
-        # rate = self.create_rate(2)
+        while(True):
+            try:
+                sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
 
-        try:
-            sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
+                trans = self.tf_buffer.lookup_transform(
+                    to_frame_rel,
+                    from_frame_rel,
+                    rclpy.time.Time())
 
-            trans = self.tf_buffer.lookup_transform(
-                to_frame_rel,
-                from_frame_rel,
-                rclpy.time.Time())
+                # print("#### tf listner")
 
-            print("#### tf listner")
+                sec2 = trans.header.stamp.sec
+                nsec2 = trans.header.stamp.nanosec
+                timediff = sec1 - sec2 + (nsec1 - nsec2) * 1e-9
 
-            sec2 = trans.header.stamp.sec
-            nsec2 = trans.header.stamp.nanosec
-            timediff = sec2 - sec1 + int((nsec2 - nsec1) * 1e-6) * 1e-3
+                if mean_timediff is None:
+                    mean_timediff = timediff
+                else:
+                    mean_timediff = 0.98 * mean_timediff + 0.02 * timediff
 
-            self.get_logger().warn('Current time {sec1}.{nsec1}, got tf at {sec2}.{nsec2}')
+                # self.get_logger().warn(f'Current time {sec1}.{nsec1}, got tf at {sec2}.{nsec2}, time difference {timediff}')
+
+                self.get_logger().warn('timediff {:.3f} - mean {:.3f}'.format(timediff, mean_timediff))
+                
+            except TransformException as ex:
+                self.get_logger().info(
+                f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
             
-        except TransformException as ex:
-            self.get_logger().info(
-            f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
-            
-            # rate.sleep()
+            time.sleep(0.001)
 
 def main(args=None):
     rclpy.init(args=args)
