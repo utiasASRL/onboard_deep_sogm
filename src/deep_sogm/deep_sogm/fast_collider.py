@@ -506,7 +506,7 @@ class OnlineCollider(Node):
                     world_obst.append(origin0[:2] + pos * self.config.dl_2D)
 
                 # Publish collision risk in a custom message
-                # self.publish_collisions(diffused_risk, stamp0, batch.p0, batch.q0)
+                self.publish_collisions(diffused_risk, stamp0, batch.p0, batch.q0)
                 #self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
 
                 # Publish obstacles
@@ -650,7 +650,7 @@ class OnlineCollider(Node):
 
     def publish_collisions(self, collision_preds, stamp0, p0, q0):
         
-        #self.get_logger().warn("Started Publisher COLLISION callback")
+        self.get_logger().warn("Started Publisher COLLISION callback")
 
         # Get origin and orientation
         origin0 = p0 - self.config.in_radius / np.sqrt(2)
