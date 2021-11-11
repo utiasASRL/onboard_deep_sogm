@@ -4,7 +4,7 @@
 source "/opt/ros/melodic/setup.bash"
 
 # Source your ROS 2 installation:
-. "/opt/ros/eloquent/setup.bash"
+. "/opt/ros/foxy/install/setup.bash"
 
 # And if you have a ROS 1 overlay workspace, something like:
 . "../catkin_ws/install_isolated/setup.bash"
@@ -14,7 +14,9 @@ source "/opt/ros/melodic/setup.bash"
 
 cd ../bridge_ws
 
-colcon build --packages-select ros1_bridge --cmake-force-configure
+colcon build --cmake-force-configure
+
+ros2 interface list | grep "VoxGrid"
 
 # Verify the custom types were recognized by the bridge, by printing all pairs of bridged types. 
 # The custom types should be listed:
@@ -22,4 +24,4 @@ colcon build --packages-select ros1_bridge --cmake-force-configure
 # echo "#####################################"
 # echo "Bridged VoxGrid?"
 # source "install/setup.bash"
-# ros2 run ros1_bridge dynamic_bridge --print-pairs | grep "Vox"
+ros2 run ros1_bridge dynamic_bridge --print-pairs | grep "Vox"

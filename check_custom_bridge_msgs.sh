@@ -11,4 +11,4 @@ pwd
 
 source "install/setup.bash"
 
-ros2 run ros1_bridge dynamic_bridge --print-pairs | grep "Vox"
+ros2 run ros1_bridge dynamic_bridge --print-pairs

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-source "/opt/ros/eloquent/setup.bash"
+source "/opt/ros/foxy/install/setup.bash"
 
-colcon build --symlink-install --packages-skip ros1_bridge
+colcon build --symlink-install --packages-skip ros1_bridge_elo_bckp msg_interfaces
 
 # Test msg 
 echo ""

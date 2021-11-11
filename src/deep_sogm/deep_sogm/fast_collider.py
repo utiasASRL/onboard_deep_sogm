@@ -616,7 +616,7 @@ class OnlineCollider(Node):
 
         # Convert to pixel positions
         obst_pos = self.mask_to_pix(obst_mask)
-
+        
         return diffused_risk, obst_pos
 
     def get_local_maxima(self, data, neighborhood_size=5, threshold=0.1):

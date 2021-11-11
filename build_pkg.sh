@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source "/opt/ros/melodic/setup.bash"
-source "/opt/ros/eloquent/setup.bash"
+source "/opt/ros/foxy/install/setup.bash"
 
 #. install/setup.bash
 
