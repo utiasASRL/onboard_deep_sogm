@@ -83,7 +83,7 @@ from geometry_msgs.msg import Pose, PolygonStamped, Point32
 
 
 from costmap_converter_msgs.msg import ObstacleArrayMsg, ObstacleMsg
-from msg_interfaces.msg import VoxGrid
+from vox_msgs.msg import VoxGrid
 
 import tf2_ros
 from tf2_msgs.msg import TFMessage

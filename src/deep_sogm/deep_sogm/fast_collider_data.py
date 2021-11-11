@@ -59,7 +59,7 @@ from scipy.spatial.transform import Rotation as scipyR
 
 # ROS
 from sensor_msgs.msg import PointCloud2, PointField
-from msg_interfaces.msg import VoxGrid
+from vox_msgs.msg import VoxGrid
 import tf2_ros
 from tf2_msgs.msg import TFMessage
 

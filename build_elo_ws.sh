@@ -2,7 +2,7 @@
 
 source "/opt/ros/foxy/install/setup.bash"
 
-colcon build --symlink-install --packages-skip ros1_bridge_elo_bckp msg_interfaces
+colcon build --symlink-install --packages-skip ros1_bridge msg_interfaces
 
 # Test msg 
 echo ""
