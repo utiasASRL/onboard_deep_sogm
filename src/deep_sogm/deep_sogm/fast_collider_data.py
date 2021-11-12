@@ -485,9 +485,6 @@ class OnlineDataset:
         print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for 3 frames'), 35*' ')
         while self.shared_fifo.len() < self.config.n_frames:
             time.sleep(0.01)
-            
-        for _ in range (10):
-            time.sleep(0.5)
 
         print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for not None'), 35*' ')
         while len(current_frames) == 0:

@@ -3,11 +3,11 @@
 # source "/opt/ros/eloquent/setup.bash"
 source "/opt/ros/melodic/setup.bash"
 
-# Source your ROS 2 installation:
-. "/opt/ros/foxy/install/setup.bash"
-
 # And if you have a ROS 1 overlay workspace, something like:
 . "../catkin_ws/install_isolated/setup.bash"
+
+# Source your ROS 2 installation:
+. "/opt/ros/foxy/install/setup.bash"
 
 # And if you have a ROS 2 overlay workspace, something like:
 . "install/local_setup.bash"
@@ -15,7 +15,7 @@ source "/opt/ros/melodic/setup.bash"
 #cd ../bridge_ws
 #colcon build --cmake-force-configure
 
-colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure
+colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 
 # Verify the custom types were recognized by the bridge, by printing all pairs of bridged types. 

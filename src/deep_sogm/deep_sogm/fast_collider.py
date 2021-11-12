@@ -363,7 +363,6 @@ class OnlineCollider(Node):
 
         return
 
-        
     def lidar_callback(self, cloud):
 
         ###############
@@ -412,143 +411,6 @@ class OnlineCollider(Node):
         print('{:^35s}'.format(logstr), 35*' ', 35*' ')
 
         self.last_t = time.time()
-
-        return
-
-    def inference_loop(self):
-
-        # No gradient computation here
-        with torch.no_grad():
-
-            # When starting this for loop, one thread will be spawned and creating network
-            # input while the loop is performing GPU operations.
-            for i, batch in enumerate(self.online_loader):
-
-                #####################
-                # Input preparation #
-                #####################
-
-                t = [time.time()]
-
-                # # Check that ros master is still up
-                # try:
-                #     topics = rospy.get_published_topics()
-                # except ConnectionRefusedError as e:
-                #     print('Lost connection to master. Terminate collider')
-                #     break
-
-                # Check if batch is a dummy
-                if len(batch.points) < 1:
-                    print(35*' ', 35*' ', '{:^35s}'.format('GPU : Corrupted batch skipped'))
-                    time.sleep(0.5)
-                    continue
-                
-                print(35*' ', 35*' ', '{:^35s}'.format('GPU : Got batch, start inference'))
-
-                # Convert batch to a cuda tensors
-                if 'cuda' in self.device.type:
-                    batch.to(self.device)
-                torch.cuda.synchronize(self.device)
-
-                t += [time.time()]
-                    
-                #####################
-                # Network inference #
-                #####################
-
-                # Forward pass
-                outputs_3D, preds_init, preds_future = self.net(batch, self.config)
-                torch.cuda.synchronize(self.device)
-                
-                t += [time.time()]
-
-                ###########
-                # Outputs #
-                ###########
-
-                # Get collision predictions [1, T, W, H, 3] -> [T, W, H, 3]
-                collision_preds = self.sigmoid_2D(preds_future)[0]
-
-
-                # Get the diffused risk
-                diffused_risk, obst_pos = self.get_diffused_risk(collision_preds)
-
-                # Convert stamp to float
-                sec1 = batch.t0.sec
-                nsec1 = batch.t0.nanosec
-                stamp0 = float(sec1) + float(int((nsec1) * 1e-6)) * 1e-3
-
-                # ##########################################################################################################
-                # Save predictions in files for debug
-
-                # stamp1 = sec1 - self.sec0 + int((nsec1 - self.nsec0) * 1e-6) * 1e-3
-                # im_name = join(ENV_HOME, 'results/debug_1_{:.3f}.gif'.format(stamp1))
-                # debug_preds = collision_preds.cpu().detach().numpy()
-                # print('\n\n', debug_preds.dtype, debug_preds.shape, '\n\n')
-
-                # # imageio.imwrite(im_name, zoom_collisions(debug_preds, 5))
-                # fast_save_future_anim(im_name, debug_preds, zoom=5, correction=True)
-
-                # im_name2 = join(ENV_HOME, 'results/debug_2_{:.3f}.gif'.format(stamp1))
-                # cm = plt.get_cmap('viridis')
-                # debug_preds2 = cm(diffused_risk)
-                # print('\n\n', debug_preds2.dtype, debug_preds2.shape, '\n\n')
-                
-                # # imageio.imwrite(im_name2, zoom_collisions(debug_preds2, 5))
-                # fast_save_future_anim(im_name2, debug_preds2, zoom=5, correction=False)
-                # ############################################################################################################
-
-                # Get obstacles in world coordinates
-                origin0 = batch.p0 - self.config.in_radius / np.sqrt(2)
-
-                world_obst = []
-                for obst_i, pos in enumerate(obst_pos):
-                    world_obst.append(origin0[:2] + pos * self.config.dl_2D)
-
-                # Publish collision risk in a custom message
-                self.publish_collisions(diffused_risk, stamp0, batch.p0, batch.q0)
-                #self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
-
-                # Publish obstacles
-                #self.publish_obstacles(world_obst, batch.t0, batch.p0, batch.q0)
-
-                ##############
-                # Outputs 3D #
-                ##############
-
-                # Get predictions
-                predicted_probs = self.softmax(outputs_3D).cpu().detach().numpy()
-                for l_ind, label_value in enumerate(self.online_dataset.label_values):
-                    if label_value in self.online_dataset.ignored_labels:
-                        predicted_probs = np.insert(predicted_probs, l_ind, 0, axis=1)
-                predictions = self.online_dataset.label_values[np.argmax(predicted_probs, axis=1)].astype(np.int32)
-
-                # Get frame points re-aligned in the velodyne coordinates
-                pred_points = batch.points[0].cpu().detach().numpy() + batch.p0
-
-                R0 = scipyR.from_quat(batch.q0).as_matrix()
-                pred_points = np.dot(pred_points - batch.p0, R0)
-                
-                # ############################################################################################################
-                # # DEBUG: Save input frames
-                # plyname = join(ENV_HOME, 'results/ptpreds_{:.3f}.gif'.format(stamp1))
-                # write_ply(plyname,
-                #           [pred_points.astype(np.float32), predictions],
-                #           ['x', 'y', 'z', 'classif'])
-                # ############################################################################################################
-
-                # Publish pointcloud
-                #self.publish_pointcloud(pred_points, predictions, batch.t0)
-
-                # Fake slowing pause
-                #time.sleep(2.5)
-                
-                t += [time.time()]
-
-                print(35 * ' ', 35 * ' ', '{:^35s}'.format('GPU : Inference Done in {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
-                                                                                                                        1000 * (t[2] - t[1]),
-                                                                                                                        1000 * (t[3] - t[2]))))
-
 
         return
 
@@ -649,8 +511,6 @@ class OnlineCollider(Node):
         return mask_pos
 
     def publish_collisions(self, collision_preds, stamp0, p0, q0):
-        
-        self.get_logger().warn("Started Publisher COLLISION callback")
 
         # Get origin and orientation
         origin0 = p0 - self.config.in_radius / np.sqrt(2)
@@ -742,7 +602,7 @@ class OnlineCollider(Node):
 
             obstacle_msg = ObstacleMsg()
             obstacle_msg.id = obst_i
-            obstacle_msg.polygon.points = [Point32(x=pos[0], y=pos[1], z=0)]
+            obstacle_msg.polygon.points = [Point32(x=pos[0], y=pos[1], z=0.0)]
 
             # obstacle_msg.polygon.points[0].x = 1.5
             # obstacle_msg.polygon.points[0].y = 0
@@ -772,6 +632,146 @@ class OnlineCollider(Node):
                                    self.velo_frame_id)
 
         self.pointcloud_pub.publish(msg)
+
+    def inference_loop(self):
+
+        # No gradient computation here
+        with torch.no_grad():
+
+            # When starting this for loop, one thread will be spawned and creating network
+            # input while the loop is performing GPU operations.
+            for i, batch in enumerate(self.online_loader):
+
+                #####################
+                # Input preparation #
+                #####################
+
+                t = [time.time()]
+
+                # # Check that ros master is still up
+                # try:
+                #     topics = rospy.get_published_topics()
+                # except ConnectionRefusedError as e:
+                #     print('Lost connection to master. Terminate collider')
+                #     break
+
+                # Check if batch is a dummy
+                if len(batch.points) < 1:
+                    print(35*' ', 35*' ', '{:^35s}'.format('GPU : Corrupted batch skipped'))
+                    time.sleep(0.5)
+                    continue
+                
+                print(35*' ', 35*' ', '{:^35s}'.format('GPU : Got batch, start inference'))
+
+                # Convert batch to a cuda tensors
+                if 'cuda' in self.device.type:
+                    batch.to(self.device)
+                torch.cuda.synchronize(self.device)
+
+                t += [time.time()]
+                    
+                #####################
+                # Network inference #
+                #####################
+
+                # Forward pass
+                outputs_3D, preds_init, preds_future = self.net(batch, self.config)
+                torch.cuda.synchronize(self.device)
+                
+                t += [time.time()]
+
+                ###########
+                # Outputs #
+                ###########
+
+                # Get collision predictions [1, T, W, H, 3] -> [T, W, H, 3]
+                collision_preds = self.sigmoid_2D(preds_future)[0]
+
+
+                # Get the diffused risk
+                diffused_risk, obst_pos = self.get_diffused_risk(collision_preds)
+
+                # Convert stamp to float
+                sec1 = batch.t0.sec
+                nsec1 = batch.t0.nanosec
+                stamp_sec = float(sec1) + float(int((nsec1) * 1e-6)) * 1e-3
+
+                # ##########################################################################################################
+                # Save predictions in files for debug
+
+                # stamp1 = sec1 - self.sec0 + int((nsec1 - self.nsec0) * 1e-6) * 1e-3
+                # im_name = join(ENV_HOME, 'results/debug_1_{:.3f}.gif'.format(stamp1))
+                # debug_preds = collision_preds.cpu().detach().numpy()
+                # print('\n\n', debug_preds.dtype, debug_preds.shape, '\n\n')
+
+                # # imageio.imwrite(im_name, zoom_collisions(debug_preds, 5))
+                # fast_save_future_anim(im_name, debug_preds, zoom=5, correction=True)
+
+                # im_name2 = join(ENV_HOME, 'results/debug_2_{:.3f}.gif'.format(stamp1))
+                # cm = plt.get_cmap('viridis')
+                # debug_preds2 = cm(diffused_risk)
+                # print('\n\n', debug_preds2.dtype, debug_preds2.shape, '\n\n')
+                
+                # # imageio.imwrite(im_name2, zoom_collisions(debug_preds2, 5))
+                # fast_save_future_anim(im_name2, debug_preds2, zoom=5, correction=False)
+                # ############################################################################################################
+
+                # Get obstacles in world coordinates
+                origin0 = batch.p0 - self.config.in_radius / np.sqrt(2)
+
+                world_obst = []
+                for obst_i, pos in enumerate(obst_pos):
+                    world_obst.append(origin0[:2] + pos * self.config.dl_2D)
+                
+                now_stamp = self.get_clock().now().to_msg()
+                now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
+                print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
+                # Publish collision risk in a custom message
+                self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
+                self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
+
+                # Publish obstacles
+                # self.publish_obstacles(world_obst)
+
+                ##############
+                # Outputs 3D #
+                ##############
+
+                # Get predictions
+                predicted_probs = self.softmax(outputs_3D).cpu().detach().numpy()
+                for l_ind, label_value in enumerate(self.online_dataset.label_values):
+                    if label_value in self.online_dataset.ignored_labels:
+                        predicted_probs = np.insert(predicted_probs, l_ind, 0, axis=1)
+                predictions = self.online_dataset.label_values[np.argmax(predicted_probs, axis=1)].astype(np.int32)
+
+                # Get frame points re-aligned in the velodyne coordinates
+                pred_points = batch.points[0].cpu().detach().numpy() + batch.p0
+
+                R0 = scipyR.from_quat(batch.q0).as_matrix()
+                pred_points = np.dot(pred_points - batch.p0, R0)
+                
+                # ############################################################################################################
+                # # DEBUG: Save input frames
+                # plyname = join(ENV_HOME, 'results/ptpreds_{:.3f}.gif'.format(stamp1))
+                # write_ply(plyname,
+                #           [pred_points.astype(np.float32), predictions],
+                #           ['x', 'y', 'z', 'classif'])
+                # ############################################################################################################
+
+                # Publish pointcloud
+                #self.publish_pointcloud(pred_points, predictions, batch.t0)
+
+                # Fake slowing pause
+                #time.sleep(2.5)
+                
+                t += [time.time()]
+
+                print(35 * ' ', 35 * ' ', '{:^35s}'.format('GPU : Inference Done in {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+                                                                                                                        1000 * (t[2] - t[1]),
+                                                                                                                        1000 * (t[3] - t[2]))))
+
+
+        return
 
 # ----------------------------------------------------------------------------------------------------------------------
 #

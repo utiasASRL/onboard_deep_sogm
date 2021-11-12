@@ -17,7 +17,6 @@
 
 # echo "Go"
 
-# nohup ros2 run ros1_bridge parameter_bridge > "nohup2.txt" 2>&1 & ros2 run py_pubsub tf2_listener
 
-
-nohup ros2 run py_pubsub tf2_listener > "nohup2.txt" 2>&1 & ros2 run ros1_bridge static_bridge
+nohup ros2 run ros1_bridge dynamic_bridge > "nohup2.txt" 2>&1 & ros2 run py_pubsub tf2_listener
+# nohup ros2 run py_pubsub tf2_listener > "nohup2.txt" 2>&1 & ros2 run ros1_bridge static_bridge

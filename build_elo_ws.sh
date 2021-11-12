@@ -2,18 +2,17 @@
 
 source "/opt/ros/foxy/install/setup.bash"
 
+# Test msg 
+echo "---------------    test tf   ---------------"
+ros2 interface list | grep "tf"
+echo "--------------------------------------------"
+
+# Build
 colcon build --symlink-install --packages-skip ros1_bridge
 
 # Test msg 
-echo ""
-echo "#######################################"
-echo ""
-
-
 source install/setup.bash
-
-echo "--------------- VoxGrid ---------------"
+echo " "
+echo "--------------- test VoxGrid ---------------"
 ros2 interface list | grep "VoxGrid"
-echo "---------------    tf   ---------------"
-ros2 interface list | grep "tf"
-echo "---------------------------------------"
+echo "--------------------------------------------"

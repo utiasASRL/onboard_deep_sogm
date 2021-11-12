@@ -4,7 +4,6 @@ source "/opt/ros/melodic/setup.bash"
 source "/opt/ros/foxy/install/setup.bash"
 
 . install/setup.bash
-. ../bridge_ws/install/setup.bash
 
 # pkill roscore
 # pkill rosmaster
