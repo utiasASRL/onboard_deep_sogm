@@ -39,6 +39,7 @@ __docformat__ = "restructuredtext en"
 
 # from .registry import converts_from_numpy, converts_to_numpy
 
+import time
 import numpy as np
 from sensor_msgs.msg import PointCloud2, PointField
 
@@ -162,6 +163,56 @@ def array_to_pointcloud2(cloud_arr, stamp=None, frame_id=None):
       all([np.isfinite(
             cloud_arr[fname]).all() for fname in cloud_arr.dtype.names])
     cloud_msg.data = cloud_arr.tostring()
+    return cloud_msg
+
+def array_to_pointcloud2_fast(cloud_arr, stamp=None, frame_id=None, is_dense=None):
+    '''
+    Converts a numpy record array to a sensor_msgs.msg.PointCloud2.
+    Assumes everything is right and make no verification for faster processing
+    '''
+
+    t = [time.time()]
+
+    cloud_msg = PointCloud2()
+    if stamp is not None:
+        cloud_msg.header.stamp = stamp
+    if frame_id is not None:
+        cloud_msg.header.frame_id = frame_id
+    cloud_msg.height = 1
+    cloud_msg.width = cloud_arr.shape[0]
+
+    t += [time.time()]
+
+    cloud_msg.fields = dtype_to_fields(cloud_arr.dtype)
+
+    t += [time.time()]
+
+    cloud_msg.is_bigendian = False # assumption
+    cloud_msg.point_step = cloud_arr.dtype.itemsize
+    cloud_msg.row_step = cloud_msg.point_step*cloud_arr.shape[0]
+
+    t += [time.time()]
+
+    if is_dense is None:
+        cloud_msg.is_dense = all([np.isfinite(cloud_arr[fname]).all() for fname in cloud_arr.dtype.names])
+    else:
+        cloud_msg.is_dense = is_dense
+
+    testaa = cloud_arr.tostring()
+
+    t += [time.time()]
+
+    cloud_msg.data = testaa
+
+    t += [time.time()]
+    print(35 * ' ',
+          35 * ' ',
+          '{:^35s}'.format('pc2 {:.0f} + {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+                                                                                      1000 * (t[2] - t[1]),
+                                                                                      1000 * (t[3] - t[2]),
+                                                                                      1000 * (t[4] - t[3]),
+                                                                                      1000 * (t[5] - t[4]))))
+
     return cloud_msg
 
 def merge_rgb_fields(cloud_arr):

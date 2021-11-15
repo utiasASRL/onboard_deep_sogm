@@ -70,7 +70,7 @@ import imageio
 # import rospy
 # import ros_numpy
 # from ros_numpy import point_cloud2 as pc2
-from utils.pc2_numpy import pointcloud2_to_array, get_xyz_points, array_to_pointcloud2
+from utils.pc2_numpy import array_to_pointcloud2_fast, pointcloud2_to_array, get_xyz_points, array_to_pointcloud2
 
 
 import rclpy
@@ -92,10 +92,6 @@ from rclpy.callback_groups import ReentrantCallbackGroup, MutuallyExclusiveCallb
 from rclpy.executors import SingleThreadedExecutor, MultiThreadedExecutor
 from rclpy.duration import Duration
 # from rclpy.time import Time
-
-# for pausing gazebo during computation:
-from std_srvs.srv import Empty
-# from sensor_msgs.msg import LaserScan
 
 class bcolors:
     HEADER = '\033[95m'
@@ -535,9 +531,10 @@ class OnlineCollider(Node):
 
         msg.data = collision_preds.ravel().tolist()
 
-
         # Publish
         self.collision_pub.publish(msg)
+        
+        print("Publish VoxGrid ##############################")
 
         return
 
@@ -616,22 +613,57 @@ class OnlineCollider(Node):
 
     def publish_pointcloud(self, new_points, predictions, t0):
 
-        # data structure of binary blob output for PointCloud2 data type
-        output_dtype = np.dtype({'names': ['x', 'y', 'z', 'intensity', 'ring'],
-                                 'formats': ['<f4', '<f4', '<f4', '<f4', '<u2'],
-                                 'offsets': [0, 4, 8, 16, 20],
-                                 'itemsize': 32})
+        t = [time.time()]
 
-        # fill structured numpy array with points and classes (in the intensity field). Fill ring with zeros to maintain Pointcloud2 structure
-        c_points = np.c_[new_points, predictions, np.zeros(len(predictions))]
-        c_points = np.core.records.fromarrays(c_points.transpose(), output_dtype)
+        # data structure of binary blob output for PointCloud2 data type
+        output_dtype = np.dtype({'names': ['x', 'y', 'z', 'label'],
+                                 'formats': ['<f4', '<f4', '<f4', '<u1']})
+
+        # new_points = np.hstack((new_points, predictions))
+        structured_pc2_array = np.empty([new_points.shape[0]], dtype=output_dtype)
+
+
+
+        # # fill structured numpy array with points and classes (in the intensity field). Fill ring with zeros to maintain Pointcloud2 structure
+        # c_points = np.c_[new_points, predictions, np.zeros(len(predictions))]
+        
+
+        t += [time.time()]
+
+        structured_pc2_array['x'] = new_points[:, 0]
+        structured_pc2_array['y'] = new_points[:, 1]
+        structured_pc2_array['z'] = new_points[:, 2]
+        structured_pc2_array['label'] = predictions
+
+        # c_points = np.core.records.fromarrays(c_points.transpose(), output_dtype)
+        
+
+        t += [time.time()]
 
         # convert to Pointcloud2 message and publish
-        msg = array_to_pointcloud2(c_points,
-                                   rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg(),
-                                   self.velo_frame_id)
+        msg = array_to_pointcloud2_fast(structured_pc2_array,
+                                        rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg(),
+                                        self.velo_frame_id,
+                                        True)
+
+
+        t += [time.time()]
 
         self.pointcloud_pub.publish(msg)
+        
+
+        t += [time.time()]
+
+        print(35 * ' ',
+              35 * ' ',
+              '{:^35s}'.format('Publish pointcloud {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+                                                                                                1000 * (t[2] - t[1]),
+                                                                                                1000 * (t[3] - t[2]),
+                                                                                                1000 * (t[4] - t[3]))))
+
+
+
+        return
 
     def inference_loop(self):
 
@@ -680,9 +712,9 @@ class OnlineCollider(Node):
                 
                 t += [time.time()]
 
-                ###########
-                # Outputs #
-                ###########
+                ######################
+                # Publish collisions #
+                ######################
 
                 # Get collision predictions [1, T, W, H, 3] -> [T, W, H, 3]
                 collision_preds = self.sigmoid_2D(preds_future)[0]
@@ -715,13 +747,6 @@ class OnlineCollider(Node):
                 # # imageio.imwrite(im_name2, zoom_collisions(debug_preds2, 5))
                 # fast_save_future_anim(im_name2, debug_preds2, zoom=5, correction=False)
                 # ############################################################################################################
-
-                # Get obstacles in world coordinates
-                origin0 = batch.p0 - self.config.in_radius / np.sqrt(2)
-
-                world_obst = []
-                for obst_i, pos in enumerate(obst_pos):
-                    world_obst.append(origin0[:2] + pos * self.config.dl_2D)
                 
                 now_stamp = self.get_clock().now().to_msg()
                 now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
@@ -729,26 +754,41 @@ class OnlineCollider(Node):
                 # Publish collision risk in a custom message
                 self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
                 self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
+                
+                t += [time.time()]
+
+                #####################
+                # Publish obstacles #
+                #####################
+
+                # Get obstacles in world coordinates
+                origin0 = batch.p0 - self.config.in_radius / np.sqrt(2)
+
+                world_obst = []
+                for obst_i, pos in enumerate(obst_pos):
+                    world_obst.append(origin0[:2] + pos * self.config.dl_2D)
 
                 # Publish obstacles
-                # self.publish_obstacles(world_obst)
+                self.publish_obstacles(world_obst)
 
-                ##############
-                # Outputs 3D #
-                ##############
+                #####################
+                # Publish 3D points #
+                #####################
 
                 # Get predictions
                 predicted_probs = self.softmax(outputs_3D).cpu().detach().numpy()
                 for l_ind, label_value in enumerate(self.online_dataset.label_values):
                     if label_value in self.online_dataset.ignored_labels:
                         predicted_probs = np.insert(predicted_probs, l_ind, 0, axis=1)
-                predictions = self.online_dataset.label_values[np.argmax(predicted_probs, axis=1)].astype(np.int32)
+                predictions = self.online_dataset.label_values[np.argmax(predicted_probs, axis=1)].astype(np.uint8)
 
                 # Get frame points re-aligned in the velodyne coordinates
                 pred_points = batch.points[0].cpu().detach().numpy() + batch.p0
 
                 R0 = scipyR.from_quat(batch.q0).as_matrix()
                 pred_points = np.dot(pred_points - batch.p0, R0)
+                
+                t += [time.time()]
                 
                 # ############################################################################################################
                 # # DEBUG: Save input frames
@@ -759,16 +799,17 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Publish pointcloud
-                #self.publish_pointcloud(pred_points, predictions, batch.t0)
-
-                # Fake slowing pause
-                #time.sleep(2.5)
+                self.publish_pointcloud(pred_points, predictions, batch.t0)
                 
                 t += [time.time()]
 
-                print(35 * ' ', 35 * ' ', '{:^35s}'.format('GPU : Inference Done in {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
-                                                                                                                        1000 * (t[2] - t[1]),
-                                                                                                                        1000 * (t[3] - t[2]))))
+                print(35 * ' ',
+                      35 * ' ',
+                      '{:^35s}'.format('GPU : Inference Done in {:.0f} + {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+                                                                                                                      1000 * (t[2] - t[1]),
+                                                                                                                      1000 * (t[3] - t[2]),
+                                                                                                                      1000 * (t[4] - t[3]),
+                                                                                                                      1000 * (t[5] - t[4]))))
 
 
         return

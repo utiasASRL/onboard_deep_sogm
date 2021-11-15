@@ -64,7 +64,6 @@ import tf2_ros
 from tf2_msgs.msg import TFMessage
 
 # for pausing gazebo during computation:
-from std_srvs.srv import Empty
 from sensor_msgs.msg import LaserScan
 
 # Subsampling extension
