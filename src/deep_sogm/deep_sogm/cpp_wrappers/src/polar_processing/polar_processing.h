@@ -15,17 +15,21 @@
 
 using namespace std;
 
-
 // KDTree type definition
-typedef nanoflann::KDTreeSingleIndexAdaptor< nanoflann::L2_Simple_Adaptor<float, PointCloud>, PointCloud, 3> PointXYZ_KDTree;
+typedef nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<float, PointCloud>, PointCloud, 3> PointXYZ_KDTree;
 
-void cart2pol_(vector<PointXYZ>& xyz);
-PointXYZ cart2pol(const PointXYZ& p);
+void cart2pol_(vector<PointXYZ> &xyz);
 
-void pca_features(vector<PointXYZ>& points,
-	vector<float>& eigenvalues,
-	vector<PointXYZ>& eigenvectors);
+inline PointXYZ cart2pol(const PointXYZ p)
+{
+	float tmp1 = p.x * p.x + p.y * p.y;
+	float tmp2 = tmp1 + p.z * p.z;
+	return PointXYZ(sqrt(tmp2), atan2(sqrt(tmp1), p.z), atan2(p.y, p.x) + M_PI / 2);
+}
 
+void pca_features(vector<PointXYZ> &points,
+				  vector<float> &eigenvalues,
+				  vector<PointXYZ> &eigenvectors);
 
 void detect_outliers(vector<PointXYZ>& rtp,
 	vector<float>& scores,

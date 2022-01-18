@@ -4,24 +4,17 @@
 void cart2pol_(vector<PointXYZ> &xyz)
 {
 	// In place modification to carthesian coordinates
-	for (auto &p : xyz)
+	float tmp1, tmp2, phi;
+	float pi_s_2 = M_PI / 2;
+	for (auto& p : xyz)
 	{
-
-		float rho = sqrt(p.sq_norm());
-		float phi = atan2(p.y, p.x);
-		float theta = atan2(sqrt(p.x * p.x + p.y * p.y), p.z);
-		p.x = rho;
-		p.y = theta;
-		p.z = phi + M_PI / 2;
+		tmp1 = p.x * p.x + p.y * p.y;
+		tmp2 = tmp1 + p.z * p.z;
+		phi = atan2(p.y, p.x); // azimuth angle
+		p.y = atan2(p.z, sqrt(tmp1));
+		p.z = phi + pi_s_2;
+		p.x = sqrt(tmp2);
 	}
-}
-
-PointXYZ cart2pol(PointXYZ &p)
-{
-	float rho = sqrt(p.sq_norm());
-	float phi = atan2(p.y, p.x);
-	float theta = atan2(sqrt(p.x * p.x + p.y * p.y), p.z);
-	return PointXYZ(rho, theta, phi + M_PI / 2);
 }
 
 void pca_features(vector<PointXYZ> &points,

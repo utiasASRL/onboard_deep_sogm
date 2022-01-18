@@ -40,6 +40,7 @@ __docformat__ = "restructuredtext en"
 # from .registry import converts_from_numpy, converts_to_numpy
 
 import time
+import array
 import numpy as np
 from sensor_msgs.msg import PointCloud2, PointField
 
@@ -171,8 +172,6 @@ def array_to_pointcloud2_fast(cloud_arr, stamp=None, frame_id=None, is_dense=Non
     Assumes everything is right and make no verification for faster processing
     '''
 
-    t = [time.time()]
-
     cloud_msg = PointCloud2()
     if stamp is not None:
         cloud_msg.header.stamp = stamp
@@ -181,37 +180,18 @@ def array_to_pointcloud2_fast(cloud_arr, stamp=None, frame_id=None, is_dense=Non
     cloud_msg.height = 1
     cloud_msg.width = cloud_arr.shape[0]
 
-    t += [time.time()]
-
     cloud_msg.fields = dtype_to_fields(cloud_arr.dtype)
-
-    t += [time.time()]
 
     cloud_msg.is_bigendian = False # assumption
     cloud_msg.point_step = cloud_arr.dtype.itemsize
     cloud_msg.row_step = cloud_msg.point_step*cloud_arr.shape[0]
-
-    t += [time.time()]
 
     if is_dense is None:
         cloud_msg.is_dense = all([np.isfinite(cloud_arr[fname]).all() for fname in cloud_arr.dtype.names])
     else:
         cloud_msg.is_dense = is_dense
 
-    testaa = cloud_arr.tostring()
-
-    t += [time.time()]
-
-    cloud_msg.data = testaa
-
-    t += [time.time()]
-    print(35 * ' ',
-          35 * ' ',
-          '{:^35s}'.format('pc2 {:.0f} + {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
-                                                                                      1000 * (t[2] - t[1]),
-                                                                                      1000 * (t[3] - t[2]),
-                                                                                      1000 * (t[4] - t[3]),
-                                                                                      1000 * (t[5] - t[4]))))
+    cloud_msg.data = array.array('B', cloud_arr.tobytes())
 
     return cloud_msg
 
