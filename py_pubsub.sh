@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# source "/opt/ros/melodic/setup.bash"
+# ROS_1_DISTRO=noetic
+# source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 # source "/opt/ros/eloquent/setup.bash"
 
 . install/setup.bash

@@ -1,7 +1,9 @@
 #!/bin/bash
 
+ROS_1_DISTRO=noetic
+
 # source "/opt/ros/eloquent/setup.bash"
-source "/opt/ros/melodic/setup.bash"
+source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 
 # And if you have a ROS 1 overlay workspace, something like:
 . "../catkin_ws/install_isolated/setup.bash"
