@@ -2,7 +2,7 @@
 
 ROS_1_DISTRO=noetic
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
-source "/opt/ros/foxy/install/setup.bash"
+source "/opt/ros/foxy/setup.bash"
 
 . install/setup.bash
 

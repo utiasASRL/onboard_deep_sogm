@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "/opt/ros/foxy/install/setup.bash"
+source "/opt/ros/foxy/setup.bash"
 
 # Test msg 
 echo "---------------    test tf   ---------------"

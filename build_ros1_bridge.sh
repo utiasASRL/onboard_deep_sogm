@@ -9,7 +9,7 @@ source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 . "../catkin_ws/install_isolated/setup.bash"
 
 # Source your ROS 2 installation:
-. "/opt/ros/foxy/install/setup.bash"
+. "/opt/ros/foxy/setup.bash"
 
 # And if you have a ROS 2 overlay workspace, something like:
 . "install/local_setup.bash"
