@@ -30,8 +30,8 @@ from os.path import exists, join
 import sys
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
-ENV_USER = 'administrator'
-ENV_HOME = '/home/administrator'
+ENV_USER = 'asrl'
+ENV_HOME = '/home/asrl'
 sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
 sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
 sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
