@@ -31,11 +31,6 @@ import sys
 from numpy.core.numeric import False_
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
-
-print(ENV_USER)
-print(ENV_HOME)
-
-
 ENV_USER = 'asrl'
 ENV_HOME = '/home/asrl'
 sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
@@ -828,8 +823,8 @@ class OnlineCollider(Node):
 def main(args=None):
 
     # Parameters
-    log_name = 'Log_2021-05-24_13-59-19'
-    chkp_name = 'chkp_0380.tar'
+    log_name = 'Log_2022-01-21_16-44-32'
+    chkp_name = 'chkp_0600.tar'
     training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 
     # Setup the collider Class
