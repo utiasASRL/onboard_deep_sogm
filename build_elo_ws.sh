@@ -15,4 +15,5 @@ source install/setup.bash
 echo " "
 echo "--------------- test VoxGrid ---------------"
 ros2 interface list | grep "VoxGrid"
+ros2 interface list | grep "Obstacle"
 echo "--------------------------------------------"

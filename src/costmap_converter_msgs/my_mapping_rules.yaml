@@ -1,0 +1,3 @@
+-
+  ros1_package_name: 'costmap_converter'
+  ros2_package_name: 'costmap_converter_msgs'

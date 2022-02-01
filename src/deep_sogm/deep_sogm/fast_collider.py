@@ -157,8 +157,8 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.obstacle_range = 1.2
-        self.norm_p = 4
+        self.obstacle_range = 1.8
+        self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
         #rclpy.init(args=sys.argv)

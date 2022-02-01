@@ -17,6 +17,8 @@ find_package(geometry_msgs REQUIRED)
 
 set(msg_files
   "msg/VoxGrid.msg"
+  "msg/ObstacleMsg.msg"
+  "msg/ObstacleArrayMsg.msg"
 )
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}

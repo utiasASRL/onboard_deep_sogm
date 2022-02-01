@@ -14,6 +14,11 @@ source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 # And if you have a ROS 2 overlay workspace, something like:
 . "install/local_setup.bash"
 
+#
+echo ""
+echo $CMAKE_PREFIX_PATH
+echo ""
+
 #cd ../bridge_ws
 #colcon build --cmake-force-configure
 

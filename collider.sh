@@ -2,6 +2,7 @@
 
 ROS_1_DISTRO=noetic
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
+. "../catkin_ws/install_isolated/setup.bash"
 source "/opt/ros/foxy/setup.bash"
 
 . install/setup.bash
@@ -18,4 +19,5 @@ source "/opt/ros/foxy/setup.bash"
 
 # echo "Go"
 
-nohup ros2 run ros1_bridge dynamic_bridge > "nohup.txt" 2>&1 & ros2 run deep_sogm collider
+# nohup ros2 run ros1_bridge dynamic_bridge > "nohup.txt" 2>&1 & ros2 run deep_sogm collider
+nohup ros2 run deep_sogm collider > "nohup.txt" 2>&1 & ros2 run ros1_bridge dynamic_bridge

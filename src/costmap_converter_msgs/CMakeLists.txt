@@ -23,4 +23,10 @@ rosidl_generate_interfaces(costmap_converter_msgs
   DEPENDENCIES builtin_interfaces geometry_msgs std_msgs
 )
 
+install(
+  FILES my_mapping_rules.yaml
+  DESTINATION share/${PROJECT_NAME})
+
+ament_export_dependencies(rosidl_default_runtime)
+
 ament_package()

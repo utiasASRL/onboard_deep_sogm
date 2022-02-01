@@ -18,4 +18,5 @@ source install_isolated/setup.bash
 echo " "
 echo "--------------- VoxGrid ---------------"
 rosmsg list | grep "VoxGrid"
+rosmsg list | grep "Obstacle"
 echo "---------------------------------------"
