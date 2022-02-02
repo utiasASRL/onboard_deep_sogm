@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd src/deep_sogm/deep_sogm/cpp_wrappers
+cd ../src/deep_sogm/deep_sogm/cpp_wrappers
 
 # Compile cpp icp normals
 cd cpp_pointmap

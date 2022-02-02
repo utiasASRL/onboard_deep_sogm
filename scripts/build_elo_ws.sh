@@ -2,6 +2,8 @@
 
 source "/opt/ros/foxy/setup.bash"
 
+cd ..
+
 # Test msg 
 echo "---------------    test tf   ---------------"
 ros2 interface list | grep "tf"

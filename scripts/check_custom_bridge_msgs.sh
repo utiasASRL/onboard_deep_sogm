@@ -3,7 +3,7 @@
 # Verify the custom types were recognized by the bridge, by printing all pairs of bridged types. 
 # The custom types should be listed:
 
-#cd ../bridge_ws
+cd ..
 
 source "install/setup.bash"
 

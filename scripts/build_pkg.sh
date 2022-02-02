@@ -20,5 +20,7 @@ echo ""
 echo "Go"
 echo ""
 
+cd ..
+
 colcon build --symlink-install --packages-select "$@"
 

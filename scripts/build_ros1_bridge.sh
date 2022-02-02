@@ -2,6 +2,8 @@
 
 ROS_1_DISTRO=noetic
 
+cd ..
+
 # source "/opt/ros/eloquent/setup.bash"
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 

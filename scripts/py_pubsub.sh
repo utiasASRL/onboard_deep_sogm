@@ -4,6 +4,8 @@
 # source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 # source "/opt/ros/eloquent/setup.bash"
 
+cd ..
+
 . install/setup.bash
 
 # pkill roscore

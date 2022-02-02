@@ -10,7 +10,7 @@ rosmsg list | grep "tf"
 echo "---------------------------------------"
 
 # Build
-cd ../catkin_ws
+cd ../../catkin_ws
 catkin_make_isolated --install
 
 # Test msg 
