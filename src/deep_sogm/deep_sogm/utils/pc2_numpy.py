@@ -205,13 +205,13 @@ def array_to_pointcloud2_fast(cloud_arr, stamp=None, frame_id=None, is_dense=Non
     cloud_msg.data = testaa
 
     t += [time.time()]
-    print(35 * ' ',
-          35 * ' ',
-          '{:^35s}'.format('pc2 {:.0f} + {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
-                                                                                      1000 * (t[2] - t[1]),
-                                                                                      1000 * (t[3] - t[2]),
-                                                                                      1000 * (t[4] - t[3]),
-                                                                                      1000 * (t[5] - t[4]))))
+    # print(35 * ' ',
+    #       35 * ' ',
+    #       '{:^35s}'.format('pc2 {:.0f} + {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+    #                                                                                   1000 * (t[2] - t[1]),
+    #                                                                                   1000 * (t[3] - t[2]),
+    #                                                                                   1000 * (t[4] - t[3]),
+    #                                                                                   1000 * (t[5] - t[4]))))
 
     return cloud_msg
 

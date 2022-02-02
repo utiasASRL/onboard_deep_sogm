@@ -157,9 +157,13 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.obstacle_range = 1.8
-        self.norm_p = 3
+        self.obstacle_range = 1.3
+        self.norm_p = 4
         self.norm_invp = 1 / self.norm_p
+
+        self.maxima_layers = [15, 29]
+
+        self.visu_T = 29
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -462,7 +466,12 @@ class OnlineCollider(Node):
         # imageio.imwrite(im_name, zoom_collisions(cm(debug_walls), 5))
 
         # Get local maxima in moving obstacles
-        obst_mask = self.get_local_maxima(diffused_1[15])
+        obst_mask = None
+        for layer_i in self.maxima_layers:
+            if obst_mask is None:
+                obst_mask = self.get_local_maxima(diffused_1[layer_i])
+            else:
+                obst_mask = np.logical_or(obst_mask, self.get_local_maxima(diffused_1[layer_i]))
 
         # Create obstacles in walls (one cell over 2 to have arround 1 obstacle every 25 cm)
         static_mask = np.squeeze(static_preds.cpu().detach().numpy() > 0.3)
@@ -533,8 +542,6 @@ class OnlineCollider(Node):
 
         # Publish
         self.collision_pub.publish(msg)
-        
-        print("Publish VoxGrid ##############################")
 
         return
 
@@ -611,7 +618,7 @@ class OnlineCollider(Node):
 
         return
 
-    def publish_pointcloud(self, new_points, predictions, t0):
+    def publish_pointcloud(self, new_points, predictions, features, t0):
 
         t = [time.time()]
 
@@ -622,20 +629,14 @@ class OnlineCollider(Node):
         # new_points = np.hstack((new_points, predictions))
         structured_pc2_array = np.empty([new_points.shape[0]], dtype=output_dtype)
 
-
-
-        # # fill structured numpy array with points and classes (in the intensity field). Fill ring with zeros to maintain Pointcloud2 structure
-        # c_points = np.c_[new_points, predictions, np.zeros(len(predictions))]
-        
-
         t += [time.time()]
 
         structured_pc2_array['x'] = new_points[:, 0]
         structured_pc2_array['y'] = new_points[:, 1]
         structured_pc2_array['z'] = new_points[:, 2]
         structured_pc2_array['label'] = predictions
+        # structured_pc2_array['frame_id'] = (features[:, -1] > 0.01).astype(np.uint8)
 
-        # c_points = np.core.records.fromarrays(c_points.transpose(), output_dtype)
         
 
         t += [time.time()]
@@ -654,12 +655,12 @@ class OnlineCollider(Node):
 
         t += [time.time()]
 
-        print(35 * ' ',
-              35 * ' ',
-              '{:^35s}'.format('Publish pointcloud {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
-                                                                                                1000 * (t[2] - t[1]),
-                                                                                                1000 * (t[3] - t[2]),
-                                                                                                1000 * (t[4] - t[3]))))
+        # print(35 * ' ',
+        #       35 * ' ',
+        #       '{:^35s}'.format('Publish pointcloud {:.0f} + {:.0f} + {:.0f} + {:.0f} ms'.format(1000 * (t[1] - t[0]),
+        #                                                                                         1000 * (t[2] - t[1]),
+        #                                                                                         1000 * (t[3] - t[2]),
+        #                                                                                         1000 * (t[4] - t[3]))))
 
 
 
@@ -753,7 +754,7 @@ class OnlineCollider(Node):
                 print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
                 # Publish collision risk in a custom message
                 self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
-                self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=15)
+                self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=self.visu_T)
                 
                 t += [time.time()]
 
@@ -799,7 +800,7 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Publish pointcloud
-                self.publish_pointcloud(pred_points, predictions, batch.t0)
+                self.publish_pointcloud(pred_points, predictions, batch.features, batch.t0)
                 
                 t += [time.time()]
 

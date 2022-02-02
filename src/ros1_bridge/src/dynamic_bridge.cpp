@@ -615,7 +615,10 @@ int main(int argc, char * argv[])
         bridge_all_1to2_topics, bridge_all_2to1_topics);
     };
 
-  auto ros1_poll_timer = ros1_node.createTimer(ros::Duration(1.0), ros1_poll, false);
+  auto ros1_poll_timer = ros1_node.createTimer(ros::Duration(1.0), ros1_poll, true);
+  auto ros1_poll_timer1 = ros1_node.createTimer(ros::Duration(5.0), ros1_poll, true);
+  auto ros1_poll_timer2 = ros1_node.createTimer(ros::Duration(10.0), ros1_poll, true);
+  auto ros1_poll_timer3 = ros1_node.createTimer(ros::Duration(15.0), ros1_poll, true);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
