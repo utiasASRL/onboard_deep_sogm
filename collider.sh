@@ -19,5 +19,5 @@ source "/opt/ros/foxy/setup.bash"
 
 # echo "Go"
 
-nohup ros2 run ros1_bridge dynamic_bridge > "nohup.txt" 2>&1 & ros2 run deep_sogm collider
-# nohup ros2 run deep_sogm collider > "nohup.txt" 2>&1 & ros2 run ros1_bridge dynamic_bridge
+nohup ros2 run ros1_bridge dynamic_bridge > "nohup_bridge.txt" 2>&1 & ros2 run deep_sogm collider
+# nohup ros2 run deep_sogm collider > "nohup_sogm.txt" 2>&1 & ros2 run ros1_bridge dynamic_bridge
