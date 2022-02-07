@@ -3,22 +3,25 @@
 # Arg to specify if we record this run or not
 record=false
 colli=false
+nohup=false
 
-# Arg to specify the name of the waypoints file to follow. If no such file exists, 
-# then we wait for the user to set waypoints for this new file
-waypoints="default_no_given"
-
-while getopts rcw: option
+# Get arguments
+while getopts nrc option
 do
 case "${option}"
 in
+n) nohup=true;;
 r) record=true;;
 c) colli=true;;
-w) waypoints=${OPTARG};;
 esac
 done
 
+
 # We should start pointslam on the xavier, to remove some of the CPU load
+ROS_1_DISTRO=noetic
+source "/opt/ros/$ROS_1_DISTRO/setup.bash"
+. "../../catkin_ws/install_isolated/setup.bash"
+
 
 # Waiting for pointslam initialization
 echo ""
@@ -33,15 +36,57 @@ echo "OK"
 
 
 # Now start move_base
+move_base_command="roslaunch jackal_navigation teb_normal.launch"
 if [ "$colli" = true ] ; then
-    echo "Running move_base with modified TEB"
-    nohup roslaunch jackal_navigation teb_modified.launch > "nohup_teb.txt" 2>&1 &
-else
-    echo "Running move_base with normal TEB"
-    nohup roslaunch jackal_navigation teb_normal.launch > "nohup_teb.txt" 2>&1 &
+    move_base_command="roslaunch jackal_navigation teb_modified.launch"
 fi
-echo "Running waypoint follower"
-nohup roslaunch follow_waypoints follow_waypoints.launch waypoint_file:="$waypoints" > "nohup_waypoint.txt" 2>&1 &
+
+echo "Running move_base : $move_base_command"
+if [ "$nohup" = true ] ; then
+    nohup $move_base_command > "nohup_teb.txt" 2>&1 &
+else
+    xterm -bg black -fg lightgray -e $move_base_command &
+fi
+
+
+# Abort run in case the waypoints were not good
+if [ "$new_waypoints" = false ] ; then
+    echo "Aborting run"
+    ./stop_exp.sh
+    exit 1
+fi
+
+
+# Start bridge and collider
+if [ "$colli" = true ] ; then
+    source "/opt/ros/foxy/setup.bash"
+    . "../install/setup.bash"
+
+    if [ "$nohup" = true ] ; then
+        nohup ros2 run ros1_bridge dynamic_bridge > "nohup_bridge.txt" 2>&1 & 
+        nohup ros2 run deep_sogm collider > "nohup_sogm.txt" 2>&1 &
+    else
+        xterm -bg black -fg lightgray -e ros2 run ros1_bridge dynamic_bridge &
+        xterm -bg black -fg lightgray -e ros2 run deep_sogm collider &
+        # ros2 run deep_sogm collider
+        
+    fi
+fi
+
+# Record run
+if [ "$record" = true ] ; then
+    echo "Record Rosbag"
+    nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
+fi
+
+
+echo ""
+read -p "Experiment running. Press any key to stop everything" choice
+echo ""
+tmp=false
+case "$choice" in 
+    * ) tmp=false;;
+esac
 
 
 
@@ -49,15 +94,3 @@ nohup roslaunch follow_waypoints follow_waypoints.launch waypoint_file:="$waypoi
 
 
 
-
-
-ROS_1_DISTRO=noetic
-source "/opt/ros/$ROS_1_DISTRO/setup.bash"
-. "../catkin_ws/install_isolated/setup.bash"
-
-echo "Running move_base with modified TEB"
-nohup ./teb_modified.sh > "nohup_teb.txt" 2>&1 &
-
-
-# Start the collider 
-./collider.sh
