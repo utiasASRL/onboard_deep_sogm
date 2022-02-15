@@ -15,7 +15,8 @@ rosbag record -O $rosbag_path /clock \
                             /move_base/current_goal \
                             /optimal_path \
                             /classified_points  \
-                            /collision_visu  \
+                            /static_visu  \
+                            /dynamic_visu  \
                             /plan_costmap_3D \
                             /move_base/TebLocalPlannerROS/local_plan \
                             /move_base/TebLocalPlannerROS/global_plan \

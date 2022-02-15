@@ -492,6 +492,10 @@ class OnlineDataset:
 
         print(35*' ', '{:^35s}'.format('CPU 1 : OK got 3 frames'), 35*' ')
 
+        sec_stamps = [float(stp.sec) + float(int((stp.nanosec) * 1e-6)) * 1e-3 for stp in current_stamps]
+        s = '{:.3f}, {:.3f}, {:.3f}'.format(*sec_stamps)
+        print(35*' ', '{:^35s}'.format(s), 35*' ')
+
         # Safe check
         if np.any([pose is None for pose in current_poses]):
             return self.dummy_batch()
