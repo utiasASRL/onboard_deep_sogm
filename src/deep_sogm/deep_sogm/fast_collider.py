@@ -157,8 +157,8 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.static_range = 1.5
-        self.dynamic_range = 2.5
+        self.static_range = 1.1
+        self.dynamic_range = 1.8
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
@@ -497,8 +497,11 @@ class OnlineCollider(Node):
 
         # Convert to pixel positions
         obst_pos = self.mask_to_pix(obst_mask)
+
+        # Get mask of static obstacles for visu
+        static_mask = np.squeeze(static_preds.detach().cpu().numpy()) > 0.3
         
-        return diffused_risk, obst_pos
+        return diffused_risk, obst_pos, static_mask
 
     def get_local_maxima(self, data, neighborhood_size=5, threshold=0.1):
         
@@ -559,7 +562,7 @@ class OnlineCollider(Node):
 
         return
 
-    def publish_collisions_visu(self, collision_preds, t0, p0, q0, visu_T=15):
+    def publish_collisions_visu(self, collision_preds, static_mask, t0, p0, q0, visu_T=15):
         '''
         0 = invisible
         1 -> 98 = blue to red
@@ -611,21 +614,52 @@ class OnlineCollider(Node):
         #   > invisible for the rest of the map
         # Actually separate them in two different costmaps
 
-        dynamic_data = collision_preds[visu_T, :, :].astype(np.float32)
-        dynamic_data = dynamic_data * 98 / 255
-        dynamic_data = dynamic_data * 1.06 - 3
-        dynamic_data = np.maximum(0, np.minimum(98, dynamic_data.astype(np.int8)))
-        msg.data = dynamic_data.ravel().tolist()
-        
-        static_data = collision_preds[0, :, :].astype(np.float32)
-        static_data = static_data * 126 / 255
-        static_data = static_data * 1.04 - 3
-        static_data = np.maximum(0, np.minimum(126, static_data.astype(np.int8)))
-        mask = static_data > 0
-        static_data[mask] = 254 - static_data[mask]
-        msg_static.data = static_data.ravel().tolist()
+        dyn_v = "v2"
+        dynamic_data0 = np.zeros((1, 1))
+        if dyn_v == "v1":
+            dynamic_mask = collision_preds[1:, :, :] > 200
+            dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
+            dynamic_data = np.max(dynamic_data, axis=0)
+            dynamic_data *= 1 / np.max(dynamic_data)
+            dynamic_data *= 126
+            dynamic_data = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
+            mask = dynamic_data > 0
+            dynamic_data[mask] += 128
+        elif dyn_v == "v2":
+
+            for iso_i, iso in enumerate([230, 150, 70]):
+
+                dynamic_mask = collision_preds[1:, :, :] > iso
+                dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
+                dynamic_data = np.max(dynamic_data, axis=0)
+                if iso_i > 0:
+                    erode_mask = dynamic_data > 0
+                    close_struct = np.ones((5, 5))
+                    erode_struct = np.ones((3, 3))
+                    erode_mask = ndimage.binary_closing(erode_mask, structure=close_struct, iterations=2)
+                    erode_mask = ndimage.binary_erosion(erode_mask, structure=erode_struct)
+                    dynamic_data[erode_mask] = 0
+                dynamic_data0 = np.maximum(dynamic_data0, dynamic_data)
+
+            dynamic_data0 *= 1 / np.max(dynamic_data0)
+            dynamic_data0 *= 126
+            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data0.astype(np.int8)))
+            mask = dynamic_data0 > 0
+            dynamic_data0[mask] += 128
+
+
+
+
+        # Static risk
+        static_data0 = collision_preds[0, :, :].astype(np.float32)
+        static_data = static_data0 * 98 / 255
+        static_data = static_data * 1.06 - 3
+        static_data = np.maximum(0, np.minimum(98, static_data.astype(np.int8)))
+        static_data[static_mask] = 99
 
         # Publish
+        msg.data = dynamic_data0.ravel().tolist()
+        msg_static.data = static_data.ravel().tolist()
         self.visu_pub.publish(msg)
         self.visu_pub_static.publish(msg_static)
 
@@ -759,7 +793,7 @@ class OnlineCollider(Node):
 
 
                 # Get the diffused risk
-                diffused_risk, obst_pos = self.get_diffused_risk(collision_preds)
+                diffused_risk, obst_pos, static_mask = self.get_diffused_risk(collision_preds)
 
                 # Convert stamp to float
                 sec1 = batch.t0.sec
@@ -791,7 +825,7 @@ class OnlineCollider(Node):
                 print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
                 # Publish collision risk in a custom message
                 self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
-                self.publish_collisions_visu(diffused_risk, batch.t0, batch.p0, batch.q0, visu_T=self.visu_T)
+                self.publish_collisions_visu(diffused_risk, static_mask, batch.t0, batch.p0, batch.q0, visu_T=self.visu_T)
                 
                 t += [time.time()]
 
@@ -837,7 +871,11 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Publish pointcloud
-                self.publish_pointcloud(pred_points, predictions, batch.features, batch.t0)
+                mask_pred = predictions > 2.5
+                pred_points = pred_points[mask_pred]
+                features = batch.features[mask_pred]
+                predictions = predictions[mask_pred]
+                self.publish_pointcloud(pred_points, predictions, features, batch.t0)
                 
                 t += [time.time()]
 

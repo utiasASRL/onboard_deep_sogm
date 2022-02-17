@@ -4,6 +4,7 @@
 # First kill move_base in case of emergency
 ROS_1_DISTRO=noetic
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
+. "../../catkin_ws/install_isolated/setup.bash"
 rosnode kill move_base
 
 all_nodes=""
@@ -22,3 +23,7 @@ if [ -n "$all_nodes" ]; then
 else
     echo "No experiment node running"
 fi
+
+
+# Additionnaly, kill nodes on Xavier board
+ssh -i $HOME/.ssh/id_rsa administrator@cpr-tor59-xav01 "cd catkin_ws/scripts/ && ./stop_exp.sh"

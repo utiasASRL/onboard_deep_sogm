@@ -2,7 +2,7 @@
 
 # Current Date
 now=`date +%Y-%m-%d_%H-%M-%S`
-rosbag_path="../../1-Deep-Collider/results/rosbag_data/$now.bag"
+rosbag_path="/home/$USER/results/rosbag_data/$now.bag"
 
 rosbag record -O $rosbag_path /clock \
                             /velodyne_points \
