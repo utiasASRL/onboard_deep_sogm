@@ -618,10 +618,10 @@ class OnlineCollider(Node):
         #   > invisible for the rest of the map
         # Actually separate them in two different costmaps
 
-        dyn_v = "v2"
+        dyn_v = "v1"
         dynamic_data0 = np.zeros((1, 1))
         if dyn_v == "v1":
-            dynamic_mask = collision_preds[1:, :, :] > 200
+            dynamic_mask = collision_preds[1:, :, :] > 180
             dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
             dynamic_data = np.max(dynamic_data, axis=0)
             dynamic_data *= 1 / np.max(dynamic_data)
