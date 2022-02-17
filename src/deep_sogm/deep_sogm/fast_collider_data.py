@@ -215,7 +215,10 @@ class SharedFifo:
             if not_none_list[ind]:
                 current_frames.append(np.copy(self.frames[ind]))
                 current_stamps.append(self.stamps[ind])
-                current_poses.append(np.copy(self.poses[ind]))
+                if self.poses[ind] is None:
+                    current_poses.append(None)
+                else:
+                    current_poses.append(np.copy(self.poses[ind]))
                 filled += 1
             ind -= 1
 
@@ -227,7 +230,6 @@ class SharedFifo:
             print(35*' ', '{:^35s}'.format(fmt_str), 35*' ')
         return current_frames, current_stamps, current_poses
     
-
     def get_sub_pts(self, n_frames, verbose=False):
 
         # Aquire lock
