@@ -587,18 +587,20 @@ class OnlineDataset:
         q0 = np.zeros((0,))
         
         # Loop (start with most recent frame)
-        for f_i, frame_pts in enumerate(current_frames):
+        for f_i, (pose, frame_pts) in enumerate(zip(current_poses, current_frames)):
 
-            current_poses
+            # Get translation and rotation matrices
+            T = pose[:3] 
+            q = pose[3:]
 
-            # # Update p0 for the most recent frame
-            # if p0.shape[0] < 1:
-            #     p0 = np.copy(T)
-            #     q0 = np.copy(q)
+            # Update p0 for the most recent frame
+            if p0.shape[0] < 1:
+                p0 = np.copy(T)
+                q0 = np.copy(q)
         
-            # # Eliminate points further than config.val_radius
-            # mask = np.sum(np.square(aligned_pts - p0), axis=1) < self.config.in_radius**2
-            # aligned_pts = aligned_pts[mask, :]
+            # Eliminate points further than config.val_radius
+            mask = np.sum(np.square(frame_pts - p0), axis=1) < self.config.in_radius**2
+            frame_pts = frame_pts[mask, :]
 
             # # Shuffle points
             # mask_inds = np.where(mask)[0].astype(np.int32)
@@ -614,6 +616,7 @@ class OnlineDataset:
             merged_points = np.vstack((merged_points, frame_pts))
             merged_feats = np.vstack((merged_feats, features))
 
+
         t += [time.time()]
 
         # # DEBUG: Save input frames
@@ -626,15 +629,15 @@ class OnlineDataset:
         # Subsample input
         #################
 
-        # # Then center on p0
-        # merged_points_c = (merged_points - p0).astype(np.float32)
+        # Then center on p0
+        merged_points_c = (merged_points - p0).astype(np.float32)
 
         # # Subsample merged frames
         # in_pts, in_fts = grid_subsampling(merged_points_c,
         #                                   features=merged_feats,
         #                                   sampleDl=self.config.first_subsampling_dl)
 
-        in_pts = merged_points
+        in_pts = merged_points_c
         in_fts = merged_feats
 
         # # Randomly drop some points (augmentation process and safety for GPU memory consumption)
