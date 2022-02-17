@@ -861,8 +861,8 @@ class OnlineCollider(Node):
                 # Get frame points re-aligned in the velodyne coordinates
                 pred_points = batch.points[0].cpu().detach().numpy() + batch.p0
 
-                R0 = scipyR.from_quat(batch.q0).as_matrix()
-                pred_points = np.dot(pred_points - batch.p0, R0)
+                # R0 = scipyR.from_quat(batch.q0).as_matrix()
+                # pred_points = np.dot(pred_points - batch.p0, R0)
                 
                 t += [time.time()]
                 
