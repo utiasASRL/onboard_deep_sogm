@@ -215,10 +215,7 @@ class SharedFifo:
             if not_none_list[ind]:
                 current_frames.append(np.copy(self.frames[ind]))
                 current_stamps.append(self.stamps[ind])
-                if self.poses[ind] is None:
-                    current_poses.append(None)
-                else:
-                    current_poses.append(np.copy(self.poses[ind]))
+                current_poses.append(np.copy(self.poses[ind]))
                 filled += 1
             ind -= 1
 
@@ -247,7 +244,10 @@ class SharedFifo:
         while filled < n_frames and ind >= 0:
             current_frames.append(np.copy(self.frames[ind]))
             current_stamps.append(self.stamps[ind])
-            current_poses.append(np.copy(self.poses[ind]))
+            if self.poses[ind] is None:
+                current_poses.append(None)
+            else:
+                current_poses.append(np.copy(self.poses[ind]))
             filled += 1
             ind -= 1
 
@@ -567,6 +567,12 @@ class OnlineDataset:
         # sec_stamps = [float(stp.sec) + float(int((stp.nanosec) * 1e-6)) * 1e-3 for stp in current_stamps]
         # s = '{:.3f}, {:.3f}, {:.3f}'.format(*sec_stamps)
         # print(35*' ', '{:^35s}'.format(s), 35*' ')
+
+        print(35*' ', [type(pose) for pose in current_poses], 35*' ')
+        
+        # Safe check
+        if np.any([pose is None for pose in current_poses]):
+            return self.dummy_batch()
 
         # Safe check
         if np.any([frame_pts.shape[0] < 100 for frame_pts in current_frames]):
