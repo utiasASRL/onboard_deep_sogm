@@ -3,6 +3,7 @@
 # Arg to specify if we record this run or not
 record=false
 sogm=false
+nav_with_sogm=false
 nohup=false
 waypoints="default_no_given"
 
@@ -14,6 +15,7 @@ in
 n) nohup=true;;
 r) record=true;;
 s) sogm=true;;
+t) nav_with_sogm=true;;
 w) waypoints=${OPTARG};;
 esac
 done
@@ -51,7 +53,7 @@ echo "OK"
 
 # Now start move_base
 move_base_command="roslaunch jackal_navigation teb_normal.launch"
-if [ "$sogm" = true ] ; then
+if [ "$sogm" = true ] && [ "$nav_with_sogm" = true ]; then
     move_base_command="roslaunch jackal_navigation teb_modified.launch"
 fi
 

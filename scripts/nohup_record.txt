@@ -1,20 +1,18 @@
-[31m[ERROR] [1645124020.981540107]: Error writing: Error opening file: /home//results/rosbag_data/2022-02-17_18-53-40.bag.active[0m
-[0m[ INFO] [1645124020.857561259]: Subscribing to /classified_points[0m
-[0m[ INFO] [1645124020.868184580]: Subscribing to /clock[0m
-[0m[ INFO] [1645124020.874753559]: Subscribing to /dynamic_visu[0m
-[0m[ INFO] [1645124020.881757119]: Subscribing to /map[0m
-[0m[ INFO] [1645124020.888442681]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
-[0m[ INFO] [1645124020.896123424]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
-[0m[ INFO] [1645124020.901547892]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
-[0m[ INFO] [1645124020.907594078]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
-[0m[ INFO] [1645124020.912828777]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
-[0m[ INFO] [1645124020.918862436]: Subscribing to /move_base/current_goal[0m
-[0m[ INFO] [1645124020.924671747]: Subscribing to /move_base/global_costmap/costmap[0m
-[0m[ INFO] [1645124020.930604501]: Subscribing to /move_base/local_costmap/costmap[0m
-[0m[ INFO] [1645124020.937073296]: Subscribing to /move_base/result[0m
-[0m[ INFO] [1645124020.943810518]: Subscribing to /optimal_path[0m
-[0m[ INFO] [1645124020.950056484]: Subscribing to /plan_costmap_3D[0m
-[0m[ INFO] [1645124020.956433304]: Subscribing to /static_visu[0m
-[0m[ INFO] [1645124020.962420683]: Subscribing to /tf[0m
-[0m[ INFO] [1645124020.968908544]: Subscribing to /tf_static[0m
-[0m[ INFO] [1645124020.975445398]: Subscribing to /velodyne_points[0m
+Traceback (most recent call last):
+  File "/opt/ros/noetic/bin/rosbag", line 35, in <module>
+    rosbag.rosbagmain()
+  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 1032, in rosbagmain
+    cmds[cmd](argv[2:])
+  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 161, in record_cmd
+    process.wait()
+  File "/usr/lib/python3.8/subprocess.py", line 1083, in wait
+    return self._wait(timeout=timeout)
+  File "/usr/lib/python3.8/subprocess.py", line 1806, in _wait
+    (pid, sts) = self._try_wait(0)
+  File "/usr/lib/python3.8/subprocess.py", line 1764, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
+  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 155, in <lambda>
+    lambda signum, frame: _send_process_sigint(signum, frame, old_handler, process)
+  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 78, in _send_process_sigint
+    old_handler(signum, frame)
+TypeError: 'Handlers' object is not callable
