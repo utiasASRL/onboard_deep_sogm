@@ -229,15 +229,17 @@ class OnlineCollider(Node):
         self.callback_group2 = MutuallyExclusiveCallbackGroup()
 
         # Subscribe to the lidar topic
-        print('\nSubscribe to /velodyne_points')
-        self.velo_frame_id = 'velodyne'
+        print('\nSubscribe to /sub_points')
+        self.velo_frame_id = 'map'
         self.velo_subscriber = self.create_subscription(PointCloud2,
-                                                      '/velodyne_points',
+                                                      '/sub_points',
                                                       self.lidar_callback,
                                                       10,
                                                       callback_group=self.callback_group1)
+                                                      
 
         print('OK\n')
+        
 
         # # Subsrcibe
         # self.tfBuffer = tf2_ros.Buffer(cache_time= CustomDuration(5.0, 0))
@@ -337,7 +339,6 @@ class OnlineCollider(Node):
 
         return fixed_conv
 
-
     def tf_callback(self, data):
 
         t1 = time.time()
@@ -358,9 +359,9 @@ class OnlineCollider(Node):
             if transform.header.frame_id == 'map' and transform.child_frame_id == 'odom':
                 got_map = True
 
-        # Just got a new map pose, update fifo
-        if got_map:
-            self.online_dataset.shared_fifo.update_poses(self.tfBuffer)
+        # # Just got a new map pose, update fifo
+        # if got_map:
+        #     self.online_dataset.shared_fifo.update_poses(self.tfBuffer)
 
         self.last_t_tf = time.time()
 
@@ -411,6 +412,9 @@ class OnlineCollider(Node):
         
         # Update the frame list
         self.online_dataset.shared_fifo.add_points(xyz_points, cloud.header.stamp)
+
+        # We should have just published the pose of this frame
+        self.online_dataset.shared_fifo.update_poses(self.tfBuffer)
 
         # Display queue (with current frame delay)
         logstr = self.online_dataset.shared_fifo.to_str()

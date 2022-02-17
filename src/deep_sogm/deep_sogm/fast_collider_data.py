@@ -70,6 +70,14 @@ from sensor_msgs.msg import LaserScan
 import cpp_wrappers.cpp_subsampling.grid_subsampling as cpp_subsampling
 import cpp_wrappers.cpp_neighbors.radius_neighbors as cpp_neighbors
 
+from rclpy.node import Node
+
+class TimeNode(Node):
+
+    def get_time(self):
+        sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
+        return sec1, nsec1
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -181,11 +189,12 @@ class SharedFifo:
             l = len(self.stamps)
         return l
 
-    def get_data(self, n_frames):
+    def get_data(self, n_frames, verbose=False):
 
         # Aquire lock
-        print(35*' ', '{:^35s}'.format('CPU 1 : Getting Data'), 35*' ')
-        t1 = time.time()
+        if verbose:
+            print(35*' ', '{:^35s}'.format('CPU 1 : Getting Data'), 35*' ')
+            t1 = time.time()
         self.lock.acquire()
 
         # Check if we have enough poses available
@@ -212,10 +221,41 @@ class SharedFifo:
 
         # Return after releasing lock
         self.lock.release()
-        t2 = time.time()
+        if verbose:
+            t2 = time.time()
+            fmt_str = 'CPU 1 : Done in {:.1f}ms'.format(1000 * (t2 - t1))
+            print(35*' ', '{:^35s}'.format(fmt_str), 35*' ')
+        return current_frames, current_stamps, current_poses
+    
 
-        fmt_str = 'CPU 1 : Done in {:.1f}ms'.format(1000 * (t2 - t1))
-        print(35*' ', '{:^35s}'.format(fmt_str), 35*' ')
+    def get_sub_pts(self, n_frames, verbose=False):
+
+        # Aquire lock
+        if verbose:
+            print(35*' ', '{:^35s}'.format('CPU 1 : Getting Data'), 35*' ')
+            t1 = time.time()
+        self.lock.acquire()
+        
+        # Get the data, assuming poses list is well ordered without holes. Makes copies to ensureno data corruption
+        ind = len(self.stamps) - 1
+        filled = 0
+        current_frames = []
+        current_stamps = []
+        current_poses = []
+        while filled < n_frames and ind >= 0:
+            current_frames.append(np.copy(self.frames[ind]))
+            current_stamps.append(self.stamps[ind])
+            current_poses.append(np.copy(self.poses[ind]))
+            filled += 1
+            ind -= 1
+
+        # Return after releasing lock
+        self.lock.release()
+        
+        if verbose:
+            t2 = time.time()
+            fmt_str = 'CPU 1 : Done in {:.1f}ms'.format(1000 * (t2 - t1))
+            print(35*' ', '{:^35s}'.format(fmt_str), 35*' ')
         return current_frames, current_stamps, current_poses
     
 
@@ -442,6 +482,8 @@ class OnlineDataset:
         #self.frame_queue = mp.Queue(maxsize=config.n_frames)
         self.config = config
 
+        self.time_node = TimeNode('timing_node')
+
         return
 
     def __len__(self):
@@ -479,27 +521,52 @@ class OnlineDataset:
 
         # Get the last three frames returned by the lidar call_back
         current_frames = []
+        current_stamps = []
         current_poses = []
 
         print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for 3 frames'), 35*' ')
         while self.shared_fifo.len() < self.config.n_frames:
             time.sleep(0.01)
 
-        print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for not None'), 35*' ')
-        while len(current_frames) == 0:
-            current_frames, current_stamps, current_poses = self.shared_fifo.get_data(self.config.n_frames)
-            time.sleep(0.1)
+        # # DEBUG DELAY
+        # while True or len(current_frames) == 0:
+        #     current_frames, current_stamps, current_poses = self.shared_fifo.get_sub_pts(self.config.n_frames)
+        #     sec1, nsec1 = self.time_node.get_time()
+        #     frame_times = [(stp.sec, stp.nanosec) for stp in current_stamps]
+        #     time_diffs = [(sec1 - sec2) * 1e3 + (nsec1 - nsec2) * 1e-6 for sec2, nsec2 in frame_times]
+        #     s = '{:.3f}, {:.3f}, {:.3f}'.format(*time_diffs)
+        #     print(35*' ', '{:^35s}'.format(s), 35*' ')
+        #     not_none_list = [int(pp is not None) for pp in current_poses]
+        #     print(35*' ', not_none_list, 35*' ')
+        #     time.sleep(0.001)
+
+        # Check delay and start processing when delay decreases (meaning we just recieved the latest point cloud)
+        print(35*' ', '{:^35s}'.format('CPU 1 : Waiting for lateset sub_points'), 35*' ')
+        last_delay = 0
+        while True:
+
+            # Get data
+            current_frames, current_stamps, current_poses = self.shared_fifo.get_sub_pts(self.config.n_frames)
+
+            # Check if delay just dropped
+            sec1, nsec1 = self.time_node.get_time()
+            new_delay = (sec1 - current_stamps[0].sec) * 1e3 + (nsec1 - current_stamps[0].nanosec)
+            if new_delay < last_delay:
+                # In that case, use the data as soon as we have all poses
+                while np.any([pp is None for pp in current_poses]):
+                    current_frames, current_stamps, current_poses = self.shared_fifo.get_sub_pts(self.config.n_frames)
+                break
+
+            # Otherwise update delay and go on
+            last_delay = new_delay
+            time.sleep(0.001)
 
         print(35*' ', '{:^35s}'.format('CPU 1 : OK got 3 frames'), 35*' ')
-
-        sec_stamps = [float(stp.sec) + float(int((stp.nanosec) * 1e-6)) * 1e-3 for stp in current_stamps]
-        s = '{:.3f}, {:.3f}, {:.3f}'.format(*sec_stamps)
-        print(35*' ', '{:^35s}'.format(s), 35*' ')
+        # sec_stamps = [float(stp.sec) + float(int((stp.nanosec) * 1e-6)) * 1e-3 for stp in current_stamps]
+        # s = '{:.3f}, {:.3f}, {:.3f}'.format(*sec_stamps)
+        # print(35*' ', '{:^35s}'.format(s), 35*' ')
 
         # Safe check
-        if np.any([pose is None for pose in current_poses]):
-            return self.dummy_batch()
-
         if np.any([frame_pts.shape[0] < 100 for frame_pts in current_frames]):
             return self.dummy_batch()
 
@@ -514,29 +581,24 @@ class OnlineDataset:
         # Initiate merged points
         merged_points = np.zeros((0, 3), dtype=np.float32)
         merged_feats = np.zeros((0, self.config.n_frames), dtype=np.float32)
-        p_origin = np.zeros((1, 3))
+
+        # p_origin = np.zeros((1, 3))
         p0 = np.zeros((0,))
         q0 = np.zeros((0,))
         
         # Loop (start with most recent frame)
-        for f_i, (pose, frame_pts) in enumerate(zip(current_poses, current_frames)):
+        for f_i, frame_pts in enumerate(current_frames):
 
-            # Get translation and rotation matrices
-            T = pose[:3] 
-            q = pose[3:]
-            R = scipyR.from_quat(q).as_matrix()
+            current_poses
 
-            # Update p0 for the most recent frame
-            if p0.shape[0] < 1:
-                p0 = np.copy(T)
-                q0 = np.copy(q)
-
-            # Apply tranformation to align input
-            aligned_pts = np.dot(frame_pts, R.T) + T
+            # # Update p0 for the most recent frame
+            # if p0.shape[0] < 1:
+            #     p0 = np.copy(T)
+            #     q0 = np.copy(q)
         
-            # Eliminate points further than config.val_radius
-            mask = np.sum(np.square(aligned_pts - p0), axis=1) < self.config.in_radius**2
-            aligned_pts = aligned_pts[mask, :]
+            # # Eliminate points further than config.val_radius
+            # mask = np.sum(np.square(aligned_pts - p0), axis=1) < self.config.in_radius**2
+            # aligned_pts = aligned_pts[mask, :]
 
             # # Shuffle points
             # mask_inds = np.where(mask)[0].astype(np.int32)
@@ -545,11 +607,11 @@ class OnlineDataset:
             # sem_labels = sem_labels[rand_order]
 
             # Stack features
-            features = np.zeros((aligned_pts.shape[0], self.config.n_frames), dtype=np.float32)
+            features = np.zeros((frame_pts.shape[0], self.config.n_frames), dtype=np.float32)
             features[:, f_i] = 1
 
             # Merge points
-            merged_points = np.vstack((merged_points, aligned_pts))
+            merged_points = np.vstack((merged_points, frame_pts))
             merged_feats = np.vstack((merged_feats, features))
 
         t += [time.time()]
@@ -564,13 +626,16 @@ class OnlineDataset:
         # Subsample input
         #################
 
-        # Then center on p0
-        merged_points_c = (merged_points - p0).astype(np.float32)
+        # # Then center on p0
+        # merged_points_c = (merged_points - p0).astype(np.float32)
 
-        # Subsample merged frames
-        in_pts, in_fts = grid_subsampling(merged_points_c,
-                                          features=merged_feats,
-                                          sampleDl=self.config.first_subsampling_dl)
+        # # Subsample merged frames
+        # in_pts, in_fts = grid_subsampling(merged_points_c,
+        #                                   features=merged_feats,
+        #                                   sampleDl=self.config.first_subsampling_dl)
+
+        in_pts = merged_points
+        in_fts = merged_feats
 
         # # Randomly drop some points (augmentation process and safety for GPU memory consumption)
         # n = in_pts.shape[0]
