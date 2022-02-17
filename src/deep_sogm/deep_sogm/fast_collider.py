@@ -626,9 +626,9 @@ class OnlineCollider(Node):
             dynamic_data = np.max(dynamic_data, axis=0)
             dynamic_data *= 1 / np.max(dynamic_data)
             dynamic_data *= 126
-            dynamic_data = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
-            mask = dynamic_data > 0
-            dynamic_data[mask] += 128
+            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
+            mask = dynamic_data0 > 0
+            dynamic_data0[mask] += 128
         elif dyn_v == "v2":
 
             for iso_i, iso in enumerate([230, 150, 70]):

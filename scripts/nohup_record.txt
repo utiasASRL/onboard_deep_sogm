@@ -1,18 +1,20 @@
-Traceback (most recent call last):
-  File "/opt/ros/noetic/bin/rosbag", line 35, in <module>
-    rosbag.rosbagmain()
-  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 1032, in rosbagmain
-    cmds[cmd](argv[2:])
-  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 161, in record_cmd
-    process.wait()
-  File "/usr/lib/python3.8/subprocess.py", line 1083, in wait
-    return self._wait(timeout=timeout)
-  File "/usr/lib/python3.8/subprocess.py", line 1806, in _wait
-    (pid, sts) = self._try_wait(0)
-  File "/usr/lib/python3.8/subprocess.py", line 1764, in _try_wait
-    (pid, sts) = os.waitpid(self.pid, wait_flags)
-  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 155, in <lambda>
-    lambda signum, frame: _send_process_sigint(signum, frame, old_handler, process)
-  File "/opt/ros/noetic/lib/python3/dist-packages/rosbag/rosbag_main.py", line 78, in _send_process_sigint
-    old_handler(signum, frame)
-TypeError: 'Handlers' object is not callable
+[31m[ERROR] [1645125217.251542442]: Error writing: Error opening file: /home//results/rosbag_data/2022-02-17_19-13-36.bag.active[0m
+[0m[ INFO] [1645125217.123800613]: Subscribing to /classified_points[0m
+[0m[ INFO] [1645125217.133888937]: Subscribing to /clock[0m
+[0m[ INFO] [1645125217.141047797]: Subscribing to /dynamic_visu[0m
+[0m[ INFO] [1645125217.147074455]: Subscribing to /map[0m
+[0m[ INFO] [1645125217.153326167]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
+[0m[ INFO] [1645125217.159851099]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
+[0m[ INFO] [1645125217.168885934]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
+[0m[ INFO] [1645125217.177770720]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
+[0m[ INFO] [1645125217.186042646]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
+[0m[ INFO] [1645125217.192307347]: Subscribing to /move_base/current_goal[0m
+[0m[ INFO] [1645125217.199090255]: Subscribing to /move_base/global_costmap/costmap[0m
+[0m[ INFO] [1645125217.204646317]: Subscribing to /move_base/local_costmap/costmap[0m
+[0m[ INFO] [1645125217.210118521]: Subscribing to /move_base/result[0m
+[0m[ INFO] [1645125217.215455052]: Subscribing to /optimal_path[0m
+[0m[ INFO] [1645125217.220575812]: Subscribing to /plan_costmap_3D[0m
+[0m[ INFO] [1645125217.225546152]: Subscribing to /static_visu[0m
+[0m[ INFO] [1645125217.231938998]: Subscribing to /tf[0m
+[0m[ INFO] [1645125217.237455136]: Subscribing to /tf_static[0m
+[0m[ INFO] [1645125217.245010975]: Subscribing to /velodyne_points[0m
