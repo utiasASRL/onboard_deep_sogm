@@ -22,6 +22,8 @@ rosbag record -O $rosbag_path /clock \
                             /static_visu  \
                             /dynamic_visu  \
                             /plan_costmap_3D \
+                            /dummy_plan_costmap_3D \
+                            /dummy_obstacles \
                             /move_base/TebLocalPlannerROS/local_plan \
                             /move_base/TebLocalPlannerROS/global_plan \
                             /move_base/TebLocalPlannerROS/teb_markers \

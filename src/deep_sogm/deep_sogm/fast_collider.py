@@ -167,17 +167,7 @@ class OnlineCollider(Node):
         self.visu_T = 29
 
         self.declare_parameter('nav_without_sogm', 'false')
-        self.nav_without_sogm = self.get_parameter('my_parameter').get_parameter_value().string_value
-
-        print('')
-        print('')
-        print('')
-        print('++++++++++++++++++++++++++++++++++++++++++++')
-        print(self.nav_without_sogm)
-        print('+++++++++++++++++++++++++++++++++++++++++++')
-        print('')
-        print('')
-        print('')
+        self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -280,55 +270,22 @@ class OnlineCollider(Node):
 
         print('OK\n')
 
-        # Init collision publisher
-        # self.collision_pub = rospy.Publisher('/plan_costmap_3D', VoxGrid, queue_size=10)
-        # self.visu_pub = rospy.Publisher('/collision_visu', OccupancyGrid, queue_size=10)
-        self.collision_pub = self.create_publisher(VoxGrid, '/plan_costmap_3D', 10)
+        if self.nav_without_sogm:
+            # Init dummy publishers
+            self.collision_pub = self.create_publisher(VoxGrid, '/dummy_plan_costmap_3D', 10)
+            self.obstacle_pub = self.create_publisher(ObstacleArrayMsg, '/dummy_obstacles', 10)
+
+        else:
+            # Init collision and obstacle publishers
+            self.collision_pub = self.create_publisher(VoxGrid, '/plan_costmap_3D', 10)
+            self.obstacle_pub = self.create_publisher(ObstacleArrayMsg, '/move_base/TebLocalPlannerROS/obstacles', 10)
+
+        # Init other visu  publisher
+        self.pointcloud_pub = self.create_publisher(PointCloud2, '/classified_points', 10)
         self.visu_pub = self.create_publisher(OccupancyGrid, '/dynamic_visu', 10)
         self.visu_pub_static = self.create_publisher(OccupancyGrid, '/static_visu', 10)
+
         self.time_resolution = self.config.T_2D / self.config.n_2D_layers
-
-        # Init obstacle publisher
-        # self.obstacle_pub = rospy.Publisher('/move_base/TebLocalPlannerROS/obstacles', ObstacleArrayMsg, queue_size=10)
-        self.obstacle_pub = self.create_publisher(ObstacleArrayMsg, '/move_base/TebLocalPlannerROS/obstacles', 10)
-
-        # Init point cloud publisher
-        # self.pointcloud_pub = rospy.Publisher('/classified_points', PointCloud2, queue_size=10)
-        self.pointcloud_pub = self.create_publisher(PointCloud2, '/classified_points', 10)
-
-        # # obtaining/defining the parameters for the output of the laserscan data
-        # try:
-        #     self.gmapping_status = rospy.get_param('gmapping_status')
-        # except KeyError:
-        #     self.gmapping_status = True
-        
-        # self.template_scan = LaserScan()
-
-        # self.template_scan.angle_max = np.pi
-        # self.template_scan.angle_min = -np.pi
-        # self.template_scan.angle_increment = 0.01
-        # self.template_scan.time_increment = 0.0
-        # self.template_scan.scan_time = 0.01
-        # self.template_scan.range_min = 0.0
-        # self.template_scan.range_max = 30.0
-        # self.min_height = 0.01
-        # self.max_height = 1
-        # self.ranges_size = int(np.ceil((self.template_scan.angle_max - self.template_scan.angle_min)/self.template_scan.angle_increment))
-
-                                                                                    
-        # self.pub_funcs = []
-        # if (PUBLISH_POINTCLOUD):
-        #     self.pub = rospy.Publisher('/classified_points', PointCloud2, queue_size=10)
-        #     self.pub_funcs.append(self.publish_as_pointcloud)
-        # if (PUBLISH_LASERSCAN):
-        #     # scan for local planner (the first element of the tuple denotes the classes alloted to that scan)
-        #     self.pub_list = [([0, 1, 2, 3, 4], rospy.Publisher('/local_planner_points2', LaserScan, queue_size=10))]
-        #     self.pub_funcs.append(self.publish_as_laserscan)
-        #     if (self.gmapping_status):
-        #         self.pub_list.append(([0, 2, 3], rospy.Publisher('/gmapping_points2', LaserScan, queue_size=10)))  # scan for gmapping
-        #     else:
-        #         self.pub_list.append(([2], rospy.Publisher('/amcl_points2', LaserScan, queue_size=10)))  # scan for amcl localization
-        #         self.pub_list.append(([0, 2, 3], rospy.Publisher('/global_planner_points2', LaserScan, queue_size=10)))  # scan for global planner
 
         self.last_t = time.time()
         self.last_t_tf = time.time()

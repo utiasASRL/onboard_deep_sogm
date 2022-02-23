@@ -105,11 +105,6 @@ if [ "$sogm" = true ] ; then
         sogm_command="ros2 launch deep_sogm sogm_nopub_launch.py"
     fi
 
-    # TODO: 1. Ici ajouter argument pour stopper la publication d'obstacles quand on ru nen -st
-    #       2. Test un run en -st
-    #       3. Record un rosbag (OK)
-    #       4. teb_debug.sh => costmap_from_rosbag.py, publier la costmap a certain moments d'un run pour test teb avec les parameters
-
     echo "$sogm_command"
     
     source "/opt/ros/foxy/setup.bash"
@@ -121,7 +116,7 @@ if [ "$sogm" = true ] ; then
     else
         xterm -bg black -fg lightgray -xrm "xterm*allowTitleOps: false" -T "Ros1-Bridge" -n "Ros1-Bridge" -hold \
             -e ros2 run ros1_bridge dynamic_bridge &
-        xterm -bg black -fg lightgray -xrm "xterm*allowTitleOps: false" -T "SOGM Prediction" -n "SOGM Prediction" -hold \
+        xterm -bg black -fg lightgray -geometry 160x20+30+10 -xrm "xterm*allowTitleOps: false" -T "SOGM Prediction" -n "SOGM Prediction" -hold \
             -e $sogm_command &
         # $sogm_command
     fi
@@ -138,12 +133,12 @@ if [ "$sogm" = true ] ; then
     until [ -n "$sogm_topic" ] 
     do 
         sleep 0.1
-        sogm_topic=$(rostopic list -p | grep "/plan_costmap_3D")
+        sogm_topic=$(rostopic list -p | grep "/classified_points")
     done 
     until [[ -n "$sogm_msg" ]]
     do 
         sleep 0.1
-        sogm_msg=$(rostopic echo -n 1 /plan_costmap_3D | grep "frame_id")
+        sogm_msg=$(rostopic echo -n 1 /classified_points | grep "frame_id")
     done 
     echo "OK"
     echo ""
