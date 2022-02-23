@@ -1,8 +1,12 @@
 #!/bin/bash
 
+ROS_1_DISTRO=noetic
+source "/opt/ros/$ROS_1_DISTRO/setup.bash"
+. "../../catkin_ws/install_isolated/setup.bash"
+
 # Current Date
 now=`date +%Y-%m-%d_%H-%M-%S`
-rosbag_path="/home/$USER/results/rosbag_data/$now.bag"
+rosbag_path="$HOME/results/rosbag_data/$now.bag"
 
 rosbag record -O $rosbag_path /clock \
                             /velodyne_points \

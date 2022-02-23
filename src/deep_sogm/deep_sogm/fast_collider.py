@@ -157,14 +157,27 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.static_range = 1.1
-        self.dynamic_range = 1.8
+        self.static_range = 0.8
+        self.dynamic_range = 0.8
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
         self.maxima_layers = [15, 29]
 
         self.visu_T = 29
+
+        self.declare_parameter('nav_without_sogm', 'false')
+        self.nav_without_sogm = self.get_parameter('my_parameter').get_parameter_value().string_value
+
+        print('')
+        print('')
+        print('')
+        print('++++++++++++++++++++++++++++++++++++++++++++')
+        print(self.nav_without_sogm)
+        print('+++++++++++++++++++++++++++++++++++++++++++')
+        print('')
+        print('')
+        print('')
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -618,8 +631,16 @@ class OnlineCollider(Node):
         #   > invisible for the rest of the map
         # Actually separate them in two different costmaps
 
-        dyn_v = "v1"
+        dyn_v = "v0"
         dynamic_data0 = np.zeros((1, 1))
+        if dyn_v == "v0":
+            dynamic_data = collision_preds[visu_T, :, :].astype(np.float32)
+            dynamic_data *= 1 / 255
+            dynamic_data *= 126
+            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
+            mask = dynamic_data0 > 0
+            dynamic_data0[mask] += 128
+
         if dyn_v == "v1":
             dynamic_mask = collision_preds[1:, :, :] > 180
             dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
@@ -629,8 +650,8 @@ class OnlineCollider(Node):
             dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
             mask = dynamic_data0 > 0
             dynamic_data0[mask] += 128
-        elif dyn_v == "v2":
 
+        elif dyn_v == "v2":
             for iso_i, iso in enumerate([230, 150, 70]):
 
                 dynamic_mask = collision_preds[1:, :, :] > iso

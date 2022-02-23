@@ -98,12 +98,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /static_visu
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: false
       Autocompute Value Bounds:
@@ -330,9 +330,7 @@ Visualization Manager:
       Marker Topic: /move_base/TebLocalPlannerROS/teb_markers
       Name: Marker
       Namespaces:
-        PointObstacles: true
-        RobotFootprintModel: true
-        TebContainer: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -340,7 +338,7 @@ Visualization Manager:
       Marker Topic: /move_base/TebLocalPlannerROS/teb_pose_layer
       Name: MarkerArray
       Namespaces:
-        teb_custom: true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -428,4 +426,4 @@ Window Geometry:
     collapsed: true
   Width: 1920
   X: 1920
-  Y: 23
+  Y: 31
