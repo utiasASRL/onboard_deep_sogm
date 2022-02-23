@@ -29,7 +29,8 @@ rosbag record -O $rosbag_path /clock \
                             /move_base/TebLocalPlannerROS/teb_markers \
                             /move_base/TebLocalPlannerROS/teb_poses \
                             /move_base/TebLocalPlannerROS/obstacles \
-                            /move_base/TebLocalPlannerROS/teb_markers
+                            /move_base/TebLocalPlannerROS/teb_pose_layer
+                            
 
 
 
