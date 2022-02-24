@@ -405,8 +405,10 @@ class OnlineCollider(Node):
         # collision_risk *= (collision_risk > 0.06).type(collision_risk.dtype)
                     
         # Remove residual preds (soft hysteresis)
-        lim1 = 0.06
-        lim2 = 0.09
+        # lim1 = 0.06
+        # lim2 = 0.09
+        lim1 = 0.15
+        lim2 = 0.2
         dlim = lim2 - lim1
         mask0 = collision_preds <= lim1
         mask1 = torch.logical_and(collision_preds < lim2, collision_preds > lim1)
@@ -660,10 +662,6 @@ class OnlineCollider(Node):
             obstacle_msg = ObstacleMsg()
             obstacle_msg.id = obst_i
             obstacle_msg.polygon.points = [Point32(x=pos[0], y=pos[1], z=0.0)]
-
-            # obstacle_msg.polygon.points[0].x = 1.5
-            # obstacle_msg.polygon.points[0].y = 0
-            # obstacle_msg.polygon.points[0].z = 0
 
             msg.obstacles.append(obstacle_msg)
 
