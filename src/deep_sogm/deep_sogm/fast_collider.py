@@ -590,7 +590,7 @@ class OnlineCollider(Node):
         #   > invisible for the rest of the map
         # Actually separate them in two different costmaps
 
-        dyn_v = "v0"
+        dyn_v = "v2"
         dynamic_data0 = np.zeros((1, 1))
         if dyn_v == "v0":
             dynamic_data = collision_preds[visu_T, :, :].astype(np.float32)
