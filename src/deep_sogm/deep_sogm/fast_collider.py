@@ -158,7 +158,7 @@ class OnlineCollider(Node):
         ############
 
         self.static_range = 0.8
-        self.dynamic_range = 0.8
+        self.dynamic_range = 1.1
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
@@ -167,7 +167,7 @@ class OnlineCollider(Node):
         self.visu_T = 29
 
         self.declare_parameter('nav_without_sogm', 'false')
-        self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value
+        self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value != "false"
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
