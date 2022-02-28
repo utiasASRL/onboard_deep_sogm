@@ -1,0 +1,20 @@
+[31m[ERROR] [1645028524.841090615]: Error writing: Error opening file: /home//results/rosbag_data/2022-02-16_16-22-04.bag.active[0m
+[0m[ INFO] [1645028524.704068176]: Subscribing to /classified_points[0m
+[0m[ INFO] [1645028524.714477198]: Subscribing to /clock[0m
+[0m[ INFO] [1645028524.719870859]: Subscribing to /dynamic_visu[0m
+[0m[ INFO] [1645028524.728003642]: Subscribing to /map[0m
+[0m[ INFO] [1645028524.736665684]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
+[0m[ INFO] [1645028524.745187026]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
+[0m[ INFO] [1645028524.751753022]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
+[0m[ INFO] [1645028524.758898740]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
+[0m[ INFO] [1645028524.767430827]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
+[0m[ INFO] [1645028524.775209922]: Subscribing to /move_base/current_goal[0m
+[0m[ INFO] [1645028524.782424113]: Subscribing to /move_base/global_costmap/costmap[0m
+[0m[ INFO] [1645028524.788384520]: Subscribing to /move_base/local_costmap/costmap[0m
+[0m[ INFO] [1645028524.793848615]: Subscribing to /move_base/result[0m
+[0m[ INFO] [1645028524.800351445]: Subscribing to /optimal_path[0m
+[0m[ INFO] [1645028524.806801633]: Subscribing to /plan_costmap_3D[0m
+[0m[ INFO] [1645028524.813811813]: Subscribing to /static_visu[0m
+[0m[ INFO] [1645028524.819496535]: Subscribing to /tf[0m
+[0m[ INFO] [1645028524.826404354]: Subscribing to /tf_static[0m
+[0m[ INFO] [1645028524.833689896]: Subscribing to /velodyne_points[0m

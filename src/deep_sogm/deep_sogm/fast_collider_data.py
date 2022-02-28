@@ -155,6 +155,7 @@ class SharedFifo:
                         self.poses[f_i] = T_q
 
                     except (tf2_ros.InvalidArgumentException, tf2_ros.LookupException, tf2_ros.ExtrapolationException) as e:
+                        print(e)
                         pass
                     
 
@@ -491,6 +492,10 @@ class OnlineDataset:
             time.sleep(0.1)
 
         print(35*' ', '{:^35s}'.format('CPU 1 : OK got 3 frames'), 35*' ')
+
+        sec_stamps = [float(stp.sec) + float(int((stp.nanosec) * 1e-6)) * 1e-3 for stp in current_stamps]
+        s = '{:.3f}, {:.3f}, {:.3f}'.format(*sec_stamps)
+        print(35*' ', '{:^35s}'.format(s), 35*' ')
 
         # Safe check
         if np.any([pose is None for pose in current_poses]):
