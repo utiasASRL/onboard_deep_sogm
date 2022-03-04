@@ -83,10 +83,8 @@ echo ""
 
 
 # Record run
-if [ "$record" = true ] ; then
-    echo "Record Rosbag"
-    nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
-fi
+echo "Record Rosbag"
+nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
 
 echo ""
 read -p "Experiment running. Press any key to stop everything" choice

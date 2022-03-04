@@ -8,6 +8,12 @@ source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 now=`date +%Y-%m-%d_%H-%M-%S`
 rosbag_path="$HOME/results/rosbag_data/$now.bag"
 
+echo ""
+echo ""
+echo "Recording to: $rosbag_path"
+echo ""
+echo ""
+
 rosbag record -O $rosbag_path /clock \
                             /velodyne_points \
                             /map \
