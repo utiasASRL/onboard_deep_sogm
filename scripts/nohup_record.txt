@@ -1,0 +1,25 @@
+[33m[ WARN] [1646173743.989696593]: Shutdown request received.[0m
+[33m[ WARN] [1646173743.989792303]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1646173519.277122691]: Subscribing to /classified_points[0m
+[0m[ INFO] [1646173519.290482715]: Subscribing to /clock[0m
+[0m[ INFO] [1646173519.298996731]: Subscribing to /dummy_obstacles[0m
+[0m[ INFO] [1646173519.305903332]: Subscribing to /dummy_plan_costmap_3D[0m
+[0m[ INFO] [1646173519.313773608]: Subscribing to /dynamic_visu[0m
+[0m[ INFO] [1646173519.321893372]: Subscribing to /map[0m
+[0m[ INFO] [1646173519.329803413]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
+[0m[ INFO] [1646173519.337094664]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
+[0m[ INFO] [1646173519.344101901]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
+[0m[ INFO] [1646173519.351386505]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
+[0m[ INFO] [1646173519.360941167]: Subscribing to /move_base/TebLocalPlannerROS/teb_pose_layer[0m
+[0m[ INFO] [1646173519.368674161]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
+[0m[ INFO] [1646173519.377057869]: Subscribing to /move_base/current_goal[0m
+[0m[ INFO] [1646173519.384427070]: Subscribing to /move_base/global_costmap/costmap[0m
+[0m[ INFO] [1646173519.391936685]: Subscribing to /move_base/local_costmap/costmap[0m
+[0m[ INFO] [1646173519.399473577]: Subscribing to /move_base/result[0m
+[0m[ INFO] [1646173519.408266843]: Subscribing to /optimal_path[0m
+[0m[ INFO] [1646173519.416399836]: Subscribing to /plan_costmap_3D[0m
+[0m[ INFO] [1646173519.422486625]: Subscribing to /static_visu[0m
+[0m[ INFO] [1646173519.429899507]: Subscribing to /tf[0m
+[0m[ INFO] [1646173519.438380428]: Subscribing to /tf_static[0m
+[0m[ INFO] [1646173519.446688798]: Subscribing to /velodyne_points[0m
+[0m[ INFO] [1646173519.454338319]: Recording to '/home/asrl/results/rosbag_data/2022-03-01_22-25-19.bag'.[0m

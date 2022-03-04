@@ -879,7 +879,7 @@ class OnlineCollider(Node):
 def main(args=None):
 
     # Parameters
-    log_name = 'Log_2022-01-21_16-44-32'
+    log_name = 'Log_2022-02-25_21-21-57'
     chkp_name = 'chkp_0600.tar'
     training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 

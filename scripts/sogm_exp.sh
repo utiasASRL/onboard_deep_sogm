@@ -89,11 +89,11 @@ else
     xterm -bg black -fg lightgray -xrm "xterm*allowTitleOps: false" -T "Move Base" -n "Move Base" -hold \
         -e $move_base_command &
 fi
+
 echo "OK"
 echo ""
 echo "------------------------------------------"
 echo ""
-
 
 # Start bridge and collider
 if [ "$sogm" = true ] ; then
@@ -140,6 +140,7 @@ if [ "$sogm" = true ] ; then
         sleep 0.1
         sogm_msg=$(rostopic echo -n 1 /classified_points | grep "frame_id")
     done 
+    
     echo "OK"
     echo ""
     echo "------------------------------------------"
