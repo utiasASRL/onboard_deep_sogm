@@ -165,19 +165,29 @@ if [ $waypoints != "default_no_given" ]; then
     case "$choice" in 
         * ) tmp=false;;
     esac
+
+    # Record run
+    if [ "$record" = true ] ; then
+        echo "Record Rosbag"
+        nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
+    fi
+
+    # Start waypoints
     rostopic pub /start_journey std_msgs/Empty -1
 
     echo "OK"
     echo ""
     echo "------------------------------------------"
     echo ""
-fi
 
+else
 
-# Record run
-if [ "$record" = true ] ; then
-    echo "Record Rosbag"
-    nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
+    # Record run
+    if [ "$record" = true ] ; then
+        echo "Record Rosbag"
+        nohup ./rosbag_record.sh > "nohup_record.txt" 2>&1 &
+    fi
+
 fi
 
 echo ""
