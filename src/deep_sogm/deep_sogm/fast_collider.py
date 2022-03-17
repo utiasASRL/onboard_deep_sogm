@@ -249,21 +249,20 @@ class OnlineCollider(Node):
         #                                             qos=10,
         #                                             static_qos=10)
 
-            
         # Subscribe to tf in the same call_back group as the lidar callback
-        print('\nSubscribe to tf messages') 
-        self.tfBuffer = tf2_ros.Buffer()                                       
+        print('\nSubscribe to tf messages')
+        self.tfBuffer = tf2_ros.Buffer()
         self.tf_sub = self.create_subscription(TFMessage,
-                                          '/tf',
-                                          self.tf_callback,
-                                          10,
-                                          callback_group=self.callback_group2)
-                                                    
+                                               '/tf',
+                                               self.tf_callback,
+                                               10,
+                                               callback_group=self.callback_group2)
+
         self.tf_static_sub = self.create_subscription(TFMessage,
-                                          '/tf_static',
-                                          self.tf_static_callback,
-                                          10,
-                                          callback_group=self.callback_group2)
+                                                      '/tf_static',
+                                                      self.tf_static_callback,
+                                                      10,
+                                                      callback_group=self.callback_group2)
 
         print('OK\n')
 
