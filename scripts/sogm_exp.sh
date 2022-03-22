@@ -28,8 +28,41 @@ w) waypoints=${OPTARG};;
 esac
 done
 
+# Which map are we using
+mapfile="map_Myhal_5.ply"
+
+
+
+
+
+
+
+
+# TODO: Verif qu'on a bien tout fini pour le classified frame 2D map
+#       Collect more data
+#       Test what we did di nthe simualtor
+#       Cahnge mapfile and chkp in fast_collider
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # First of all start pointslam on Xavier board
 point_slam_command="cd catkin_ws/scripts/ && ./point_slam.sh"
+if [ "$sogm" = true ] ; then
+    point_slam_command="$point_slam_command -f"
+fi
+point_slam_command="$point_slam_command -m \"$mapfile\""
 ssh_command="ssh -i $HOME/.ssh/id_rsa administrator@cpr-tor59-xav01 $point_slam_command"
 echo ""
 echo "Running PointSlam via ssh. Command used:"
@@ -37,13 +70,14 @@ echo "$ssh_command"
 if [ "$nohup" = true ] ; then
     nohup $ssh_command > "nohup_point_slam.txt" 2>&1 &
 else
-    xterm -bg black -fg lightgray -xrm "xterm*allowTitleOps: false" -T "PointSlam" -n "PointSlam" -hold \
+    xterm -bg black -fg lightgray -geometry 120x30+40+20 -xrm "xterm*allowTitleOps: false" -T "PointSlam" -n "PointSlam" -hold \
         -e $ssh_command &
 fi
 echo "OK"
 echo ""
 echo "------------------------------------------"
 echo ""
+
 
 # Source ros here
 echo ""
@@ -200,10 +234,5 @@ esac
 
 # Stop everything
 ./stop_exp.sh
-
-
-
-
-
 
 

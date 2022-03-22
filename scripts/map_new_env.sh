@@ -10,7 +10,7 @@ echo ""
 
 
 # First of all start pointslam on Xavier board
-point_slam_command="cd catkin_ws/scripts/ && ./point_slam.sh -m"
+point_slam_command="cd catkin_ws/scripts/ && ./point_slam.sh"
 ssh_command="ssh -i $HOME/.ssh/id_rsa administrator@cpr-tor59-xav01 $point_slam_command"
 echo ""
 echo "Running PointSlam via ssh. Command used:"

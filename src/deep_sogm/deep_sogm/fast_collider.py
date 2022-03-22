@@ -233,7 +233,7 @@ class OnlineCollider(Node):
 
         # Subscribe to the lidar topic
         print('\nSubscribe to /sub_points')
-        self.velo_frame_id = 'map'
+        self.map_frame_id = 'map'
         self.velo_subscriber = self.create_subscription(PointCloud2,
                                                       '/sub_points',
                                                       self.lidar_callback,
@@ -366,13 +366,16 @@ class OnlineCollider(Node):
         #         return
 
         # convert PointCloud2 message to structured numpy array
-        labeled_points = pointcloud2_to_array(cloud)
-
-        # convert numpy array to Nx3 sized numpy array of float32
-        xyz_points = get_xyz_points(labeled_points, remove_nans=True, dtype=np.float32)
+        frame_data = pointcloud2_to_array(cloud)
+        
+        # Remove nan values
+        mask = np.isfinite(frame_data['x']) & \
+            np.isfinite(frame_data['y']) & \
+            np.isfinite(frame_data['z'])
+        frame_data = frame_data[mask]
 
         # Safe check
-        if xyz_points.shape[0] < 100:
+        if frame_data.shape[0] < 100:
             print('{:^35s}'.format('CPU 0 : Corrupted frame not added'), 35*' ', 35*' ')
             return
 
@@ -381,7 +384,7 @@ class OnlineCollider(Node):
         #################
         
         # Update the frame list
-        self.online_dataset.shared_fifo.add_points(xyz_points, cloud.header.stamp)
+        self.online_dataset.shared_fifo.add_points(frame_data, cloud.header.stamp)
 
         # We should have just published the pose of this frame
         self.online_dataset.shared_fifo.update_poses(self.tfBuffer)
@@ -669,33 +672,38 @@ class OnlineCollider(Node):
 
         return
 
-    def publish_pointcloud(self, new_points, predictions, features, t0):
+    def publish_pointcloud(self, new_points, predictions, f_times, f_rings, t0):
 
         t = [time.time()]
 
         # data structure of binary blob output for PointCloud2 data type
-        output_dtype = np.dtype({'names': ['x', 'y', 'z', 'label'],
-                                 'formats': ['<f4', '<f4', '<f4', '<u1']})
+        output_dtype = np.dtype({'names': ['x', 'y', 'z', 'classif', 'time', 'ring'],
+                                 'formats': ['<f4', '<f4', '<f4', '<i4', '<f4', '<u2']})
 
         # new_points = np.hstack((new_points, predictions))
         structured_pc2_array = np.empty([new_points.shape[0]], dtype=output_dtype)
 
         t += [time.time()]
 
+        print(new_points.shape, new_points.dtype)
+        print(f_times.shape, f_times.dtype)
+        print(f_rings.shape, f_rings.dtype)
+
         structured_pc2_array['x'] = new_points[:, 0]
         structured_pc2_array['y'] = new_points[:, 1]
         structured_pc2_array['z'] = new_points[:, 2]
-        structured_pc2_array['label'] = predictions
+        structured_pc2_array['classif'] = predictions.astype(np.int32)
+        structured_pc2_array['time'] = f_times.astype(np.float32)
+        structured_pc2_array['ring'] = f_rings.astype(np.uint16)
+
         # structured_pc2_array['frame_id'] = (features[:, -1] > 0.01).astype(np.uint8)
-
         
-
         t += [time.time()]
 
         # convert to Pointcloud2 message and publish
         msg = array_to_pointcloud2_fast(structured_pc2_array,
                                         rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg(),
-                                        self.velo_frame_id,
+                                        self.map_frame_id,
                                         True)
 
 
@@ -850,12 +858,22 @@ class OnlineCollider(Node):
                 #           ['x', 'y', 'z', 'classif'])
                 # ############################################################################################################
 
+
+                # # Remove static point for better visu in rviz (publish as a separate topic)
+                # mask_pred = predictions > 2.5
+                # pred_points = pred_points[mask_pred]
+                # features = batch.features[mask_pred]
+                # predictions = predictions[mask_pred]
+
+                # Only keep points from last frame
+                last_frame_mask = batch.features.cpu().detach().numpy()[:, -1] > 0.1
+                pred_points = pred_points[last_frame_mask]
+                predictions = predictions[last_frame_mask]
+                f_times = batch.f_times[last_frame_mask]
+                f_rings =  batch.f_rings[last_frame_mask]
+
                 # Publish pointcloud
-                mask_pred = predictions > 2.5
-                pred_points = pred_points[mask_pred]
-                features = batch.features[mask_pred]
-                predictions = predictions[mask_pred]
-                self.publish_pointcloud(pred_points, predictions, features, batch.t0)
+                self.publish_pointcloud(pred_points, predictions, f_times, f_rings, batch.t0)
                 
                 t += [time.time()]
 
@@ -879,7 +897,8 @@ class OnlineCollider(Node):
 def main(args=None):
 
     # Parameters
-    log_name = 'Log_2022-02-25_21-21-57'
+    log_name = 'Log_2022-01-21_16-44-32'
+    # log_name = 'Log_2022-02-25_21-21-57'
     chkp_name = 'chkp_0600.tar'
     training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 

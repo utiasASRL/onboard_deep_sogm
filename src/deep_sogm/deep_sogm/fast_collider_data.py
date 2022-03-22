@@ -589,13 +589,24 @@ class OnlineDataset:
         # Initiate merged points
         merged_points = np.zeros((0, 3), dtype=np.float32)
         merged_feats = np.zeros((0, self.config.n_frames), dtype=np.float32)
+        
+        merged_times = np.zeros((0,), dtype=np.float32)
+        merged_rings = np.zeros((0,), dtype=np.int32)
 
         # p_origin = np.zeros((1, 3))
         p0 = np.zeros((0,))
         q0 = np.zeros((0,))
         
         # Loop (start with most recent frame)
-        for f_i, (pose, frame_pts) in enumerate(zip(current_poses, current_frames)):
+        for f_i, (pose, frame_data) in enumerate(zip(current_poses, current_frames)):
+
+            # Get pts, ts and rings from data
+            frame_pts = np.zeros(frame_data.shape + (3,), dtype=np.float32)
+            frame_pts[...,0] = frame_data['x']
+            frame_pts[...,1] = frame_data['y']
+            frame_pts[...,2] = frame_data['z']
+            frame_times = frame_data['time'].astype(np.float32)
+            frame_rings = frame_data['ring'].astype(np.int32)
 
             # Get translation and rotation matrices
             T = pose[:3] 
@@ -609,6 +620,8 @@ class OnlineDataset:
             # Eliminate points further than config.val_radius
             mask = np.sum(np.square(frame_pts - p0), axis=1) < self.config.in_radius**2
             frame_pts = frame_pts[mask, :]
+            frame_times = frame_times[mask]
+            frame_rings = frame_rings[mask]
 
             # # Shuffle points
             # mask_inds = np.where(mask)[0].astype(np.int32)
@@ -623,15 +636,10 @@ class OnlineDataset:
             # Merge points
             merged_points = np.vstack((merged_points, frame_pts))
             merged_feats = np.vstack((merged_feats, features))
-
-
+            merged_times = np.hstack((merged_times, frame_times))
+            merged_rings = np.hstack((merged_rings, frame_rings))
+            
         t += [time.time()]
-
-        # # DEBUG: Save input frames
-        # plyname = join(ENV_HOME, 'catkin_ws/test_frame_{:.3f}.ply'.format(current_frames[0][0].to_sec()))
-        # write_ply(plyname,
-        #           [merged_points, merged_feats],
-        #           ['x', 'y', 'z', 'f1', 'f2', 'f3'])
 
         #################
         # Subsample input
@@ -751,6 +759,8 @@ class OnlineDataset:
         # Add additionnal inputs
         input_list += [stacked_pools_2D]
         input_list += [stacked_features]
+        input_list += [merged_times]
+        input_list += [merged_rings]
         input_list += [p0, q0, current_stamps[0]]
 
         # # Fake sleeping time
@@ -977,6 +987,10 @@ class OnlineColliderBatch:
         self.pools_2D = torch.from_numpy(input_list[ind])
         ind += 1
         self.features = torch.from_numpy(input_list[ind])
+        ind += 1
+        self.f_times = input_list[ind]
+        ind += 1
+        self.f_rings = input_list[ind]
         ind += 1
         self.p0 = input_list[ind]
         ind += 1
