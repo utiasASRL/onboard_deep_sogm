@@ -72,11 +72,13 @@ import cpp_wrappers.cpp_neighbors.radius_neighbors as cpp_neighbors
 
 from rclpy.node import Node
 
+
 class TimeNode(Node):
 
     def get_time(self):
         sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
         return sec1, nsec1
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -184,10 +186,12 @@ class SharedFifo:
 
         return logstr
 
+
     def len(self):
         with self.lock:
-            l = len(self.stamps)
-        return l
+            lll = len(self.stamps)
+        return lll
+
 
     def get_data(self, n_frames, verbose=False):
 
@@ -261,7 +265,7 @@ class SharedFifo:
         return current_frames, current_stamps, current_poses
     
 
-
+    
 
 def grid_subsampling(points, features=None, labels=None, sampleDl=0.1, verbose=0):
     """
@@ -602,9 +606,9 @@ class OnlineDataset:
 
             # Get pts, ts and rings from data
             frame_pts = np.zeros(frame_data.shape + (3,), dtype=np.float32)
-            frame_pts[...,0] = frame_data['x']
-            frame_pts[...,1] = frame_data['y']
-            frame_pts[...,2] = frame_data['z']
+            frame_pts[..., 0] = frame_data['x']
+            frame_pts[..., 1] = frame_data['y']
+            frame_pts[..., 2] = frame_data['z']
             frame_times = frame_data['time'].astype(np.float32)
             frame_rings = frame_data['ring'].astype(np.int32)
 

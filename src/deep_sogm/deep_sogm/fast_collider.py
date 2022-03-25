@@ -93,6 +93,7 @@ from rclpy.executors import SingleThreadedExecutor, MultiThreadedExecutor
 from rclpy.duration import Duration
 # from rclpy.time import Time
 
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -103,6 +104,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
 
 class CustomDuration():
 
@@ -115,6 +117,7 @@ class CustomDuration():
             return False
         else:
             return (self.sec == other.sec) and (self.nanosec == other.nanosec)
+
 
 class OnlineCollider(Node):
 
@@ -235,14 +238,12 @@ class OnlineCollider(Node):
         print('\nSubscribe to /sub_points')
         self.map_frame_id = 'map'
         self.velo_subscriber = self.create_subscription(PointCloud2,
-                                                      '/sub_points',
-                                                      self.lidar_callback,
-                                                      10,
-                                                      callback_group=self.callback_group1)
-                                                      
+                                                        '/sub_points',
+                                                        self.lidar_callback,
+                                                        10,
+                                                        callback_group=self.callback_group1)
 
         print('OK\n')
-        
 
         # # Subsrcibe
         # self.tfBuffer = tf2_ros.Buffer(cache_time= CustomDuration(5.0, 0))
@@ -252,21 +253,20 @@ class OnlineCollider(Node):
         #                                             qos=10,
         #                                             static_qos=10)
 
-            
         # Subscribe to tf in the same call_back group as the lidar callback
-        print('\nSubscribe to tf messages') 
-        self.tfBuffer = tf2_ros.Buffer()                                       
+        print('\nSubscribe to tf messages')
+        self.tfBuffer = tf2_ros.Buffer()
         self.tf_sub = self.create_subscription(TFMessage,
-                                          '/tf',
-                                          self.tf_callback,
-                                          10,
-                                          callback_group=self.callback_group2)
-                                                    
+                                               '/tf',
+                                               self.tf_callback,
+                                               10,
+                                               callback_group=self.callback_group2)
+
         self.tf_static_sub = self.create_subscription(TFMessage,
-                                          '/tf_static',
-                                          self.tf_static_callback,
-                                          10,
-                                          callback_group=self.callback_group2)
+                                                      '/tf_static',
+                                                      self.tf_static_callback,
+                                                      10,
+                                                      callback_group=self.callback_group2)
 
         print('OK\n')
 
@@ -870,7 +870,7 @@ class OnlineCollider(Node):
                 pred_points = pred_points[last_frame_mask]
                 predictions = predictions[last_frame_mask]
                 f_times = batch.f_times[last_frame_mask]
-                f_rings =  batch.f_rings[last_frame_mask]
+                f_rings = batch.f_rings[last_frame_mask]
 
                 # Publish pointcloud
                 self.publish_pointcloud(pred_points, predictions, f_times, f_rings, batch.t0)
@@ -888,11 +888,13 @@ class OnlineCollider(Node):
 
         return
 
+
 # ----------------------------------------------------------------------------------------------------------------------
 #
 #           Main Call
 #       \***************/
 #
+
 
 def main(args=None):
 
@@ -907,15 +909,16 @@ def main(args=None):
     rclpy.init(args=args)
     tester = OnlineCollider(training_path, chkp_name)
 
-
     # Spin in a separate thread
     executor = MultiThreadedExecutor()
+
     def run_func():
         executor.add_node(tester)
         executor.spin()
         executor.remove_node(tester)
     dedicated_listener_thread = threading.Thread(target=run_func)
     dedicated_listener_thread.start()
+    
     print('OK')
 
     # # Spin in a separate thread
