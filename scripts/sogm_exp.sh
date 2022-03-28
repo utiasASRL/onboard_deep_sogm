@@ -14,9 +14,10 @@ sogm=false
 nav_without_sogm=false
 nohup=false
 waypoints="default_no_given"
+mapfile=""
 
 # Get arguments
-while getopts nrstw: option
+while getopts nrstw:m: option
 do
 case "${option}"
 in
@@ -25,11 +26,14 @@ r) record=true;;
 s) sogm=true;;
 t) nav_without_sogm=true;;
 w) waypoints=${OPTARG};;
+m) mapfile=${OPTARG};;
 esac
 done
 
 # Which map are we using
-mapfile="map_Myhal_5.ply"
+if [ "$mapfile" = "" ] ; then
+    mapfile="map_Myhal_1.ply"
+fi
 
 
 
