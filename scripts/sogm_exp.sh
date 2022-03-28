@@ -38,21 +38,8 @@ fi
 
 
 
-
-
-
-
-# TODO: Verif qu'on a bien tout fini pour le classified frame 2D map
-#       Collect more data
-#       Test what we did di nthe simualtor
-#       Cahnge mapfile and chkp in fast_collider
-
-
-
-
-
-
-
+# TODO: Verif que la 2D costmap marche bien dans myhal 1 quand on utilise sogm
+#       Change mapfile and chkp in fast_collider
 
 
 

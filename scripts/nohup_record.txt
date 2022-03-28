@@ -1,30 +1,30 @@
 
 
-Recording to: /home/asrl/results/rosbag_data/2022-03-28_15-04-24.bag
+Recording to: /home/asrl/results/rosbag_data/2022-03-28_22-02-15.bag
 
 
-[33m[ WARN] [1648480017.621053974]: Shutdown request received.[0m
-[33m[ WARN] [1648480017.621174273]: Reason given for shutdown: [user request][0m
-[0m[ INFO] [1648479865.194988113]: Subscribing to /classified_points[0m
-[0m[ INFO] [1648479865.208050074]: Subscribing to /clock[0m
-[0m[ INFO] [1648479865.215896791]: Subscribing to /dummy_obstacles[0m
-[0m[ INFO] [1648479865.224198418]: Subscribing to /dummy_plan_costmap_3D[0m
-[0m[ INFO] [1648479865.235068277]: Subscribing to /dynamic_visu[0m
-[0m[ INFO] [1648479865.242221856]: Subscribing to /map[0m
-[0m[ INFO] [1648479865.250592496]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
-[0m[ INFO] [1648479865.258108964]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
-[0m[ INFO] [1648479865.264495599]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
-[0m[ INFO] [1648479865.271713204]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
-[0m[ INFO] [1648479865.279510174]: Subscribing to /move_base/TebLocalPlannerROS/teb_pose_layer[0m
-[0m[ INFO] [1648479865.289248456]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
-[0m[ INFO] [1648479865.298973004]: Subscribing to /move_base/current_goal[0m
-[0m[ INFO] [1648479865.307520581]: Subscribing to /move_base/global_costmap/costmap[0m
-[0m[ INFO] [1648479865.315980890]: Subscribing to /move_base/local_costmap/costmap[0m
-[0m[ INFO] [1648479865.323226366]: Subscribing to /move_base/result[0m
-[0m[ INFO] [1648479865.330426422]: Subscribing to /optimal_path[0m
-[0m[ INFO] [1648479865.337649252]: Subscribing to /plan_costmap_3D[0m
-[0m[ INFO] [1648479865.345001838]: Subscribing to /static_visu[0m
-[0m[ INFO] [1648479865.352157230]: Subscribing to /tf[0m
-[0m[ INFO] [1648479865.361417319]: Subscribing to /tf_static[0m
-[0m[ INFO] [1648479865.368315519]: Subscribing to /velodyne_points[0m
-[0m[ INFO] [1648479865.375955480]: Recording to '/home/asrl/results/rosbag_data/2022-03-28_15-04-24.bag'.[0m
+[33m[ WARN] [1648505105.965894603]: Shutdown request received.[0m
+[33m[ WARN] [1648505105.967377604]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1648504935.625368726]: Subscribing to /classified_points[0m
+[0m[ INFO] [1648504935.637029668]: Subscribing to /clock[0m
+[0m[ INFO] [1648504935.645209654]: Subscribing to /dummy_obstacles[0m
+[0m[ INFO] [1648504935.652447562]: Subscribing to /dummy_plan_costmap_3D[0m
+[0m[ INFO] [1648504935.659825292]: Subscribing to /dynamic_visu[0m
+[0m[ INFO] [1648504935.667253301]: Subscribing to /map[0m
+[0m[ INFO] [1648504935.674200416]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
+[0m[ INFO] [1648504935.685883092]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
+[0m[ INFO] [1648504935.695071197]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
+[0m[ INFO] [1648504935.703544417]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
+[0m[ INFO] [1648504935.711243265]: Subscribing to /move_base/TebLocalPlannerROS/teb_pose_layer[0m
+[0m[ INFO] [1648504935.718507158]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
+[0m[ INFO] [1648504935.725629172]: Subscribing to /move_base/current_goal[0m
+[0m[ INFO] [1648504935.733471980]: Subscribing to /move_base/global_costmap/costmap[0m
+[0m[ INFO] [1648504935.740918873]: Subscribing to /move_base/local_costmap/costmap[0m
+[0m[ INFO] [1648504935.748659279]: Subscribing to /move_base/result[0m
+[0m[ INFO] [1648504935.755463750]: Subscribing to /optimal_path[0m
+[0m[ INFO] [1648504935.762966804]: Subscribing to /plan_costmap_3D[0m
+[0m[ INFO] [1648504935.770765459]: Subscribing to /static_visu[0m
+[0m[ INFO] [1648504935.779242474]: Subscribing to /tf[0m
+[0m[ INFO] [1648504935.787338559]: Subscribing to /tf_static[0m
+[0m[ INFO] [1648504935.793856980]: Subscribing to /velodyne_points[0m
+[0m[ INFO] [1648504935.800542136]: Recording to '/home/asrl/results/rosbag_data/2022-03-28_22-02-15.bag'.[0m
