@@ -31,13 +31,23 @@ import sys
 from numpy.core.numeric import False_
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
-ENV_USER = 'asrl'
-ENV_HOME = '/home/asrl'
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+# ENV_USER = 'asrl'
+# ENV_HOME = '/home/asrl'
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+
+ROBOT_ROOT = '/home/asrl/eloquent_ws/src/deep_sogm/deep_sogm'
+SIMU_ROOT = '/home/hth/Deep-Collison-Checker/Myhal_Simulator/onboard_deep_sogm/src/deep_sogm/deep_sogm'
+for ROOT_DIR in [ROBOT_ROOT, SIMU_ROOT]:
+    sys.path.insert(0, ROOT_DIR)
+    sys.path.insert(0, join(ROOT_DIR, "utils"))
+    sys.path.insert(0, join(ROOT_DIR, "models"))
+    sys.path.insert(0, join(ROOT_DIR, "kernels"))
+    sys.path.insert(0, join(ROOT_DIR, "cpp_wrappers"))
+
 
 # Common libs
 import sklearn
@@ -172,6 +182,9 @@ class OnlineCollider(Node):
         self.declare_parameter('nav_without_sogm', 'false')
         self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value != "false"
 
+        self.declare_parameter('simu', 'false')
+        self.simu = self.get_parameter('simu').get_parameter_value().string_value != "false"
+
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
         #self.node.get_logger().info('Created node: fast_collider')
@@ -193,7 +206,7 @@ class OnlineCollider(Node):
 
         # Init data class
         self.queue_length = 5
-        self.online_dataset = OnlineDataset(self.config, self.queue_length)
+        self.online_dataset = OnlineDataset(self.config, self.queue_length, self.simu)
         self.online_sampler = OnlineSampler(self.online_dataset)
         self.online_loader = DataLoader(self.online_dataset,
                                         batch_size=1,
@@ -313,7 +326,7 @@ class OnlineCollider(Node):
 
         t1 = time.time()
         difft = 1000*(t1 - self.last_t_tf)
-        if difft > 200:
+        if not self.simu and difft > 200:
             print(bcolors.WARNING + '{:.1f} --- TF DELAY'.format(difft) + bcolors.ENDC)
         # else:
         #     print('{:.1f} --- OK'.format(difft))
@@ -350,11 +363,13 @@ class OnlineCollider(Node):
         ###############
         # Add new frame
         ###############
+        
 
         t1 = time.time()
         difft = 1000*(t1 - self.last_t)
-        if difft > 200:
+        if not self.simu and difft > 200:
             print(bcolors.WARNING + '{:.1f} --- VELO DELAY'.format(difft) + bcolors.ENDC)
+            
 
         # self.velo_frame_id = cloud.header.frame_id
 
@@ -394,6 +409,11 @@ class OnlineCollider(Node):
         sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
         sec2 = cloud.header.stamp.sec
         nsec2 = cloud.header.stamp.nanosec
+
+        print(sec1, sec2)
+        print(nsec1, nsec2)
+
+
         timediff = (sec1 - sec2) * 1e3 + (nsec1 - nsec2) * 1e-6
         logstr += '  {:6.1f}ms '.format(-timediff)
         print('{:^35s}'.format(logstr), 35*' ', 35*' ')
@@ -614,7 +634,7 @@ class OnlineCollider(Node):
             dynamic_data0[mask] += 128
 
         elif dyn_v == "v2":
-            for iso_i, iso in enumerate([230, 150, 70]):
+            for iso_i, iso in enumerate([220]):
 
                 dynamic_mask = collision_preds[1:, :, :] > iso
                 dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
@@ -684,10 +704,6 @@ class OnlineCollider(Node):
         structured_pc2_array = np.empty([new_points.shape[0]], dtype=output_dtype)
 
         t += [time.time()]
-
-        print(new_points.shape, new_points.dtype)
-        print(f_times.shape, f_times.dtype)
-        print(f_rings.shape, f_rings.dtype)
 
         structured_pc2_array['x'] = new_points[:, 0]
         structured_pc2_array['y'] = new_points[:, 1]
@@ -898,11 +914,23 @@ class OnlineCollider(Node):
 
 def main(args=None):
 
+    # Simu Networks (old with dl=0.06)
+    # log_name = 'Log_2021-05-Bouncers'
+    # log_name = 'Log_2021-05-Wanderers'
+    # log_name = 'Log_2021-05-FlowFollowers'
+    # chkp_name = 'chkp_0300.tar'
+
+    # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
+    log_name = 'Log_2022-03-01_16-47-49'
+    chkp_name = 'chkp_0260.tar'
+    training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
+    
+
     # Parameters
-    log_name = 'Log_2022-01-21_16-44-32'
+    # log_name = 'Log_2022-01-21_16-44-32'
     # log_name = 'Log_2022-02-25_21-21-57'
-    chkp_name = 'chkp_0600.tar'
-    training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
+    # chkp_name = 'chkp_0600.tar'
+    # training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 
     # Setup the collider Class
     print('\n\n\n\n        ------ Init Collider ------')
