@@ -171,11 +171,12 @@ class OnlineCollider(Node):
         ############
 
         self.static_range = 0.8
-        self.dynamic_range = 1.1
+        self.dynamic_range = 1.2
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
-        self.maxima_layers = [15, 29]
+        # self.maxima_layers = [18, 38]
+        self.maxima_layers = [15]
 
         self.visu_T = 29
 
@@ -438,6 +439,9 @@ class OnlineCollider(Node):
         collision_preds[mask0] *= 0
         collision_preds[mask1] *= (1 - ((collision_preds[mask1] - lim2) / dlim) ** 2) ** 2
 
+        # Static risk
+        # ***********
+
         # Get risk from static objects, [1, 1, W, H]
         static_preds = torch.unsqueeze(torch.max(collision_preds[:1, :, :, :2], dim=-1)[0], 1)
 
@@ -449,16 +453,51 @@ class OnlineCollider(Node):
 
         # Do not repeat we only keep it for the first layer: [1, 1, W, H] -> [W, H]
         diffused_0 = np.squeeze(diffused_0)
-
-        # Diffuse the risk from moving obstacles , [T, 1, W, H] -> [T, W, H]
-        moving_risk = torch.unsqueeze(collision_preds[..., 2], 1)
-        diffused_1 = np.squeeze(self.dynamic_conv(moving_risk).cpu().detach().numpy())
         
         # Inverse power for p-norm
         diffused_0 = np.power(np.maximum(0, diffused_0), self.norm_invp)
+
+        # Dynamic risk
+        # ************
+
+        # Get dynamic risk [T, W, H]
+        dynamic_risk = collision_preds[..., 2]
+
+        # Get high risk area
+        high_risk_threshold = 0.7
+        high_risk_mask = dynamic_risk > high_risk_threshold
+        high_risk = torch.zeros_like(dynamic_risk)
+        high_risk[high_risk_mask] = dynamic_risk[high_risk_mask]
+
+        # On the whole dynamic_risk, convolution
+        # Higher value for larger area of risk even if low risk
+        dynamic_risk = torch.unsqueeze(dynamic_risk, 1)
+        diffused_1 = np.squeeze(self.dynamic_conv(dynamic_risk).cpu().detach().numpy())
+
+        # Inverse power for p-norm
         diffused_1 = np.power(np.maximum(0, diffused_1), self.norm_invp)
 
-        # Rescale risk values
+        # Rescale this low_risk at smaller value
+        low_risk_value = 0.4
+        diffused_1 = low_risk_value * diffused_1 / (np.max(diffused_1) + 1e-6)
+
+        # On the high risk, we normalize to have similar value of highest risk (around 1.0)
+        high_risk = torch.unsqueeze(high_risk, 1)
+        high_risk_normalized = high_risk / (self.dynamic_conv(high_risk) + 1e-6)
+        diffused_2 = np.squeeze(self.dynamic_conv(high_risk_normalized).cpu().detach().numpy())
+
+        # Inverse power for p-norm
+        diffused_2 = np.power(np.maximum(0, diffused_2), self.norm_invp)
+
+        # Rescale and combine risk
+        # ************************
+        
+        print(np.max(diffused_0), np.max(diffused_1), np.max(diffused_2))
+
+        # Combine dynamic risks
+        diffused_1 = np.maximum(diffused_1, diffused_2)
+
+        # Rescale risk values (max should be stable around 1.0 for both)
         diffused_0 *= 1.0 / (np.max(diffused_0) + 1e-6)
         diffused_1 *= 1.0 / (np.max(diffused_1) + 1e-6)
 
@@ -592,7 +631,7 @@ class OnlineCollider(Node):
         msg.info.height = collision_preds.shape[2]
         msg.info.origin.position.x = origin0[0]
         msg.info.origin.position.y = origin0[1]
-        msg.info.origin.position.z = -0.011
+        msg.info.origin.position.z = 0.011
         #msg.info.origin.orientation.x = q0[0]
         #msg.info.origin.orientation.y = q0[1]
         #msg.info.origin.orientation.z = q0[2]
@@ -604,7 +643,7 @@ class OnlineCollider(Node):
         msg_static.info.height = collision_preds.shape[2]
         msg_static.info.origin.position.x = origin0[0]
         msg_static.info.origin.position.y = origin0[1]
-        msg_static.info.origin.position.z = -0.01
+        msg_static.info.origin.position.z = 0.01
 
 
         # Define message data
@@ -616,7 +655,7 @@ class OnlineCollider(Node):
         dyn_v = "v2"
         dynamic_data0 = np.zeros((1, 1))
         if dyn_v == "v0":
-            dynamic_data = collision_preds[visu_T, :, :].astype(np.float32)
+            dynamic_data = collision_preds[5, :, :].astype(np.float32)
             dynamic_data *= 1 / 255
             dynamic_data *= 126
             dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
@@ -634,7 +673,7 @@ class OnlineCollider(Node):
             dynamic_data0[mask] += 128
 
         elif dyn_v == "v2":
-            for iso_i, iso in enumerate([220]):
+            for iso_i, iso in enumerate([220, 150]):
 
                 dynamic_mask = collision_preds[1:, :, :] > iso
                 dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
@@ -915,15 +954,16 @@ class OnlineCollider(Node):
 def main(args=None):
 
     # Simu Networks (old with dl=0.06)
-    # log_name = 'Log_2021-05-Bouncers'
+    log_name = 'Log_2021-05-Bouncers'
     # log_name = 'Log_2021-05-Wanderers'
     # log_name = 'Log_2021-05-FlowFollowers'
-    # chkp_name = 'chkp_0300.tar'
-
-    # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
-    log_name = 'Log_2022-03-01_16-47-49'
-    chkp_name = 'chkp_0260.tar'
+    chkp_name = 'chkp_0300.tar'
     training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
+
+    # # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
+    # log_name = 'Log_2022-03-01_16-47-49'
+    # chkp_name = 'chkp_0260.tar'
+    # training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
     
 
     # Parameters

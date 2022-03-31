@@ -493,7 +493,32 @@ class OnlineDataset:
         if len(neighb_limits) == config.num_layers:
             self.neighborhood_limits = neighb_limits
         else:
-            raise ValueError('The neighbors limits were not initialized')
+
+            # # We could not find the limits
+            # raise ValueError('The neighbors limits were not initialized')
+            print('Warning: using uninitialized neighbor limits')
+
+            # Neighbors limit are only here for memory consumption stability.
+            av_keys = np.sort([k for k, v in neighb_lim_dict.items()])
+
+            neighb_limits = []
+            for layer_ind in range(config.num_layers):
+
+                dl = config.first_subsampling_dl * (2**layer_ind)
+                if config.deform_layers[layer_ind]:
+                    r = dl * config.deform_radius
+                else:
+                    r = dl * config.conv_radius
+                layer_str = '{:.3f}_{:.3f}'.format(dl, r)
+                all_lims = [neighb_lim_dict[k] for k in av_keys if layer_str in k]
+
+                if len(all_lims) < 1:
+                    raise ValueError('The neighbors limits were not initialized')
+
+                neighb_limits += [np.max(all_lims)]
+
+            self.neighborhood_limits = neighb_limits
+                
 
         # Setup varaibles for parallelised input queue
         self.shared_fifo = SharedFifo(fifo_size)
