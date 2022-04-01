@@ -38,8 +38,8 @@ fi
 
 
 
-# TODO: Verif que la 2D costmap marche bien dans myhal 1 quand on utilise sogm
-#       Change mapfile and chkp in fast_collider
+
+# TODO: Now test running with sogm downstairs, everything should be working quite well. Just ensure that you have the latest trained model 
 
 
 
@@ -47,6 +47,27 @@ fi
 
 
 
+
+# Get corresponding trained session
+trained_session=""
+chkp_name=""
+if [ "$mapfile" = "map_Myhal_1.ply" ] ; then
+    trained_session="Log_2022-02-25_21-21-57"
+    chkp_name="chkp_0600.tar"
+
+elif [ "$mapfile" = "map_Myhal_5.ply" ] ; then
+    trained_session="Log_2022-01-21_16-44-32"
+    chkp_name="chkp_0600.tar"
+
+else
+    echo ""
+    echo "ERROR: Unkown map file, aborting run"
+    echo ""
+    exit 1
+fi
+
+# Full path
+model_path="$HOME/results/pretrained_logs/$trained_session/checkpoints/$chkp_name"
 
 # First of all start pointslam on Xavier board
 point_slam_command="cd catkin_ws/scripts/ && ./point_slam.sh"
@@ -80,6 +101,7 @@ echo "OK"
 echo ""
 echo "------------------------------------------"
 echo ""
+
 
 # Waiting for pointslam initialization
 echo ""
@@ -126,9 +148,8 @@ if [ "$sogm" = true ] ; then
     echo "Running deep_sogm collider. Command used:"
     
     sogm_command="ros2 launch deep_sogm sogm_launch.py"
-    if [ "$nav_without_sogm" = true ]; then
-        sogm_command="ros2 launch deep_sogm sogm_nopub_launch.py"
-    fi
+    sogm_command="$sogm_command nav_without_sogm:=$nav_without_sogm"
+    sogm_command="$sogm_command model_path:=$model_path"
 
     echo "$sogm_command"
     

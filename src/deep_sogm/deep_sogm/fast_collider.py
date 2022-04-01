@@ -121,7 +121,7 @@ class CustomDuration():
 
 class OnlineCollider(Node):
 
-    def __init__(self, training_path, chkp_name):
+    def __init__(self):
         super().__init__('online_collider')
 
         ####################
@@ -169,6 +169,9 @@ class OnlineCollider(Node):
 
         self.visu_T = 29
 
+        self.declare_parameter('model_path', '')
+        self.model_path = self.get_parameter('model_path').get_parameter_value().string_value
+        
         self.declare_parameter('nav_without_sogm', 'false')
         self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value != "false"
 
@@ -184,8 +187,11 @@ class OnlineCollider(Node):
         print('*****************')
         t1 = time.time()
 
-        # Choose which training checkpoints to use
-        chkp_path = os.path.join(training_path, 'checkpoints', chkp_name)
+        # Get training path from session
+        training_path = '/'.join(self.model_path.split('/')[:-2])
+
+        print(self.model_path)
+        print(training_path)
 
         # Load configuration class used at training
         self.config = Config()
@@ -216,15 +222,15 @@ class OnlineCollider(Node):
 
         # Load the pretrained weigths
         if on_gpu and torch.cuda.is_available():
-            checkpoint = torch.load(chkp_path, map_location=self.device)
+            checkpoint = torch.load(self.model_path, map_location=self.device)
         else:
-            checkpoint = torch.load(chkp_path, map_location=torch.device('cpu'))
+            checkpoint = torch.load(self.model_path, map_location=torch.device('cpu'))
         self.net.load_state_dict(checkpoint['model_state_dict'])
 
         # Switch network from training to evaluation mode
         self.net.eval()
 
-        print("\nModel and training state restored from " + chkp_path)
+        print("\nModel and training state restored from " + self.model_path)
         print('Done in {:.1f}s\n'.format(time.time() - t1))
 
         ###############
@@ -898,16 +904,16 @@ class OnlineCollider(Node):
 
 def main(args=None):
 
-    # Parameters
-    log_name = 'Log_2022-01-21_16-44-32'
-    # log_name = 'Log_2022-02-25_21-21-57'
-    chkp_name = 'chkp_0600.tar'
-    training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
+    # # Parameters
+    # log_name = 'Log_2022-01-21_16-44-32'
+    # # log_name = 'Log_2022-02-25_21-21-57'
+    # chkp_name = 'chkp_0600.tar'
+    # training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 
     # Setup the collider Class
     print('\n\n\n\n        ------ Init Collider ------')
     rclpy.init(args=args)
-    tester = OnlineCollider(training_path, chkp_name)
+    tester = OnlineCollider()
 
     # Spin in a separate thread
     executor = MultiThreadedExecutor()
