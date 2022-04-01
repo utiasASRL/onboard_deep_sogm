@@ -464,7 +464,7 @@ class OnlineCollider(Node):
         dynamic_risk = collision_preds[..., 2]
 
         # Get high risk area
-        high_risk_threshold = 0.7
+        high_risk_threshold = 0.4
         high_risk_mask = dynamic_risk > high_risk_threshold
         high_risk = torch.zeros_like(dynamic_risk)
         high_risk[high_risk_mask] = dynamic_risk[high_risk_mask]
@@ -954,9 +954,9 @@ class OnlineCollider(Node):
 def main(args=None):
 
     # Simu Networks (old with dl=0.06)
-    log_name = 'Log_2021-05-Bouncers'
+    # log_name = 'Log_2021-05-Bouncers'
     # log_name = 'Log_2021-05-Wanderers'
-    # log_name = 'Log_2021-05-FlowFollowers'
+    log_name = 'Log_2021-05-FlowFollowers'
     chkp_name = 'chkp_0300.tar'
     training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
 
