@@ -52,8 +52,8 @@ fi
 trained_session=""
 chkp_name=""
 if [ "$mapfile" = "map_Myhal_1.ply" ] ; then
-    trained_session="Log_2022-02-25_21-21-57"
-    chkp_name="chkp_0600.tar"
+    trained_session="Log_2022-03-23_21-08-49"
+    chkp_name="chkp_0580.tar"
 
 elif [ "$mapfile" = "map_Myhal_5.ply" ] ; then
     trained_session="Log_2022-01-21_16-44-32"

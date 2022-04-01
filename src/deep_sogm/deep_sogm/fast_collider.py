@@ -183,11 +183,15 @@ class OnlineCollider(Node):
         self.declare_parameter('model_path', '')
         self.model_path = self.get_parameter('model_path').get_parameter_value().string_value
         
-        self.declare_parameter('nav_without_sogm', 'false')
-        self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value != "false"
+        self.declare_parameter('nav_without_sogm', False)
+        self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().bool_value
 
-        self.declare_parameter('simu', 'false')
-        self.simu = self.get_parameter('simu').get_parameter_value().string_value != "false"
+        self.declare_parameter('simu', False)
+        self.simu = self.get_parameter('simu').get_parameter_value().bool_value
+
+        print(self.model_path)
+        print(self.nav_without_sogm)
+        print(self.simu)
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -417,10 +421,6 @@ class OnlineCollider(Node):
         sec2 = cloud.header.stamp.sec
         nsec2 = cloud.header.stamp.nanosec
 
-        print(sec1, sec2)
-        print(nsec1, nsec2)
-
-
         timediff = (sec1 - sec2) * 1e3 + (nsec1 - nsec2) * 1e-6
         logstr += '  {:6.1f}ms '.format(-timediff)
         print('{:^35s}'.format(logstr), 35*' ', 35*' ')
@@ -498,7 +498,7 @@ class OnlineCollider(Node):
         # Rescale and combine risk
         # ************************
         
-        print(np.max(diffused_0), np.max(diffused_1), np.max(diffused_2))
+        # print(np.max(diffused_0), np.max(diffused_1), np.max(diffused_2))
 
         # Combine dynamic risks
         diffused_1 = np.maximum(diffused_1, diffused_2)
@@ -693,7 +693,7 @@ class OnlineCollider(Node):
                     dynamic_data[erode_mask] = 0
                 dynamic_data0 = np.maximum(dynamic_data0, dynamic_data)
 
-            dynamic_data0 *= 1 / np.max(dynamic_data0)
+            dynamic_data0 *= (1 / np.max(dynamic_data0) + 1e-6)
             dynamic_data0 *= 126
             dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data0.astype(np.int8)))
             mask = dynamic_data0 > 0
@@ -962,9 +962,9 @@ def main(args=None):
     # Simu Networks (old with dl=0.06)
     # log_name = 'Log_2021-05-Bouncers'
     # log_name = 'Log_2021-05-Wanderers'
-    log_name = 'Log_2021-05-FlowFollowers'
-    chkp_name = 'chkp_0300.tar'
-    training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
+    # log_name = 'Log_2021-05-FlowFollowers'
+    # chkp_name = 'chkp_0300.tar'
+    # training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
 
     # # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
     # log_name = 'Log_2022-03-01_16-47-49'
