@@ -30,13 +30,22 @@ from os.path import exists, join
 import sys
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
-ENV_USER = 'asrl'
-ENV_HOME = '/home/asrl'
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+# ENV_USER = 'asrl'
+# ENV_HOME = '/home/asrl'
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+
+ROBOT_ROOT = '/home/asrl/eloquent_ws/src/deep_sogm/deep_sogm'
+SIMU_ROOT = '/home/hth/Deep-Collison-Checker/Myhal_Simulator/onboard_deep_sogm/src/deep_sogm/deep_sogm'
+for ROOT_DIR in [ROBOT_ROOT, SIMU_ROOT]:
+    sys.path.insert(0, ROOT_DIR)
+    sys.path.insert(0, join(ROOT_DIR, "utils"))
+    sys.path.insert(0, join(ROOT_DIR, "models"))
+    sys.path.insert(0, join(ROOT_DIR, "kernels"))
+    sys.path.insert(0, join(ROOT_DIR, "cpp_wrappers"))
 
 # Common libs
 import torch
@@ -431,7 +440,9 @@ def batch_neighbors(queries, supports, q_batches, s_batches, radius):
 
 class OnlineDataset:
 
-    def __init__(self, config, fifo_size):
+    def __init__(self, config, fifo_size, simu):
+
+        self.simu = simu
 
         # Dict from labels to names
         self.label_to_names = {0: 'uncertain',
@@ -451,7 +462,10 @@ class OnlineDataset:
         self.ignored_labels = np.sort([0])
 
         # Load neighb_limits dictionary
-        neighb_lim_file = join(ENV_HOME, 'Data/MyhalSim/neighbors_limits.pkl')
+        if self.simu:
+            neighb_lim_file = join('/home/hth/Deep-Collison-Checker/Data/KPConv_data/neighbors_limits.pkl')
+        else:
+            neighb_lim_file = join(ENV_HOME, 'Data/MyhalSim/neighbors_limits.pkl')
         if exists(neighb_lim_file):
             with open(neighb_lim_file, 'rb') as file:
                 neighb_lim_dict = pickle.load(file)
@@ -479,7 +493,32 @@ class OnlineDataset:
         if len(neighb_limits) == config.num_layers:
             self.neighborhood_limits = neighb_limits
         else:
-            raise ValueError('The neighbors limits were not initialized')
+
+            # # We could not find the limits
+            # raise ValueError('The neighbors limits were not initialized')
+            print('Warning: using uninitialized neighbor limits')
+
+            # Neighbors limit are only here for memory consumption stability.
+            av_keys = np.sort([k for k, v in neighb_lim_dict.items()])
+
+            neighb_limits = []
+            for layer_ind in range(config.num_layers):
+
+                dl = config.first_subsampling_dl * (2**layer_ind)
+                if config.deform_layers[layer_ind]:
+                    r = dl * config.deform_radius
+                else:
+                    r = dl * config.conv_radius
+                layer_str = '{:.3f}_{:.3f}'.format(dl, r)
+                all_lims = [neighb_lim_dict[k] for k in av_keys if layer_str in k]
+
+                if len(all_lims) < 1:
+                    raise ValueError('The neighbors limits were not initialized')
+
+                neighb_limits += [np.max(all_lims)]
+
+            self.neighborhood_limits = neighb_limits
+                
 
         # Setup varaibles for parallelised input queue
         self.shared_fifo = SharedFifo(fifo_size)
@@ -613,7 +652,7 @@ class OnlineDataset:
             frame_rings = frame_data['ring'].astype(np.int32)
 
             # Get translation and rotation matrices
-            T = pose[:3] 
+            T = pose[:3]
             q = pose[3:]
 
             # Update p0 for the most recent frame

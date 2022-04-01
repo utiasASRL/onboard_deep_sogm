@@ -31,13 +31,23 @@ import sys
 from numpy.core.numeric import False_
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
-ENV_USER = 'asrl'
-ENV_HOME = '/home/asrl'
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
-sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+# ENV_USER = 'asrl'
+# ENV_HOME = '/home/asrl'
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/utils"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/models"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
+# sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
+
+ROBOT_ROOT = '/home/asrl/eloquent_ws/src/deep_sogm/deep_sogm'
+SIMU_ROOT = '/home/hth/Deep-Collison-Checker/Myhal_Simulator/onboard_deep_sogm/src/deep_sogm/deep_sogm'
+for ROOT_DIR in [ROBOT_ROOT, SIMU_ROOT]:
+    sys.path.insert(0, ROOT_DIR)
+    sys.path.insert(0, join(ROOT_DIR, "utils"))
+    sys.path.insert(0, join(ROOT_DIR, "models"))
+    sys.path.insert(0, join(ROOT_DIR, "kernels"))
+    sys.path.insert(0, join(ROOT_DIR, "cpp_wrappers"))
+
 
 # Common libs
 import sklearn
@@ -161,11 +171,12 @@ class OnlineCollider(Node):
         ############
 
         self.static_range = 0.8
-        self.dynamic_range = 1.1
+        self.dynamic_range = 1.2
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
-        self.maxima_layers = [15, 29]
+        # self.maxima_layers = [18, 38]
+        self.maxima_layers = [15]
 
         self.visu_T = 29
 
@@ -174,6 +185,9 @@ class OnlineCollider(Node):
         
         self.declare_parameter('nav_without_sogm', 'false')
         self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().string_value != "false"
+
+        self.declare_parameter('simu', 'false')
+        self.simu = self.get_parameter('simu').get_parameter_value().string_value != "false"
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -199,7 +213,7 @@ class OnlineCollider(Node):
 
         # Init data class
         self.queue_length = 5
-        self.online_dataset = OnlineDataset(self.config, self.queue_length)
+        self.online_dataset = OnlineDataset(self.config, self.queue_length, self.simu)
         self.online_sampler = OnlineSampler(self.online_dataset)
         self.online_loader = DataLoader(self.online_dataset,
                                         batch_size=1,
@@ -319,7 +333,7 @@ class OnlineCollider(Node):
 
         t1 = time.time()
         difft = 1000*(t1 - self.last_t_tf)
-        if difft > 200:
+        if not self.simu and difft > 200:
             print(bcolors.WARNING + '{:.1f} --- TF DELAY'.format(difft) + bcolors.ENDC)
         # else:
         #     print('{:.1f} --- OK'.format(difft))
@@ -356,11 +370,13 @@ class OnlineCollider(Node):
         ###############
         # Add new frame
         ###############
+        
 
         t1 = time.time()
         difft = 1000*(t1 - self.last_t)
-        if difft > 200:
+        if not self.simu and difft > 200:
             print(bcolors.WARNING + '{:.1f} --- VELO DELAY'.format(difft) + bcolors.ENDC)
+            
 
         # self.velo_frame_id = cloud.header.frame_id
 
@@ -400,6 +416,11 @@ class OnlineCollider(Node):
         sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
         sec2 = cloud.header.stamp.sec
         nsec2 = cloud.header.stamp.nanosec
+
+        print(sec1, sec2)
+        print(nsec1, nsec2)
+
+
         timediff = (sec1 - sec2) * 1e3 + (nsec1 - nsec2) * 1e-6
         logstr += '  {:6.1f}ms '.format(-timediff)
         print('{:^35s}'.format(logstr), 35*' ', 35*' ')
@@ -424,6 +445,9 @@ class OnlineCollider(Node):
         collision_preds[mask0] *= 0
         collision_preds[mask1] *= (1 - ((collision_preds[mask1] - lim2) / dlim) ** 2) ** 2
 
+        # Static risk
+        # ***********
+
         # Get risk from static objects, [1, 1, W, H]
         static_preds = torch.unsqueeze(torch.max(collision_preds[:1, :, :, :2], dim=-1)[0], 1)
 
@@ -435,16 +459,51 @@ class OnlineCollider(Node):
 
         # Do not repeat we only keep it for the first layer: [1, 1, W, H] -> [W, H]
         diffused_0 = np.squeeze(diffused_0)
-
-        # Diffuse the risk from moving obstacles , [T, 1, W, H] -> [T, W, H]
-        moving_risk = torch.unsqueeze(collision_preds[..., 2], 1)
-        diffused_1 = np.squeeze(self.dynamic_conv(moving_risk).cpu().detach().numpy())
         
         # Inverse power for p-norm
         diffused_0 = np.power(np.maximum(0, diffused_0), self.norm_invp)
+
+        # Dynamic risk
+        # ************
+
+        # Get dynamic risk [T, W, H]
+        dynamic_risk = collision_preds[..., 2]
+
+        # Get high risk area
+        high_risk_threshold = 0.4
+        high_risk_mask = dynamic_risk > high_risk_threshold
+        high_risk = torch.zeros_like(dynamic_risk)
+        high_risk[high_risk_mask] = dynamic_risk[high_risk_mask]
+
+        # On the whole dynamic_risk, convolution
+        # Higher value for larger area of risk even if low risk
+        dynamic_risk = torch.unsqueeze(dynamic_risk, 1)
+        diffused_1 = np.squeeze(self.dynamic_conv(dynamic_risk).cpu().detach().numpy())
+
+        # Inverse power for p-norm
         diffused_1 = np.power(np.maximum(0, diffused_1), self.norm_invp)
 
-        # Rescale risk values
+        # Rescale this low_risk at smaller value
+        low_risk_value = 0.4
+        diffused_1 = low_risk_value * diffused_1 / (np.max(diffused_1) + 1e-6)
+
+        # On the high risk, we normalize to have similar value of highest risk (around 1.0)
+        high_risk = torch.unsqueeze(high_risk, 1)
+        high_risk_normalized = high_risk / (self.dynamic_conv(high_risk) + 1e-6)
+        diffused_2 = np.squeeze(self.dynamic_conv(high_risk_normalized).cpu().detach().numpy())
+
+        # Inverse power for p-norm
+        diffused_2 = np.power(np.maximum(0, diffused_2), self.norm_invp)
+
+        # Rescale and combine risk
+        # ************************
+        
+        print(np.max(diffused_0), np.max(diffused_1), np.max(diffused_2))
+
+        # Combine dynamic risks
+        diffused_1 = np.maximum(diffused_1, diffused_2)
+
+        # Rescale risk values (max should be stable around 1.0 for both)
         diffused_0 *= 1.0 / (np.max(diffused_0) + 1e-6)
         diffused_1 *= 1.0 / (np.max(diffused_1) + 1e-6)
 
@@ -578,7 +637,7 @@ class OnlineCollider(Node):
         msg.info.height = collision_preds.shape[2]
         msg.info.origin.position.x = origin0[0]
         msg.info.origin.position.y = origin0[1]
-        msg.info.origin.position.z = -0.011
+        msg.info.origin.position.z = 0.011
         #msg.info.origin.orientation.x = q0[0]
         #msg.info.origin.orientation.y = q0[1]
         #msg.info.origin.orientation.z = q0[2]
@@ -590,7 +649,7 @@ class OnlineCollider(Node):
         msg_static.info.height = collision_preds.shape[2]
         msg_static.info.origin.position.x = origin0[0]
         msg_static.info.origin.position.y = origin0[1]
-        msg_static.info.origin.position.z = -0.01
+        msg_static.info.origin.position.z = 0.01
 
 
         # Define message data
@@ -602,7 +661,7 @@ class OnlineCollider(Node):
         dyn_v = "v2"
         dynamic_data0 = np.zeros((1, 1))
         if dyn_v == "v0":
-            dynamic_data = collision_preds[visu_T, :, :].astype(np.float32)
+            dynamic_data = collision_preds[5, :, :].astype(np.float32)
             dynamic_data *= 1 / 255
             dynamic_data *= 126
             dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
@@ -620,7 +679,7 @@ class OnlineCollider(Node):
             dynamic_data0[mask] += 128
 
         elif dyn_v == "v2":
-            for iso_i, iso in enumerate([230, 150, 70]):
+            for iso_i, iso in enumerate([220, 150]):
 
                 dynamic_mask = collision_preds[1:, :, :] > iso
                 dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
@@ -690,10 +749,6 @@ class OnlineCollider(Node):
         structured_pc2_array = np.empty([new_points.shape[0]], dtype=output_dtype)
 
         t += [time.time()]
-
-        print(new_points.shape, new_points.dtype)
-        print(f_times.shape, f_times.dtype)
-        print(f_rings.shape, f_rings.dtype)
 
         structured_pc2_array['x'] = new_points[:, 0]
         structured_pc2_array['y'] = new_points[:, 1]
@@ -904,9 +959,22 @@ class OnlineCollider(Node):
 
 def main(args=None):
 
-    # # Parameters
+    # Simu Networks (old with dl=0.06)
+    # log_name = 'Log_2021-05-Bouncers'
+    # log_name = 'Log_2021-05-Wanderers'
+    log_name = 'Log_2021-05-FlowFollowers'
+    chkp_name = 'chkp_0300.tar'
+    training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
+
+    # # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
+    # log_name = 'Log_2022-03-01_16-47-49'
+    # chkp_name = 'chkp_0260.tar'
+    # training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
+    
+
+    # Parameters
     # log_name = 'Log_2022-01-21_16-44-32'
-    # # log_name = 'Log_2022-02-25_21-21-57'
+    # log_name = 'Log_2022-02-25_21-21-57'
     # chkp_name = 'chkp_0600.tar'
     # training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 
