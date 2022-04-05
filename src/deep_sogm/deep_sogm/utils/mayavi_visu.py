@@ -1528,7 +1528,6 @@ def show_risk_diffusion(collision_risk, dl=0.12, diff_range=1.5, p=5, show=True)
     t1 = time.time()
 
     print('computed diffusion in {:.1f} ms'.format(1000 * (t1 - t0)))
-    # TODO IF WE USE SUM, PARALLELISE CONVOLUTION ON GPU????
 
 
     vmin0 = np.min(collision_risk)

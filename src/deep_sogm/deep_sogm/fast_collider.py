@@ -90,7 +90,7 @@ from rclpy.time import Time as rclTime
 from sensor_msgs.msg import PointCloud2, PointField
 from nav_msgs.msg import OccupancyGrid, MapMetaData
 from geometry_msgs.msg import Pose, PolygonStamped, Point32
-
+from rosgraph_msgs.msg import Clock
 
 from costmap_converter_msgs.msg import ObstacleArrayMsg, ObstacleMsg
 from vox_msgs.msg import VoxGrid
@@ -180,18 +180,12 @@ class OnlineCollider(Node):
 
         self.visu_T = 29
 
-        self.declare_parameter('model_path', '')
-        self.model_path = self.get_parameter('model_path').get_parameter_value().string_value
-        
         self.declare_parameter('nav_without_sogm', False)
+        self.declare_parameter('model_path', '')
+        
         self.nav_without_sogm = self.get_parameter('nav_without_sogm').get_parameter_value().bool_value
-
-        self.declare_parameter('simu', False)
-        self.simu = self.get_parameter('simu').get_parameter_value().bool_value
-
-        print(self.model_path)
-        print(self.nav_without_sogm)
-        print(self.simu)
+        self.simu = self.get_parameter('use_sim_time').get_parameter_value().bool_value
+        self.model_path = self.get_parameter('model_path').get_parameter_value().string_value
 
         #rclpy.init(args=sys.argv)
         #self.node = rclpy.create_node('fast_collider')
@@ -257,6 +251,7 @@ class OnlineCollider(Node):
 
         self.callback_group1 = MutuallyExclusiveCallbackGroup()
         self.callback_group2 = MutuallyExclusiveCallbackGroup()
+        self.callback_group3 = MutuallyExclusiveCallbackGroup()
 
         # Subscribe to the lidar topic
         print('\nSubscribe to /sub_points')
@@ -293,6 +288,14 @@ class OnlineCollider(Node):
                                                       callback_group=self.callback_group2)
 
         print('OK\n')
+
+        # Subscribe to clock topic for simulated runs
+        if self.simu:
+            self.clock_subscriber = self.create_subscription(Clock,
+                                                             '/clock',
+                                                             self.clock_callback,
+                                                             10,
+                                                             callback_group=self.callback_group3)
 
         if self.nav_without_sogm:
             # Init dummy publishers
@@ -366,6 +369,14 @@ class OnlineCollider(Node):
         for transform in data.transforms:
             # print(transform.header.frame_id, transform.child_frame_id)
             self.tfBuffer.set_transform_static(transform, who)
+
+        return
+
+    def clock_callback(self, data):
+
+        verif = False
+        if verif:
+            print(data)
 
         return
 
@@ -868,11 +879,17 @@ class OnlineCollider(Node):
                 # # imageio.imwrite(im_name2, zoom_collisions(debug_preds2, 5))
                 # fast_save_future_anim(im_name2, debug_preds2, zoom=5, correction=False)
                 # ############################################################################################################
-                
+
+                # Wait until current ros time reached desired value
+                simu_delay = 0.35
                 now_stamp = self.get_clock().now().to_msg()
                 now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
-                print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
+                while (now_sec < stamp_sec + simu_delay):
+                    now_stamp = self.get_clock().now().to_msg()
+                    now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
+
                 # Publish collision risk in a custom message
+                print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
                 self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
                 self.publish_collisions_visu(diffused_risk, static_mask, batch.t0, batch.p0, batch.q0, visu_T=self.visu_T)
                 
@@ -958,25 +975,6 @@ class OnlineCollider(Node):
 
 
 def main(args=None):
-
-    # Simu Networks (old with dl=0.06)
-    # log_name = 'Log_2021-05-Bouncers'
-    # log_name = 'Log_2021-05-Wanderers'
-    # log_name = 'Log_2021-05-FlowFollowers'
-    # chkp_name = 'chkp_0300.tar'
-    # training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
-
-    # # Hybrid network (dl=0.12  ---  Training: real60% sim40%  ---  Time: 4s/40')
-    # log_name = 'Log_2022-03-01_16-47-49'
-    # chkp_name = 'chkp_0260.tar'
-    # training_path = join('/home/hth/Deep-Collison-Checker/SOGM-3D-2D-Net/results', log_name)
-    
-
-    # Parameters
-    # log_name = 'Log_2022-01-21_16-44-32'
-    # log_name = 'Log_2022-02-25_21-21-57'
-    # chkp_name = 'chkp_0600.tar'
-    # training_path = join(ENV_HOME, 'results/pretrained_logs/', log_name)
 
     # Setup the collider Class
     print('\n\n\n\n        ------ Init Collider ------')
