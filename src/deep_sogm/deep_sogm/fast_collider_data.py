@@ -723,8 +723,8 @@ class OnlineDataset:
         support_pts[:, 2] *= 0
 
         # Create grid
-        grid_ticks = np.arange(-self.config.in_radius / np.sqrt(2),
-                               self.config.in_radius / np.sqrt(2),
+        grid_ticks = np.arange(-self.config.radius_2D / np.sqrt(2),
+                               self.config.radius_2D / np.sqrt(2),
                                self.config.dl_2D)
         xx, yy = np.meshgrid(grid_ticks, grid_ticks)
         L_2D = xx.shape[0]

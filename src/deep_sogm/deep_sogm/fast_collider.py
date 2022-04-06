@@ -638,7 +638,7 @@ class OnlineCollider(Node):
     def publish_collisions(self, collision_preds, stamp0, p0, q0):
 
         # Get origin and orientation
-        origin0 = p0 - self.config.in_radius / np.sqrt(2)
+        origin0 = p0 - self.config.radius_2D / np.sqrt(2)
 
         # Define header
         msg = VoxGrid()
@@ -680,7 +680,7 @@ class OnlineCollider(Node):
         if update_data:
 
             # Get origin and orientation
-            origin0 = p0 - self.config.in_radius / np.sqrt(2)
+            origin0 = p0 - self.config.radius_2D / np.sqrt(2)
 
             # Define header
             msg_dyn = OccupancyGrid()
@@ -993,7 +993,7 @@ class OnlineCollider(Node):
                 #####################
 
                 # Get obstacles in world coordinates
-                origin0 = batch.p0 - self.config.in_radius / np.sqrt(2)
+                origin0 = batch.p0 - self.config.radius_2D / np.sqrt(2)
 
                 world_obst = []
                 for obst_i, pos in enumerate(obst_pos):
