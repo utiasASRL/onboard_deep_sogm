@@ -16,7 +16,7 @@ source "/opt/ros/foxy/setup.bash"
 
 
 # Open terminals or nohup
-nohup=false
+nohup=true
 
 
 # Old model path (dl=0.06 Sim only)

@@ -28,6 +28,7 @@
 import os
 from os.path import exists, join
 import sys
+from multiprocessing import Lock
 from numpy.core.numeric import False_
 ENV_USER = os.getenv('USER')
 ENV_HOME = os.getenv('HOME')
@@ -172,6 +173,7 @@ class OnlineCollider(Node):
 
         self.static_range = 0.8
         self.dynamic_range = 1.2
+        self.dynamic_t_range = 0.5
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
@@ -227,10 +229,15 @@ class OnlineCollider(Node):
         self.sigmoid_2D = torch.nn.Sigmoid()
 
         # Convolution for Collision risk diffusion
-        self.static_conv = self.diffusing_convolution(self.static_range)
+        self.static_conv = self.diffusing_convolution(self.static_range, self.config.dl_2D, self.norm_p)
         self.static_conv.to(self.device)
-        self.dynamic_conv = self.diffusing_convolution(self.dynamic_range)
+        self.dynamic_conv = self.diffusing_convolution(self.dynamic_range, self.config.dl_2D, self.norm_p)
         self.dynamic_conv.to(self.device)
+
+        # Convolution for time diffusion
+        self.dt = self.config.T_2D / self.config.n_2D_layers
+        self.time_conv = self.diffusing_convolution(self.dynamic_t_range, self.dt, self.norm_p, dim1D=True)
+        self.time_conv.to(self.device)
 
         # Load the pretrained weigths
         if on_gpu and torch.cuda.is_available():
@@ -318,20 +325,49 @@ class OnlineCollider(Node):
         self.last_t_tf = time.time()
         self.sec0, self.nsec0 = self.get_clock().now().seconds_nanoseconds()
 
+        # Lock for visu publisher
+        self.visu_lock = Lock()
+        self.msg_static = None
+        self.msg_dyn = None
+        self.current_SRM = None
+        self.visu_mode = "v2"
+        self.current_T = 0
+        self.last_layer_i = -1
+
         return
 
-    def diffusing_convolution(self, obstacle_range):
+    def diffusing_convolution(self, obstacle_range, dl, norm_p, dim1D=False):
         
-        k_range = int(np.ceil(obstacle_range / self.config.dl_2D))
+        k_range = int(np.ceil(obstacle_range / dl))
         k = 2 * k_range + 1
-        dist_kernel = np.zeros((k, k))
-        for i, vv in enumerate(dist_kernel):
-            for j, v in enumerate(vv):
-                dist_kernel[i, j] = np.sqrt((i - k_range) ** 2 + (j - k_range) ** 2)
-        dist_kernel = np.clip(1.0 - dist_kernel * self.config.dl_2D / obstacle_range, 0, 1) ** self.norm_p
-        fixed_conv = torch.nn.Conv2d(1, 1, k, stride=1, padding=k_range, bias=False)
+
+        if dim1D:
+            dist_kernel = np.zeros((k, 1, 1))
+            for i in range(k):
+                dist_kernel[i, 0, 0] = abs(i - k_range)
+
+        else:
+            dist_kernel = np.zeros((k, k))
+            for i, vv in enumerate(dist_kernel):
+                for j, v in enumerate(vv):
+                    dist_kernel[i, j] = np.sqrt((i - k_range) ** 2 + (j - k_range) ** 2)
+
+
+        dist_kernel = np.clip(1.0 - dist_kernel * (dl / obstacle_range), 0, 1) ** norm_p
+
+        if dim1D:
+            fixed_conv = torch.nn.Conv3d(1, 1, (k, 1, 1),
+                                         stride=1,
+                                         padding=(k_range, 0, 0),
+                                         padding_mode='replicate',
+                                         bias=False)
+
+        else:
+            fixed_conv = torch.nn.Conv2d(1, 1, k, stride=1, padding=k_range, bias=False)
+
         fixed_conv.weight.requires_grad = False
         fixed_conv.weight *= 0
+
         fixed_conv.weight += torch.from_numpy(dist_kernel)
 
         return fixed_conv
@@ -374,9 +410,13 @@ class OnlineCollider(Node):
 
     def clock_callback(self, data):
 
+        # We do not need the clock data but we use this functio nas publication
+
         verif = False
         if verif:
             print(data)
+            
+        self.publish_collisions_visu(None, None, None, None)
 
         return
 
@@ -440,6 +480,7 @@ class OnlineCollider(Node):
 
         return
 
+
     def get_diffused_risk(self, collision_preds):
                                     
         # # Remove residual preds (hard hysteresis)
@@ -484,39 +525,45 @@ class OnlineCollider(Node):
         high_risk_threshold = 0.4
         high_risk_mask = dynamic_risk > high_risk_threshold
         high_risk = torch.zeros_like(dynamic_risk)
-        high_risk[high_risk_mask] = dynamic_risk[high_risk_mask]
+        # high_risk[high_risk_mask] = dynamic_risk[high_risk_mask]
+        high_risk[high_risk_mask] = 1
 
         # On the whole dynamic_risk, convolution
         # Higher value for larger area of risk even if low risk
         dynamic_risk = torch.unsqueeze(dynamic_risk, 1)
-        diffused_1 = np.squeeze(self.dynamic_conv(dynamic_risk).cpu().detach().numpy())
+        diffused_1 = torch.squeeze(self.dynamic_conv(dynamic_risk))
 
         # Inverse power for p-norm
-        diffused_1 = np.power(np.maximum(0, diffused_1), self.norm_invp)
+        diffused_1 = torch.pow(torch.clamp(diffused_1, min=0), self.norm_invp)
 
         # Rescale this low_risk at smaller value
         low_risk_value = 0.4
-        diffused_1 = low_risk_value * diffused_1 / (np.max(diffused_1) + 1e-6)
+        diffused_1 = low_risk_value * diffused_1 / (torch.max(diffused_1) + 1e-6)
 
         # On the high risk, we normalize to have similar value of highest risk (around 1.0)
-        high_risk = torch.unsqueeze(high_risk, 1)
-        high_risk_normalized = high_risk / (self.dynamic_conv(high_risk) + 1e-6)
-        diffused_2 = np.squeeze(self.dynamic_conv(high_risk_normalized).cpu().detach().numpy())
+        high_risk_norm = torch.squeeze(self.dynamic_conv(torch.unsqueeze(high_risk, 1)))
+        high_risk_norm = torch.unsqueeze(torch.unsqueeze(high_risk_norm, 0), 0)
+        high_risk_norm = torch.squeeze(self.time_conv(high_risk_norm))
+        high_risk_normalized = high_risk / (high_risk_norm + 1e-6)
+
+        # We only diffuse time for high risk (as this is useful for the beginning of predictions)
+        diffused_2 = torch.squeeze(self.dynamic_conv(torch.unsqueeze(high_risk_normalized, 1)))
+        diffused_2 = torch.unsqueeze(torch.unsqueeze(diffused_2, 0), 0)
+        diffused_2 = torch.squeeze(self.time_conv(diffused_2))
 
         # Inverse power for p-norm
-        diffused_2 = np.power(np.maximum(0, diffused_2), self.norm_invp)
+        diffused_2 = torch.pow(torch.clamp(diffused_2, min=0), self.norm_invp)
 
         # Rescale and combine risk
         # ************************
         
-        # print(np.max(diffused_0), np.max(diffused_1), np.max(diffused_2))
-
         # Combine dynamic risks
-        diffused_1 = np.maximum(diffused_1, diffused_2)
+        diffused_1 = torch.maximum(diffused_1, diffused_2).detach().cpu().numpy()
 
-        # Rescale risk values (max should be stable around 1.0 for both)
-        diffused_0 *= 1.0 / (np.max(diffused_0) + 1e-6)
-        diffused_1 *= 1.0 / (np.max(diffused_1) + 1e-6)
+        # Rescale risk with a fixed value, because thx to normalization, the mx should be close to one, 
+        # There are peak at border so we divide by 1.1 to take it into consideration
+        diffused_1 *= 1.0 / 1.1
+        diffused_0 *= 1.0 / 1.1
 
         # merge the static risk as the first layer of the vox grid (with the delay this layer is useless for dynamic)
         diffused_1[0, :, :] = diffused_0
@@ -557,6 +604,7 @@ class OnlineCollider(Node):
         static_mask = np.squeeze(static_preds.detach().cpu().numpy()) > 0.3
         
         return diffused_risk, obst_pos, static_mask
+
 
     def get_local_maxima(self, data, neighborhood_size=5, threshold=0.1):
         
@@ -617,7 +665,7 @@ class OnlineCollider(Node):
 
         return
 
-    def publish_collisions_visu(self, collision_preds, static_mask, t0, p0, q0, visu_T=15):
+    def publish_collisions_visu(self, collision_preds, static_mask, t0, p0):
         '''
         0 = invisible
         1 -> 98 = blue to red
@@ -627,104 +675,147 @@ class OnlineCollider(Node):
         128 -> 254 = red to yellow
         255 = vert/gris
         '''
+        update_data = collision_preds is not None
 
-        # Get origin and orientation
-        origin0 = p0 - self.config.in_radius / np.sqrt(2)
+        if update_data:
 
-        # Define header
-        msg = OccupancyGrid()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = 'map'
-        msg_static = OccupancyGrid()
-        msg_static.header.stamp = self.get_clock().now().to_msg()
-        msg_static.header.frame_id = 'map'
+            # Get origin and orientation
+            origin0 = p0 - self.config.in_radius / np.sqrt(2)
 
+            # Define header
+            msg_dyn = OccupancyGrid()
+            msg_dyn.header.stamp = self.get_clock().now().to_msg()
+            msg_dyn.header.frame_id = 'map'
+            msg_static = OccupancyGrid()
+            msg_static.header.stamp = self.get_clock().now().to_msg()
+            msg_static.header.frame_id = 'map'
 
+            # Define message meta data
+            msg_dyn.info.map_load_time = rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg()
+            msg_dyn.info.resolution = self.config.dl_2D
+            msg_dyn.info.width = collision_preds.shape[1]
+            msg_dyn.info.height = collision_preds.shape[2]
+            msg_dyn.info.origin.position.x = origin0[0]
+            msg_dyn.info.origin.position.y = origin0[1]
+            msg_dyn.info.origin.position.z = 0.011
+            #msg_dyn.info.origin.orientation.x = q0[0]
+            #msg_dyn.info.origin.orientation.y = q0[1]
+            #msg_dyn.info.origin.orientation.z = q0[2]
+            #msg_dyn.info.origin.orientation.w = q0[3]
 
-        # Define message meta data
-        msg.info.map_load_time = rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg()
-        msg.info.resolution = self.config.dl_2D
-        msg.info.width = collision_preds.shape[1]
-        msg.info.height = collision_preds.shape[2]
-        msg.info.origin.position.x = origin0[0]
-        msg.info.origin.position.y = origin0[1]
-        msg.info.origin.position.z = 0.011
-        #msg.info.origin.orientation.x = q0[0]
-        #msg.info.origin.orientation.y = q0[1]
-        #msg.info.origin.orientation.z = q0[2]
-        #msg.info.origin.orientation.w = q0[3]
-
-        msg_static.info.map_load_time = rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg()
-        msg_static.info.resolution = self.config.dl_2D
-        msg_static.info.width = collision_preds.shape[1]
-        msg_static.info.height = collision_preds.shape[2]
-        msg_static.info.origin.position.x = origin0[0]
-        msg_static.info.origin.position.y = origin0[1]
-        msg_static.info.origin.position.z = 0.01
-
-
-        # Define message data
-        #   > static risk: yellow to red
-        #   > dynamic risk: blue to red
-        #   > invisible for the rest of the map
-        # Actually separate them in two different costmaps
-
-        dyn_v = "v2"
-        dynamic_data0 = np.zeros((1, 1))
-        if dyn_v == "v0":
-            dynamic_data = collision_preds[5, :, :].astype(np.float32)
-            dynamic_data *= 1 / 255
-            dynamic_data *= 126
-            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
-            mask = dynamic_data0 > 0
-            dynamic_data0[mask] += 128
-
-        if dyn_v == "v1":
-            dynamic_mask = collision_preds[1:, :, :] > 180
-            dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
-            dynamic_data = np.max(dynamic_data, axis=0)
-            dynamic_data *= 1 / np.max(dynamic_data)
-            dynamic_data *= 126
-            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data.astype(np.int8)))
-            mask = dynamic_data0 > 0
-            dynamic_data0[mask] += 128
-
-        elif dyn_v == "v2":
-            for iso_i, iso in enumerate([220, 150]):
-
-                dynamic_mask = collision_preds[1:, :, :] > iso
-                dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
-                dynamic_data = np.max(dynamic_data, axis=0)
-                if iso_i > 0:
-                    erode_mask = dynamic_data > 0
-                    close_struct = np.ones((5, 5))
-                    erode_struct = np.ones((3, 3))
-                    erode_mask = ndimage.binary_closing(erode_mask, structure=close_struct, iterations=2)
-                    erode_mask = ndimage.binary_erosion(erode_mask, structure=erode_struct)
-                    dynamic_data[erode_mask] = 0
-                dynamic_data0 = np.maximum(dynamic_data0, dynamic_data)
-
-            dynamic_data0 *= (1 / np.max(dynamic_data0) + 1e-6)
-            dynamic_data0 *= 126
-            dynamic_data0 = np.maximum(0, np.minimum(126, dynamic_data0.astype(np.int8)))
-            mask = dynamic_data0 > 0
-            dynamic_data0[mask] += 128
+            msg_static.info.map_load_time = rclTime(seconds=t0.sec, nanoseconds=t0.nanosec).to_msg()
+            msg_static.info.resolution = self.config.dl_2D
+            msg_static.info.width = collision_preds.shape[1]
+            msg_static.info.height = collision_preds.shape[2]
+            msg_static.info.origin.position.x = origin0[0]
+            msg_static.info.origin.position.y = origin0[1]
+            msg_static.info.origin.position.z = 0.01
 
 
+            # Define message data
+            #   > static risk: yellow to red
+            #   > dynamic risk: blue to red
+            #   > invisible for the rest of the map
+            # Actually separate them in two different costmaps
 
+            visu_SRM = np.zeros((1, 1))
+            if self.visu_mode == "v1":
+                visu_SRM = collision_preds[1:, :, :].astype(np.float32)
+                visu_SRM *= 1 / 255
+                visu_SRM *= 126
+                visu_SRM = np.maximum(0, np.minimum(126, visu_SRM.astype(np.int8)))
+                mask = visu_SRM > 0
+                visu_SRM[mask] += 128
 
-        # Static risk
-        static_data0 = collision_preds[0, :, :].astype(np.float32)
-        static_data = static_data0 * 98 / 255
-        static_data = static_data * 1.06 - 3
-        static_data = np.maximum(0, np.minimum(98, static_data.astype(np.int8)))
-        static_data[static_mask] = 99
+            elif self.visu_mode == "v2":
+                for iso_i, iso in enumerate([220, 150]):
 
-        # Publish
-        msg.data = dynamic_data0.ravel().tolist()
-        msg_static.data = static_data.ravel().tolist()
-        self.visu_pub.publish(msg)
-        self.visu_pub_static.publish(msg_static)
+                    dynamic_mask = collision_preds[1:, :, :] > iso
+                    dynamic_data = dynamic_mask.astype(np.float32) * np.expand_dims(np.arange(dynamic_mask.shape[0]), (1, 2))
+                    dynamic_data = np.max(dynamic_data, axis=0)
+                    if iso_i > 0:
+                        erode_mask = dynamic_data > 0
+                        close_struct = np.ones((5, 5))
+                        erode_struct = np.ones((3, 3))
+                        erode_mask = ndimage.binary_closing(erode_mask, structure=close_struct, iterations=2)
+                        erode_mask = ndimage.binary_erosion(erode_mask, structure=erode_struct)
+                        dynamic_data[erode_mask] = 0
+                    visu_SRM = np.maximum(visu_SRM, dynamic_data)
+
+                visu_SRM *= (1 / np.max(visu_SRM) + 1e-6)
+                visu_SRM *= 126
+                visu_SRM = np.maximum(0, np.minimum(126, visu_SRM.astype(np.int8)))
+                mask = visu_SRM > 0
+                visu_SRM[mask] += 128
+
+            # Define message data
+            #   > static risk: yellow to red
+            
+            static_data0 = collision_preds[0, :, :].astype(np.float32)
+            static_data = static_data0 * 98 / 255
+            static_data = static_data * 1.06 - 3
+            static_data = np.maximum(0, np.minimum(98, static_data.astype(np.int8)))
+            static_data[static_mask] = 99
+
+            # Static message does not change
+            msg_static.data = static_data.ravel().tolist()
+
+            
+            with self.visu_lock:
+
+                # Save current data
+                self.msg_static = msg_static
+                self.msg_dyn = msg_dyn
+                self.current_SRM = visu_SRM
+
+        else:
+
+            # Ignore publication if we do not have data yet
+            with self.visu_lock:
+                if self.current_SRM is not None:
+
+                    
+                    if self.visu_mode == "v1":
+
+                        # Time we want to show ( now - SOGM_start )
+                        stamp0 = self.msg_dyn.info.map_load_time.sec + self.msg_dyn.info.map_load_time.nanosec * 1e-9
+                        sec1, nsec1 = self.get_clock().now().seconds_nanoseconds()
+                        stamp1 = sec1 + nsec1 * 1e-9
+                        t_now = stamp1 - stamp0
+
+                        # Corresponding layer
+                        layer_i = int(np.round(t_now + self.current_T / self.dt))
+
+                        if layer_i > self.current_SRM.shape[0]:
+                            layer_i = int(np.round(t_now / self.dt))
+                            self.current_T = 0.005
+                        else:
+                            self.current_T += 0.005
+
+                        if layer_i != self.last_layer_i:
+
+                            self.last_layer_i = layer_i
+                            visu_data = self.current_SRM[layer_i]
+
+                            # Publish
+                            self.msg_dyn.data = visu_data.ravel().tolist()
+                            self.visu_pub.publish(self.msg_dyn)
+                            self.visu_pub_static.publish(self.msg_static)
+                            
+                    elif self.visu_mode == "v2":
+                        
+                        # Only publish when new data arrives
+                        stamp0 = self.msg_dyn.info.map_load_time.sec + self.msg_dyn.info.map_load_time.nanosec * 1e-9
+                        stamp0 = int(stamp0 * 1e3)
+                        if stamp0 > self.last_layer_i:
+
+                            self.last_layer_i = stamp0
+                            visu_data = self.current_SRM
+
+                            # Publish
+                            self.msg_dyn.data = visu_data.ravel().tolist()
+                            self.visu_pub.publish(self.msg_dyn)
+                            self.visu_pub_static.publish(self.msg_static)
 
         return
 
@@ -881,7 +972,7 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Wait until current ros time reached desired value
-                simu_delay = 0.35
+                simu_delay = 0.25
                 now_stamp = self.get_clock().now().to_msg()
                 now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
                 while (now_sec < stamp_sec + simu_delay):
@@ -891,7 +982,9 @@ class OnlineCollider(Node):
                 # Publish collision risk in a custom message
                 print(35 * ' ', 35 * ' ', 'Publishing {:.3f} with a delay of {:.3f}s'.format(stamp_sec, now_sec - stamp_sec))
                 self.publish_collisions(diffused_risk, stamp_sec, batch.p0, batch.q0)
-                self.publish_collisions_visu(diffused_risk, static_mask, batch.t0, batch.p0, batch.q0, visu_T=self.visu_T)
+
+                # This call dos not publish but just updates the data. Pubications are done in aother thread at a much higher rate
+                self.publish_collisions_visu(diffused_risk, static_mask, batch.t0, batch.p0)
                 
                 t += [time.time()]
 
