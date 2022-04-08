@@ -11,13 +11,12 @@ echo "---------------------------------------"
 
 # Build
 cd ../../catkin_ws
-# catkin_make_isolated --install
-catkin build
+catkin_make_isolated --install
 
 # Test msg 
 source devel/setup.bash
 echo " "
-echo "--------------- VoxGrid ---------------"
-rosmsg list | grep "VoxGrid"
-rosmsg list | grep "Obstacle"
+echo "--------------- Zeus ---------------"
+rosmsg list | grep "Detections3D"
+rosmsg list | grep "BoundingBox3D"
 echo "---------------------------------------"

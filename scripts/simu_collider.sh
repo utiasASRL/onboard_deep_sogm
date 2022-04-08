@@ -64,7 +64,7 @@ fi
 # if [ "$nohup" = true ] ; then
 #     # Before going further wait for collider to be running
 #     source "/opt/ros/$ROS_1_DISTRO/setup.bash"
-#     . "../../catkin_ws/install_isolated/setup.bash"
+#     . "../../catkin_ws/devel/setup.bash"
 #     echo ""
 #     echo "Waiting for SOGM predictions ..."
 #     until [ -n "$sogm_topic" ] 

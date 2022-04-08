@@ -8,7 +8,7 @@ cd ..
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 
 # And if you have a ROS 1 overlay workspace, something like:
-. "../catkin_ws/install_isolated/setup.bash"
+. "../catkin_ws/devel/setup.bash"
 
 # Source your ROS 2 installation:
 . "/opt/ros/foxy/setup.bash"

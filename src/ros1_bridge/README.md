@@ -69,7 +69,7 @@ Next you need to source the ROS 1 environment, for Linux and ROS Melodic that wo
 ```
 source /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 ```
 
 The bridge will be built with support for any message/service packages that are on your path and have an associated mapping between ROS 1 and ROS 2.
@@ -113,7 +113,7 @@ First we start a ROS 1 `roscore`:
 # Shell A (ROS 1 only):
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 roscore
 ```
 
@@ -127,7 +127,7 @@ Once a *matching* topic has been detected it starts to bridge the messages on th
 # Source ROS 1 first:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 # Source ROS 2 next:
 . <install-space-with-bridge>/setup.bash
 # For example:
@@ -146,7 +146,7 @@ Now we start the ROS 1 talker.
 # Shell C:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 rosrun rospy_tutorials talker
 ```
 
@@ -190,7 +190,7 @@ The steps are very similar to the previous example and therefore only the comman
 # Shell A:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 roscore
 ```
 
@@ -200,7 +200,7 @@ roscore
 # Shell B:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 . <install-space-with-bridge>/setup.bash
 export ROS_MASTER_URI=http://localhost:11311
 ros2 run ros1_bridge dynamic_bridge
@@ -224,7 +224,7 @@ Now we start the ROS 1 listener.
 # Shell D:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 rosrun roscpp_tutorials listener
 ```
 
@@ -241,7 +241,7 @@ First we start a ROS 1 `roscore` and the bridge:
 # Shell A:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 roscore
 ```
 
@@ -249,7 +249,7 @@ roscore
 # Shell B:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 . <workspace-with-bridge>/install/setup.bash
 export ROS_MASTER_URI=http://localhost:11311
 ros2 run ros1_bridge dynamic_bridge
@@ -263,7 +263,7 @@ Now we start the ROS 1 GUI:
 # Shell C:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 rqt_image_view /image
 ```
 
@@ -288,7 +288,7 @@ You can either use the `Message Publisher` plugin in `rqt` to publish a `std_msg
 # Shell E:
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 rostopic pub -r 1 /flip_image std_msgs/Bool "{data: true}"
 rostopic pub -r 1 /flip_image std_msgs/Bool "{data: false}"
 ```
@@ -371,7 +371,7 @@ Start a ROS 1 roscore:
 # Shell A (ROS 1 only):
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 roscore
 ```
 
@@ -381,7 +381,7 @@ Then load the bridge.yaml config file and start the talker to publish on the `/c
 Shell B: (ROS1 only):
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 rosparam load bridge.yaml
 
 rosrun rospy_tutorials talker
@@ -391,7 +391,7 @@ rosrun rospy_tutorials talker
 Shell C: (ROS1 only):
 . /opt/ros/melodic/setup.bash
 # Or, on OSX, something like:
-# . ~/ros_catkin_ws/install_isolated/setup.bash
+# . ~/ros_catkin_ws/devel/setup.bash
 
 rosrun roscpp_tutorials add_two_ints_server
 ```
