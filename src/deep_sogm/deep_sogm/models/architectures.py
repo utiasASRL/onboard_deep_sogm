@@ -1329,14 +1329,21 @@ class KPCollider(nn.Module):
 
             # Propagated preds
             preds_2D = []
+            x_2D_0 = x_2D.clone()
             if self.shared_2D:
                 for i in range(config.n_2D_layers):
                     x_2D = self.prop_net(x_2D)
-                    preds_2D.append(self.head_softmax_2D(x_2D))
+                    if self.skipcut_2D:
+                        preds_2D.append(self.head_softmax_2D(torch.cat([x_2D, x_2D_0], dim=1)))
+                    else:
+                        preds_2D.append(self.head_softmax_2D(x_2D))
             else:
                 for i in range(config.n_2D_layers):
                     x_2D = self.prop_net[i](x_2D)
-                    preds_2D.append(self.head_softmax_2D[i](x_2D))
+                    if self.skipcut_2D:
+                        preds_2D.append(self.head_softmax_2D[i](torch.cat([x_2D, x_2D_0], dim=1)))
+                    else:
+                        preds_2D.append(self.head_softmax_2D[i](x_2D))
 
             # Stack 2d outputs and permute dimension to get the shape: [B, T, L_2D, L_2D, 3]
             preds_2D = torch.stack(preds_2D, axis=2).permute(0, 2, 3, 4, 1)

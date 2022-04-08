@@ -76,6 +76,9 @@ class Config:
 
     # Share weights for 2D network TODO: see if not sharing makes a difference
     shared_2D = False
+    
+    # Add a shortcut of initial 2D features to each sogm layer
+    skipcut_2D = False
 
     # Trainable backend 3D network
     apply_3D_loss = True
@@ -352,6 +355,7 @@ class Config:
                                'pretrained_3D',
                                'detach_2D',
                                'shared_2D',
+                               'skipcut_2D,'
                                'apply_3D_loss',
                                'use_visibility',
                                'init_2D_levels',
