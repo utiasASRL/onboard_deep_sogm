@@ -171,9 +171,9 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.static_range = 0.8
+        self.static_range = 0.9
         self.dynamic_range = 1.2
-        self.dynamic_t_range = 0.5
+        self.dynamic_t_range = 1.0
         self.norm_p = 3
         self.norm_invp = 1 / self.norm_p
 
@@ -773,8 +773,6 @@ class OnlineCollider(Node):
             # Ignore publication if we do not have data yet
             with self.visu_lock:
                 if self.current_SRM is not None:
-
-                    
                     if self.visu_mode == "v1":
 
                         # Time we want to show ( now - SOGM_start )
@@ -985,6 +983,8 @@ class OnlineCollider(Node):
 
                 # This call dos not publish but just updates the data. Pubications are done in aother thread at a much higher rate
                 self.publish_collisions_visu(diffused_risk, static_mask, batch.t0, batch.p0)
+                if not self.simu:
+                    self.publish_collisions_visu(None, None, None, None)
                 
                 t += [time.time()]
 

@@ -1171,6 +1171,7 @@ class KPCollider(nn.Module):
         self.merge_softmax_2D = nn.Conv2d(config.first_features_dim, 3, kernel_size=1, bias=True)
 
         self.shared_2D = config.shared_2D
+        self.skipcut_2D = config.skipcut_2D
         if self.shared_2D:
             # Use a mini network for propagation, which is repeated at every step
             self.prop_net = Propagation2DBlock(config.first_features_dim, config.first_features_dim, n_blocks=config.prop_2D_resnets)

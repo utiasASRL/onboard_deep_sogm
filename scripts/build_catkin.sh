@@ -12,7 +12,7 @@ echo "---------------------------------------"
 # Build
 cd ../../catkin_ws
 # catkin_make_isolated --install
-catkin build
+catkin build -DCMAKE_BUILD_TYPE=Release
 
 # Test msg 
 source devel/setup.bash
