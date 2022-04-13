@@ -1170,21 +1170,25 @@ class KPCollider(nn.Module):
         self.init_softmax_2D = nn.Conv2d(config.first_features_dim, 3, kernel_size=1, bias=True)
         self.merge_softmax_2D = nn.Conv2d(config.first_features_dim, 3, kernel_size=1, bias=True)
 
+        self.skipcut_2D = config.shared_2D
+        head_softmax_in_D = config.first_features_dim
+        if self.skipcut_2D:
+            head_softmax_in_D *= 2
+
         self.shared_2D = config.shared_2D
-        self.skipcut_2D = config.skipcut_2D
         if self.shared_2D:
             # Use a mini network for propagation, which is repeated at every step
             self.prop_net = Propagation2DBlock(config.first_features_dim, config.first_features_dim, n_blocks=config.prop_2D_resnets)
 
             # Shared head softmax
-            self.head_softmax_2D = nn.Conv2d(config.first_features_dim, 3, kernel_size=1, bias=True)
+            self.head_softmax_2D = nn.Conv2d(head_softmax_in_D, 3, kernel_size=1, bias=True)
 
         else:
             self.prop_net = nn.ModuleList()
             self.head_softmax_2D = nn.ModuleList()
             for i in range(config.n_2D_layers):
                 self.prop_net.append(Propagation2DBlock(config.first_features_dim, config.first_features_dim, n_blocks=config.prop_2D_resnets))
-                self.head_softmax_2D.append(nn.Conv2d(config.first_features_dim, 3, kernel_size=1, bias=True))
+                self.head_softmax_2D.append(nn.Conv2d(head_softmax_in_D, 3, kernel_size=1, bias=True))
 
 
         ################
@@ -1417,12 +1421,15 @@ class KPCollider(nn.Module):
             # Binary cross entropy loss for multilable classification (because the labels are not mutually exclusive)
             # Only apply loss to part of the empyty space to reduce unbalanced classes
 
+            # Indice of the initial frame (latest of the input frames)
+            i0 = self.n_frames - 1
+
             # Init loss for initial class probablitities => shapes = [B, 1, L_2D, L_2D, 3]
-            self.init_2D_loss = self.power_2D_init_loss * self.criterion_2D(preds_init_2D[:, 0, :, :, :], batch.future_2D[:, self.n_frames - 1, :, :, :])
+            self.init_2D_loss = self.power_2D_init_loss * self.criterion_2D(preds_init_2D[:, 0, :, :, :], batch.future_2D[:, i0, :, :, :])
 
             # Init loss for merged future class probablitities => shapes = [B, 1, L_2D, L_2D, 3]
-            merged_future = batch.future_2D[:, self.n_frames - 1, :, :, :].detach().clone()
-            max_v, _ = torch.max(batch.future_2D[:, :, :, :, 2], dim=1)
+            merged_future = batch.future_2D[:, i0, :, :, :].detach().clone()
+            max_v, _ = torch.max(batch.future_2D[:, i0:, :, :, 2], dim=1)
             merged_future[:, :, :, 2] = max_v
             self.init_2D_loss += self.power_2D_init_loss * self.criterion_2D(preds_init_2D[:, 1, :, :, :], merged_future)
             
