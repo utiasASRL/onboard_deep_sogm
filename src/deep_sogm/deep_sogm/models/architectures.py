@@ -1247,7 +1247,7 @@ class KPCollider(nn.Module):
         np_coeffs = np.expand_dims(class_factors, 0) * np.expand_dims(layer_factors, 1)
         np_coeffs = np_coeffs / np.sum(np_coeffs)
 
-        # Test: sequential addition of losses
+        # Test: sequential addition of losses TODO: remove this or make it a aconfig parameter
         self.seq_loss = True
         self.seq_loss_n = 5
         self.seq_loss_i = 0
