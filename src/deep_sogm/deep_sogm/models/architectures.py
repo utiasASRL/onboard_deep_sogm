@@ -1247,11 +1247,24 @@ class KPCollider(nn.Module):
         np_coeffs = np.expand_dims(class_factors, 0) * np.expand_dims(layer_factors, 1)
         np_coeffs = np_coeffs / np.sum(np_coeffs)
 
-        self.future_coeffs = torch.nn.Parameter(torch.from_numpy(np_coeffs), requires_grad=False)
-        # self.total_coeff = float(torch.sum(self.future_coeffs))
+        # Test: sequential addition of losses TODO: remove this or make it a aconfig parameter
+        self.seq_loss = True
+        self.seq_loss_n = 5
+        self.seq_loss_i = 0
+        if self.seq_loss:
+            seq_stride = np_coeffs.shape[0] // self.seq_loss_n
+            np_coeffs_list = [np.copy(np_coeffs) for _ in range(self.seq_loss_n)]
+
+            for i in range(self.seq_loss_n - 1):
+                np_coeffs_list[i][(i + 1) * seq_stride:] = 0
+
+            self.future_coeffs = [torch.nn.Parameter(torch.from_numpy(np_cfs / np.sum(np_cfs)), requires_grad=False)
+                                  for np_cfs in np_coeffs_list]
+
+        else:
+            self.future_coeffs = torch.nn.Parameter(torch.from_numpy(np_coeffs), requires_grad=False)
 
         return
-
 
     def backend_3D_forward(self, x, batch, lrf=None, save_block_features=False):
 
@@ -1573,8 +1586,11 @@ class KPCollider(nn.Module):
                 future_sums = torch.sum(loss_mask, dim=(0, 2, 3))
                 future_errors = future_errors / (future_sums + 1e-9)
             
-            # Here multiply with coefficients
-            future_loss = torch.sum(future_errors * self.future_coeffs)
+            # Here multiply with coefficientsself.
+            if self.seq_loss:
+                future_loss = torch.sum(future_errors * self.future_coeffs[self.seq_loss_i])
+            else:
+                future_loss = torch.sum(future_errors * self.future_coeffs)
 
             # Save prop loss
             self.prop_2D_loss = self.power_2D_prop_loss * future_loss

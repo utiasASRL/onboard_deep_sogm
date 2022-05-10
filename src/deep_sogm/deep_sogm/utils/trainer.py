@@ -349,6 +349,12 @@ class ModelTrainer:
                 for param_group in self.optimizer.param_groups:
                     param_group['lr'] *= config.lr_decays[self.epoch]
 
+            # Update seq_loss_i  TODO: remove this or make it a aconfig parameter
+            seq_loss_epochs = [100 + 20 * sli for sli in range(self.seq_loss_n + 1)]
+            if self.epoch in seq_loss_epochs:
+                self.seq_loss_i = max(1 + self.seq_loss_i, self.seq_loss_n - 1)
+                
+
             # Update epoch
             self.epoch += 1
 
