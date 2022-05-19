@@ -244,6 +244,7 @@ class OnlineCollider(Node):
             checkpoint = torch.load(self.model_path, map_location=self.device)
         else:
             checkpoint = torch.load(self.model_path, map_location=torch.device('cpu'))
+
         self.net.load_state_dict(checkpoint['model_state_dict'])
 
         # Switch network from training to evaluation mode
