@@ -1,0 +1,7 @@
+[INFO] [1652998420.779752442] [ros_bridge]: Passing message from ROS 1 rosgraph_msgs/Clock to ROS 2 rosgraph_msgs/msg/Clock (showing msg only once per type)
+[INFO] [1652998420.780130387] [ros_bridge]: Passing message from ROS 2 rcl_interfaces/msg/Log to ROS 1 rosgraph_msgs/Log (showing msg only once per type)
+[INFO] [1652998424.928386751] [ros_bridge]: Passing message from ROS 1 sensor_msgs/PointCloud2 to ROS 2 sensor_msgs/msg/PointCloud2 (showing msg only once per type)
+[INFO] [1652998424.929132305] [ros_bridge]: Passing message from ROS 1 tf2_msgs/TFMessage to ROS 2 tf2_msgs/msg/TFMessage (showing msg only once per type)
+[INFO] [1652998437.603638659] [ros_bridge]: Passing message from ROS 2 vox_msgs/msg/VoxGrid to ROS 1 vox_msgs/VoxGrid (showing msg only once per type)
+[INFO] [1652998437.649900611] [ros_bridge]: Passing message from ROS 2 nav_msgs/msg/OccupancyGrid to ROS 1 nav_msgs/OccupancyGrid (showing msg only once per type)
+[INFO] [1652998437.657122092] [ros_bridge]: Passing message from ROS 2 sensor_msgs/msg/PointCloud2 to ROS 1 sensor_msgs/PointCloud2 (showing msg only once per type)
