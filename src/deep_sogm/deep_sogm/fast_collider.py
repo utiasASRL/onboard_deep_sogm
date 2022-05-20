@@ -171,7 +171,7 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.static_range = 0.9
+        self.static_range = 1.0
         self.dynamic_range = 1.2
         self.dynamic_t_range = 1.0
         self.norm_p = 3
