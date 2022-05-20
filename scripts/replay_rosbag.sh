@@ -29,7 +29,7 @@ source "/opt/ros/$ROS_1_DISTRO/setup.bash"
 . "../catkin_ws/devel/setup.bash"
 
 echo "$ROS_MASTER_URI"
-ROS_MASTER_URI="http://localhost:11311"
+# ROS_MASTER_URI="http://localhost:11311"
 echo "$ROS_MASTER_URI"
 
 # Create a ROS master

@@ -35,19 +35,6 @@ if [ "$mapfile" = "" ] ; then
     mapfile="map_Myhal_1.ply"
 fi
 
-
-
-
-
-# TODO: Now test running with sogm downstairs, everything should be working quite well. Just ensure that you have the latest trained model 
-
-
-
-
-
-
-
-
 # Get corresponding trained session
 trained_session=""
 chkp_name=""
