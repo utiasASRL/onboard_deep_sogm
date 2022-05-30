@@ -43,6 +43,10 @@ if [ "$mapfile" = "map_Myhal_1.ply" ] ; then
     chkp_name="chkp_0580.tar"
 
 elif [ "$mapfile" = "map_Myhal_5.ply" ] ; then
+    trained_session="Log_2022-05-27_16-46-35"
+    chkp_name="chkp_0300.tar"
+
+elif [ "$mapfile" = "oldmap_Myhal_5.ply" ] ; then
     trained_session="Log_2022-01-21_16-44-32"
     chkp_name="chkp_0600.tar"
 

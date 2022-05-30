@@ -1,31 +1,31 @@
 
 
-Recording to: /home/asrl/results/rosbag_data/2022-05-20_13-04-19.bag
+Recording to: /home/asrl/results/rosbag_data/2022-05-20_17-28-56.bag
 
 
-[33m[ WARN] [1653052015.164989790]: Shutdown request received.[0m
-[33m[ WARN] [1653052015.173089216]: Reason given for shutdown: [user request][0m
-[0m[ INFO] [1653051859.612964385]: Subscribing to /classified_points[0m
-[0m[ INFO] [1653051859.623080756]: Subscribing to /clock[0m
-[0m[ INFO] [1653051859.630254306]: Subscribing to /dummy_obstacles[0m
-[0m[ INFO] [1653051859.638321750]: Subscribing to /dummy_plan_costmap_3D[0m
-[0m[ INFO] [1653051859.647229777]: Subscribing to /dynamic_visu[0m
-[0m[ INFO] [1653051859.657952401]: Subscribing to /map[0m
-[0m[ INFO] [1653051859.663309817]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
-[0m[ INFO] [1653051859.669527176]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
-[0m[ INFO] [1653051859.676123929]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
-[0m[ INFO] [1653051859.683693295]: Subscribing to /move_base/TebLocalPlannerROS/sogm_delay[0m
-[0m[ INFO] [1653051859.691418448]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
-[0m[ INFO] [1653051859.699593086]: Subscribing to /move_base/TebLocalPlannerROS/teb_pose_layer[0m
-[0m[ INFO] [1653051859.708192301]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
-[0m[ INFO] [1653051859.715410094]: Subscribing to /move_base/current_goal[0m
-[0m[ INFO] [1653051859.721932135]: Subscribing to /move_base/global_costmap/costmap[0m
-[0m[ INFO] [1653051859.729540508]: Subscribing to /move_base/local_costmap/costmap[0m
-[0m[ INFO] [1653051859.739680720]: Subscribing to /move_base/result[0m
-[0m[ INFO] [1653051859.747772723]: Subscribing to /optimal_path[0m
-[0m[ INFO] [1653051859.754977781]: Subscribing to /plan_costmap_3D[0m
-[0m[ INFO] [1653051859.763286987]: Subscribing to /static_visu[0m
-[0m[ INFO] [1653051859.771362595]: Subscribing to /tf[0m
-[0m[ INFO] [1653051859.779944437]: Subscribing to /tf_static[0m
-[0m[ INFO] [1653051859.786428536]: Subscribing to /velodyne_points[0m
-[0m[ INFO] [1653051859.793270693]: Recording to '/home/asrl/results/rosbag_data/2022-05-20_13-04-19.bag'.[0m
+[33m[ WARN] [1653067964.042928206]: Shutdown request received.[0m
+[33m[ WARN] [1653067964.050904475]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1653067737.157575398]: Subscribing to /classified_points[0m
+[0m[ INFO] [1653067737.166528410]: Subscribing to /clock[0m
+[0m[ INFO] [1653067737.174140777]: Subscribing to /dummy_obstacles[0m
+[0m[ INFO] [1653067737.181972361]: Subscribing to /dummy_plan_costmap_3D[0m
+[0m[ INFO] [1653067737.190426974]: Subscribing to /dynamic_visu[0m
+[0m[ INFO] [1653067737.199839824]: Subscribing to /map[0m
+[0m[ INFO] [1653067737.206320234]: Subscribing to /move_base/TebLocalPlannerROS/global_plan[0m
+[0m[ INFO] [1653067737.213065250]: Subscribing to /move_base/TebLocalPlannerROS/local_plan[0m
+[0m[ INFO] [1653067737.220203350]: Subscribing to /move_base/TebLocalPlannerROS/obstacles[0m
+[0m[ INFO] [1653067737.227435640]: Subscribing to /move_base/TebLocalPlannerROS/sogm_delay[0m
+[0m[ INFO] [1653067737.235884651]: Subscribing to /move_base/TebLocalPlannerROS/teb_markers[0m
+[0m[ INFO] [1653067737.244065788]: Subscribing to /move_base/TebLocalPlannerROS/teb_pose_layer[0m
+[0m[ INFO] [1653067737.252043509]: Subscribing to /move_base/TebLocalPlannerROS/teb_poses[0m
+[0m[ INFO] [1653067737.259843091]: Subscribing to /move_base/current_goal[0m
+[0m[ INFO] [1653067737.268292240]: Subscribing to /move_base/global_costmap/costmap[0m
+[0m[ INFO] [1653067737.275548121]: Subscribing to /move_base/local_costmap/costmap[0m
+[0m[ INFO] [1653067737.283569212]: Subscribing to /move_base/result[0m
+[0m[ INFO] [1653067737.293234592]: Subscribing to /optimal_path[0m
+[0m[ INFO] [1653067737.301442789]: Subscribing to /plan_costmap_3D[0m
+[0m[ INFO] [1653067737.309422492]: Subscribing to /static_visu[0m
+[0m[ INFO] [1653067737.316867402]: Subscribing to /tf[0m
+[0m[ INFO] [1653067737.323499051]: Subscribing to /tf_static[0m
+[0m[ INFO] [1653067737.331147306]: Subscribing to /velodyne_points[0m
+[0m[ INFO] [1653067737.339517286]: Recording to '/home/asrl/results/rosbag_data/2022-05-20_17-28-56.bag'.[0m
