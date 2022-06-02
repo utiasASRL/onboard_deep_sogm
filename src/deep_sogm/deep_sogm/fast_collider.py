@@ -481,7 +481,6 @@ class OnlineCollider(Node):
 
         return
 
-
     def get_diffused_risk(self, collision_preds):
                                     
         # # Remove residual preds (hard hysteresis)
@@ -605,7 +604,6 @@ class OnlineCollider(Node):
         static_mask = np.squeeze(static_preds.detach().cpu().numpy()) > 0.3
         
         return diffused_risk, obst_pos, static_mask
-
 
     def get_local_maxima(self, data, neighborhood_size=5, threshold=0.1):
         
@@ -971,7 +969,10 @@ class OnlineCollider(Node):
                 # ############################################################################################################
 
                 # Wait until current ros time reached desired value
-                simu_delay = 0.25
+                if self.simu:
+                    simu_delay = 0.25
+                else:
+                    simu_delay = 0.0
                 now_stamp = self.get_clock().now().to_msg()
                 now_sec = float(now_stamp.sec) + float(int((now_stamp.nanosec) * 1e-6)) * 1e-3
                 while (now_sec < stamp_sec + simu_delay):
