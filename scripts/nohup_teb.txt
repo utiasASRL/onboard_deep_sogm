@@ -1,0 +1,183 @@
+[33m[ WARN] [1654112501.023394382]: global_costmap: Pre-Hydro parameter "static_map" unused since "plugins" is provided[0m
+[33m[ WARN] [1654112501.026878574]: global_costmap: Pre-Hydro parameter "map_type" unused since "plugins" is provided[0m
+[33m[ WARN] [1654112501.515856876]: local_costmap: Pre-Hydro parameter "static_map" unused since "plugins" is provided[0m
+[33m[ WARN] [1654112501.517304090]: local_costmap: Pre-Hydro parameter "map_type" unused since "plugins" is provided[0m
+[33m[ WARN] [1654112501.770791434]: Debug 1 ##############################[0m
+[33m[ WARN] [1654112501.770818027]: Debug 4 ##############################[0m
+[33m[ WARN] [1654112501.770844229]: TebLocalPlannerROS[0m
+[33m[ WARN] [1654112502.063501140]: Parallel planning in distinctive topologies enabled.[0m
+[33m[ WARN] [1654112502.472731984]: Debug 3 ##############################[0m
+[33m[ WARN] [1654112502.487659608]: Debug 3 ## Subscribed to /plan_costmap_3D[0m
+[33m[ WARN] [1654112512.620552209]: VoxMsg working![0m
+[33m[ WARN] [1654112512.628088840]: Custom Obstacle Callback Working![0m
+[0m[ INFO] [1654112501.028911761]: global_costmap: Using plugin "static_layer"[0m
+[0m[ INFO] [1654112501.044982486]: Requesting the map...[0m
+[0m[ INFO] [1654112501.252900593]: Resizing costmap to 371 X 372 at 0.120000 m/pix[0m
+[0m[ INFO] [1654112501.352836798]: Received a 371 X 372 map at 0.120000 m/pix[0m
+[0m[ INFO] [1654112501.370675160]: global_costmap: Using plugin "inflater_layer"[0m
+[0m[ INFO] [1654112501.520342147]: local_costmap: Using plugin "static_layer"[0m
+[0m[ INFO] [1654112501.539127507]: Requesting the map...[0m
+[0m[ INFO] [1654112501.547061510]: Resizing static layer to 371 X 372 at 0.120000 m/pix[0m
+[0m[ INFO] [1654112501.646781568]: Received a 371 X 372 map at 0.120000 m/pix[0m
+[0m[ INFO] [1654112501.658926527]: local_costmap: Using plugin "inflater_layer"[0m
+[0m[ INFO] [1654112501.770762109]: Created local_planner teb_local_planner/TebLocalPlannerROS[0m
+[0m[ INFO] [1654112502.063446739]: Footprint model 'circular' (radius: 0.35m) loaded for trajectory optimization.[0m
+[0m[ INFO] [1654112502.063529320]: No costmap conversion plugin specified. All occupied costmap cells are treaten as point obstacles.[0m
+[0m[ INFO] [1654112502.328854863]: Footprint model 'circular' (radius: 0.35m) loaded for trajectory optimization.[0m
+[0m[ INFO] [1654112503.578807921]: Recovery behavior will clear layer 'obstacles'[0m
+[0m[ INFO] [1654112503.596348712]: Recovery behavior will clear layer 'obstacles'[0m
+[0m[ INFO] [1654112503.691202624]: odom received![0m
+Warning: TF_REPEATED_DATA ignoring data with redundant timestamp for frame base_link at time 1654112530.206797 according to authority unknown_publisher
+         at line 278 in /tmp/binarydeb/ros-noetic-tf2-0.7.5/src/buffer_core.cpp
+[33m[ WARN] [1654112533.012992086]: Shutdown request received.[0m
+[33m[ WARN] [1654112533.013042740]: Reason given for shutdown: [user request][0m
+... logging to /home/asrl/.ros/log/a99c3898-e1d2-11ec-99e7-c400ad2eb6b6/roslaunch-Idefix-1234.log
+Checking log directory for disk usage. This may take a while.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/asrl/catkin_ws/src/jackal/jackal_navigation/launch/teb_modified.launch
+[1mstarted roslaunch server http://Idefix:34299/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /move_base/TebLocalPlannerROS/acc_lim_theta: 0.8
+ * /move_base/TebLocalPlannerROS/acc_lim_x: 0.9
+ * /move_base/TebLocalPlannerROS/control_look_ahead_poses: 2
+ * /move_base/TebLocalPlannerROS/costmap_obstacles_behind_robot_dist: 6.0
+ * /move_base/TebLocalPlannerROS/costmap_obstacles_stride: 2
+ * /move_base/TebLocalPlannerROS/dt_hysteresis: 0.09
+ * /move_base/TebLocalPlannerROS/dt_ref: 0.3
+ * /move_base/TebLocalPlannerROS/dynamic_obstacle_inflation_dist: 0.9
+ * /move_base/TebLocalPlannerROS/enable_homotopy_class_planning: True
+ * /move_base/TebLocalPlannerROS/enable_multithreading: True
+ * /move_base/TebLocalPlannerROS/exact_arc_length: False
+ * /move_base/TebLocalPlannerROS/feasibility_check_no_poses: 2
+ * /move_base/TebLocalPlannerROS/footprint_model/radius: 0.35
+ * /move_base/TebLocalPlannerROS/footprint_model/type: circular
+ * /move_base/TebLocalPlannerROS/free_goal_vel: True
+ * /move_base/TebLocalPlannerROS/global_plan_overwrite_orientation: True
+ * /move_base/TebLocalPlannerROS/h_signature_prescaler: 1.0
+ * /move_base/TebLocalPlannerROS/h_signature_threshold: 0.1
+ * /move_base/TebLocalPlannerROS/include_costmap_obstacles: False
+ * /move_base/TebLocalPlannerROS/include_dynamic_obstacles: True
+ * /move_base/TebLocalPlannerROS/inflation_dist: 0.6
+ * /move_base/TebLocalPlannerROS/map_frame: map
+ * /move_base/TebLocalPlannerROS/max_global_plan_lookahead_dist: 3.5
+ * /move_base/TebLocalPlannerROS/max_number_classes: 5
+ * /move_base/TebLocalPlannerROS/max_vel_theta: 0.7
+ * /move_base/TebLocalPlannerROS/max_vel_x: 1.1
+ * /move_base/TebLocalPlannerROS/max_vel_x_backwards: 0.5
+ * /move_base/TebLocalPlannerROS/min_obstacle_dist: 0.1
+ * /move_base/TebLocalPlannerROS/min_samples: 5
+ * /move_base/TebLocalPlannerROS/min_turning_radius: 0.4
+ * /move_base/TebLocalPlannerROS/no_inner_iterations: 5
+ * /move_base/TebLocalPlannerROS/no_outer_iterations: 4
+ * /move_base/TebLocalPlannerROS/obstacle_heading_threshold: 1.0
+ * /move_base/TebLocalPlannerROS/obstacle_keypoint_offset: 0.1
+ * /move_base/TebLocalPlannerROS/obstacle_poses_affected: 30
+ * /move_base/TebLocalPlannerROS/odom_topic: /odometry/filtered
+ * /move_base/TebLocalPlannerROS/optimization_activate: True
+ * /move_base/TebLocalPlannerROS/optimization_verbose: False
+ * /move_base/TebLocalPlannerROS/penalty_epsilon: 0.01
+ * /move_base/TebLocalPlannerROS/publish_feedback: False
+ * /move_base/TebLocalPlannerROS/roadmap_graph_area_width: 5
+ * /move_base/TebLocalPlannerROS/roadmap_graph_no_samples: 20
+ * /move_base/TebLocalPlannerROS/selection_cost_hysteresis: 0.99
+ * /move_base/TebLocalPlannerROS/simple_exploration: False
+ * /move_base/TebLocalPlannerROS/teb_autosize: True
+ * /move_base/TebLocalPlannerROS/visualize_hc_graph: False
+ * /move_base/TebLocalPlannerROS/weight_acc_lim_theta: 1
+ * /move_base/TebLocalPlannerROS/weight_acc_lim_x: 1
+ * /move_base/TebLocalPlannerROS/weight_dynamic_obstacle: 0
+ * /move_base/TebLocalPlannerROS/weight_dynamic_obstacle_inflation: 0
+ * /move_base/TebLocalPlannerROS/weight_inflation: 0
+ * /move_base/TebLocalPlannerROS/weight_kinematics_forward_drive: 2
+ * /move_base/TebLocalPlannerROS/weight_kinematics_nh: 1000
+ * /move_base/TebLocalPlannerROS/weight_kinematics_turning_radius: 1
+ * /move_base/TebLocalPlannerROS/weight_max_vel_theta: 1
+ * /move_base/TebLocalPlannerROS/weight_max_vel_x: 2
+ * /move_base/TebLocalPlannerROS/weight_obstacle: 0
+ * /move_base/TebLocalPlannerROS/weight_optimaltime: 0.8
+ * /move_base/TebLocalPlannerROS/weight_predicted_costmap: 1.3
+ * /move_base/TebLocalPlannerROS/weight_shortest_path: 0.4
+ * /move_base/TebLocalPlannerROS/weight_static_costmap: 1.1
+ * /move_base/TebLocalPlannerROS/weight_viapoint: 1
+ * /move_base/TebLocalPlannerROS/xy_goal_tolerance: 1.0
+ * /move_base/TebLocalPlannerROS/yaw_goal_tolerance: 100.0
+ * /move_base/base_global_planner: navfn/NavfnROS
+ * /move_base/base_local_planner: teb_local_planner...
+ * /move_base/clearing_rotation_allowed: True
+ * /move_base/controller_frequency: 20.0
+ * /move_base/controller_patience: 15.0
+ * /move_base/global_costmap/footprint: [[-0.21, -0.165],...
+ * /move_base/global_costmap/footprint_padding: 0.05
+ * /move_base/global_costmap/global_frame: map
+ * /move_base/global_costmap/height: 45.0
+ * /move_base/global_costmap/inflater_layer/cost_scaling_factor: 1.0
+ * /move_base/global_costmap/inflater_layer/inflation_radius: 1.0
+ * /move_base/global_costmap/map_type: costmap
+ * /move_base/global_costmap/meter_scoring: True
+ * /move_base/global_costmap/obstacle_range: 5.5
+ * /move_base/global_costmap/origin_x: -15.0
+ * /move_base/global_costmap/origin_y: -5.0
+ * /move_base/global_costmap/origin_z: 0.0
+ * /move_base/global_costmap/plugins: [{'name': 'static...
+ * /move_base/global_costmap/publish_frequency: 5.0
+ * /move_base/global_costmap/publish_voxel_map: False
+ * /move_base/global_costmap/raytrace_range: 6.0
+ * /move_base/global_costmap/resolution: 0.05
+ * /move_base/global_costmap/robot_base_frame: base_link
+ * /move_base/global_costmap/rolling_window: False
+ * /move_base/global_costmap/static_map: True
+ * /move_base/global_costmap/transform_tolerance: 0.5
+ * /move_base/global_costmap/update_frequency: 1.0
+ * /move_base/global_costmap/width: 45.0
+ * /move_base/global_costmap/z_resolution: 1
+ * /move_base/global_costmap/z_voxels: 2
+ * /move_base/local_costmap/footprint: [[-0.21, -0.165],...
+ * /move_base/local_costmap/footprint_padding: 0.05
+ * /move_base/local_costmap/global_frame: map
+ * /move_base/local_costmap/height: 12.0
+ * /move_base/local_costmap/inflater_layer/cost_scaling_factor: 1.0
+ * /move_base/local_costmap/inflater_layer/inflation_radius: 1.5
+ * /move_base/local_costmap/map_type: costmap
+ * /move_base/local_costmap/meter_scoring: True
+ * /move_base/local_costmap/obstacle_range: 5.5
+ * /move_base/local_costmap/origin_z: 0.0
+ * /move_base/local_costmap/plugins: [{'name': 'static...
+ * /move_base/local_costmap/publish_frequency: 5.0
+ * /move_base/local_costmap/publish_voxel_map: False
+ * /move_base/local_costmap/raytrace_range: 6.0
+ * /move_base/local_costmap/resolution: 0.06
+ * /move_base/local_costmap/robot_base_frame: base_link
+ * /move_base/local_costmap/rolling_window: True
+ * /move_base/local_costmap/static_map: False
+ * /move_base/local_costmap/transform_tolerance: 0.5
+ * /move_base/local_costmap/update_frequency: 5.0
+ * /move_base/local_costmap/width: 12.0
+ * /move_base/local_costmap/z_resolution: 1
+ * /move_base/local_costmap/z_voxels: 2
+ * /move_base/oscillation_distance: 0.5
+ * /move_base/oscillation_timeout: 0.0
+ * /move_base/planner_frequency: 0.2
+ * /move_base/planner_patience: 15.0
+ * /move_base/recovery_behavior_enabled: True
+ * /move_base/shutdown_costmaps: False
+ * /rosdistro: noetic
+ * /rosversion: 1.15.13
+
+NODES
+  /
+    move_base (move_base/move_base)
+
+[1mROS_MASTER_URI=http://cpr-tor59-01:11311[0m
+]2;/home/asrl/catkin_ws/src/jackal/jackal_navigation/launch/teb_modified.launch http://cpr-tor59-01:11311
+[1mprocess[move_base-1]: started with pid [1383][0m
+[1m[move_base-1] process has finished cleanly
+log file: /home/asrl/.ros/log/a99c3898-e1d2-11ec-99e7-c400ad2eb6b6/move_base-1*.log[0m
+all processes on machine have died, roslaunch will exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m
