@@ -1,8 +1,29 @@
-[INFO] [1654530783.489417943] [ros_bridge]: Passing message from ROS 1 rosgraph_msgs/Clock to ROS 2 rosgraph_msgs/msg/Clock (showing msg only once per type)
-[INFO] [1654530783.489830698] [ros_bridge]: Passing message from ROS 2 rcl_interfaces/msg/Log to ROS 1 rosgraph_msgs/Log (showing msg only once per type)
-[INFO] [1654530792.648916867] [ros_bridge]: Passing message from ROS 1 sensor_msgs/PointCloud2 to ROS 2 sensor_msgs/msg/PointCloud2 (showing msg only once per type)
-[INFO] [1654530792.649420541] [ros_bridge]: Passing message from ROS 1 tf2_msgs/TFMessage to ROS 2 tf2_msgs/msg/TFMessage (showing msg only once per type)
-[INFO] [1654530805.622181082] [ros_bridge]: Passing message from ROS 2 vox_msgs/msg/VoxGrid to ROS 1 vox_msgs/VoxGrid (showing msg only once per type)
-[INFO] [1654530805.643379226] [ros_bridge]: Passing message from ROS 2 nav_msgs/msg/OccupancyGrid to ROS 1 nav_msgs/OccupancyGrid (showing msg only once per type)
-[INFO] [1654530805.674906020] [ros_bridge]: Passing message from ROS 2 sensor_msgs/msg/PointCloud2 to ROS 1 sensor_msgs/PointCloud2 (showing msg only once per type)
-[INFO] [1654530865.639054970] [ros_bridge]: Passing message from ROS 2 costmap_converter_msgs/msg/ObstacleArrayMsg to ROS 1 costmap_converter/ObstacleArrayMsg (showing msg only once per type)
+[INFO] [1654562029.007546624] [ros_bridge]: Passing message from ROS 1 rosgraph_msgs/Clock to ROS 2 rosgraph_msgs/msg/Clock (showing msg only once per type)
+[INFO] [1654562029.007898708] [ros_bridge]: Passing message from ROS 2 rcl_interfaces/msg/Log to ROS 1 rosgraph_msgs/Log (showing msg only once per type)
+[INFO] [1654562038.171073547] [ros_bridge]: Passing message from ROS 1 sensor_msgs/PointCloud2 to ROS 2 sensor_msgs/msg/PointCloud2 (showing msg only once per type)
+[INFO] [1654562038.274441181] [ros_bridge]: Passing message from ROS 1 tf2_msgs/TFMessage to ROS 2 tf2_msgs/msg/TFMessage (showing msg only once per type)
+[INFO] [1654562050.071440863] [ros_bridge]: Passing message from ROS 2 vox_msgs/msg/VoxGrid to ROS 1 vox_msgs/VoxGrid (showing msg only once per type)
+[INFO] [1654562050.111903539] [ros_bridge]: Passing message from ROS 2 sensor_msgs/msg/PointCloud2 to ROS 1 sensor_msgs/PointCloud2 (showing msg only once per type)
+[INFO] [1654562050.112463052] [ros_bridge]: Passing message from ROS 2 nav_msgs/msg/OccupancyGrid to ROS 1 nav_msgs/OccupancyGrid (showing msg only once per type)
+[INFO] [1654562115.112002612] [ros_bridge]: Passing message from ROS 2 costmap_converter_msgs/msg/ObstacleArrayMsg to ROS 1 costmap_converter/ObstacleArrayMsg (showing msg only once per type)
+[33m[ WARN] [1654566146.186633086, 166.342000000]: Shutdown request received.[0m
+[33m[ WARN] [1654566146.187995606, 166.342000000]: Reason given for shutdown: [user request][0m
+Created 2 to 1 bridge for service /ekf_localization/enable
+Created 2 to 1 bridge for service /gazebo/pause_physics
+Created 2 to 1 bridge for service /gazebo/reset_simulation
+Created 2 to 1 bridge for service /gazebo/reset_world
+Created 2 to 1 bridge for service /gazebo/unpause_physics
+Created 2 to 1 bridge for service /imu/data/calibrate
+created 2to1 bridge for topic '/rosout' with ROS 2 type 'rcl_interfaces/msg/Log' and ROS 1 type 'rosgraph_msgs/Log'
+created 1to2 bridge for topic '/clock' with ROS 1 type 'rosgraph_msgs/Clock' and ROS 2 type 'rosgraph_msgs/msg/Clock'
+created 1to2 bridge for topic '/sub_points' with ROS 1 type 'sensor_msgs/PointCloud2' and ROS 2 type 'sensor_msgs/msg/PointCloud2'
+created 1to2 bridge for topic '/tf' with ROS 1 type 'tf2_msgs/TFMessage' and ROS 2 type 'tf2_msgs/msg/TFMessage'
+created 1to2 bridge for topic '/tf_static' with ROS 1 type 'tf2_msgs/TFMessage' and ROS 2 type 'tf2_msgs/msg/TFMessage'
+created 2to1 bridge for topic '/classified_points' with ROS 2 type 'sensor_msgs/msg/PointCloud2' and ROS 1 type ''
+created 2to1 bridge for topic '/dynamic_visu' with ROS 2 type 'nav_msgs/msg/OccupancyGrid' and ROS 1 type ''
+created 2to1 bridge for topic '/plan_costmap_3D' with ROS 2 type 'vox_msgs/msg/VoxGrid' and ROS 1 type ''
+created 2to1 bridge for topic '/static_visu' with ROS 2 type 'nav_msgs/msg/OccupancyGrid' and ROS 1 type ''
+created 2to1 bridge for topic '/move_base/TebLocalPlannerROS/obstacles' with ROS 2 type 'costmap_converter_msgs/msg/ObstacleArrayMsg' and ROS 1 type ''
+Created 2 to 1 bridge for service /move_base/NavfnROS/make_plan
+Created 2 to 1 bridge for service /move_base/clear_costmaps
+Created 2 to 1 bridge for service /move_base/make_plan
