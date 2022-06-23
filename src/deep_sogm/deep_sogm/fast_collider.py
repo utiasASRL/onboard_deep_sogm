@@ -174,7 +174,7 @@ class OnlineCollider(Node):
         self.static_range = 1.1
         self.dynamic_range = 1.2  # TODO 1.2
         self.dynamic_t_range = 1.0  # TODO 1.0
-        self.norm_p = 1  # TODO 3
+        self.norm_p = 3  # TODO 3
         self.norm_invp = 1 / self.norm_p
 
         # self.maxima_layers = [18, 38]
