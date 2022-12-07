@@ -40,8 +40,10 @@ ENV_HOME = os.getenv('HOME')
 # sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/kernels"))
 # sys.path.insert(0, join(ENV_HOME, "eloquent_ws/src/deep_sogm/deep_sogm/cpp_wrappers"))
 
-ROBOT_ROOT = '/home/asrl/eloquent_ws/src/deep_sogm/deep_sogm'
-SIMU_ROOT = '/home/hth/Deep-Collison-Checker/Myhal_Simulator/onboard_deep_sogm/src/deep_sogm/deep_sogm'
+print('\n\n', ENV_HOME, '\n\n', ENV_USER, '\n\n')
+
+ROBOT_ROOT = join(ENV_HOME, 'eloquent_ws/src/deep_sogm/deep_sogm')
+SIMU_ROOT = join(ENV_HOME, 'Deep-Collison-Checker/Myhal_Simulator/onboard_deep_sogm/src/deep_sogm/deep_sogm')
 for ROOT_DIR in [ROBOT_ROOT, SIMU_ROOT]:
     sys.path.insert(0, ROOT_DIR)
     sys.path.insert(0, join(ROOT_DIR, "utils"))
@@ -171,7 +173,7 @@ class OnlineCollider(Node):
         # Init ROS #
         ############
 
-        self.static_range = 1.1
+        self.static_range = 0.7
         self.dynamic_range = 1.2  # TODO 1.2
         self.dynamic_t_range = 1.0  # TODO 1.0
         self.norm_p = 3  # TODO 3

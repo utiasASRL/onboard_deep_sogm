@@ -57,7 +57,7 @@ done
 
 # Which map are we using
 if [ "$mapfile" = "AppleMap" ] ; then
-    mapfile="../../results/maps/map_Apple1.ply"
+    mapfile="$PWD/../../results/maps/map_Apple1.ply"
     # trained_session="Log_2022-03-23_21-08-49"
     # chkp_name="chkp_0580.tar"
     trained_session="Log_2022-05-27_16-46-35"
@@ -109,9 +109,34 @@ done
 
 
 if [[ -z "$velo_state_msg" ]] ; then
-    echo -e "\033[1;31mError: No point cloud message recieved from lidar\033[0m"
-    echo " "
-    exit
+    echo -e "\033[1;33mWarning: no /velodyne_points message recieved.\033[0m"
+    echo -e "\033[1;33mStarting velodyne node on orin (cpr-tor-xav02).\033[0m"
+
+    # Start rosbag record on orin
+    velo_command="cd 0-VelodyneMapping && ./start_velodyne.sh"
+    ssh_command="ssh -i $HOME/.ssh/id_rsa polus@cpr-tor59-xav02 $velo_command"
+    $ssh_command
+    echo "OK"
+
+    # Check again for messages
+    velo_state_msg=""
+    for i in {1..5}
+    do
+        if [[ -z "$velo_state_msg" ]] ; then
+            velo_state_msg=$(timeout 2 rostopic echo -n 1 /velodyne_points | grep "header")
+        fi
+
+        if [[ ! -z "$velo_state_msg" ]] ; then
+            break
+        fi
+    done
+
+    # Stop if still nothing
+    if [[ -z "$velo_state_msg" ]] ; then
+        echo -e "\033[1;31mError: No point cloud message recieved from lidar\033[0m"
+        echo " "
+        exit
+    fi
 fi
 
 echo "OK"
@@ -132,12 +157,7 @@ loc_launch="roslaunch point_slam point_slam.launch init_map_path:=$mapfile"
 if [ "$nohup_mode" = true ] ; then
 
     echo -e "In nohup mode"
-
-    echo "$PWD"
-
-
-
-    NOHUP_FILE="../../results/nohup_logs/nohup_slam.txt"
+    NOHUP_FILE="../../results/nohup_logs/nohup_pointmap.txt"
     nohup $loc_launch > "$NOHUP_FILE" 2>&1 &
 
     echo -e "Process running. See log saved at $NOHUP_FILE"
@@ -145,13 +165,10 @@ if [ "$nohup_mode" = true ] ; then
 
 else
 
-    xterm -bg black -fg lightgray -geometry 120x30+40+20 \
-        -xrm "xterm*allowTitleOps: false" \ 
-        -T "Localization" \
-        -n "Localization" \
-        -hold \
-        -e $loc_launch &
-
+    xterm -bg black -fg lightgray -geometry 160x20+5+5 \
+    -xrm "xterm*allowTitleOps: false" -T "Localization" -n "Localization" -hold \
+    -e $loc_launch &
+    
 fi
 
 # Waiting for pointslam initialization
@@ -191,8 +208,8 @@ if [ "$nohup_mode" = true ] ; then
 
 else
 
-    xterm -bg black -fg lightgray -geometry 120x30+40+20 \
-        -xrm "xterm*allowTitleOps: false" \ 
+    xterm -bg black -fg lightgray -geometry 160x20+5+300 \
+        -xrm "xterm*allowTitleOps: false" \
         -T "Move Base" \
         -n "Move Base" \
         -hold \
@@ -225,14 +242,18 @@ if [ "$sogm" = true ] ; then
         NOHUP_FILE="../../results/nohup_logs/nohup_sogm.txt"
         nohup $sogm_command > "$NOHUP_FILE" 2>&1 &
     else
-        xterm -bg black -fg lightgray -xrm "xterm*allowTitleOps: false" -T "Ros1-Bridge" -n "Ros1-Bridge" -hold \
+        xterm -bg black -fg lightgray -geometry 80x12+5-5 -xrm "xterm*allowTitleOps: false" \
+            -T "Ros1-Bridge" -n "Ros1-Bridge" -hold \
             -e ros2 run ros1_bridge dynamic_bridge &
-        xterm -bg black -fg lightgray -geometry 160x20+30+10 -xrm "xterm*allowTitleOps: false" -T "SOGM Prediction" -n "SOGM Prediction" -hold \
+        xterm -bg black -fg lightgray -geometry 160x45+5+595 -xrm "xterm*allowTitleOps: false" \
+            -T "SOGM Prediction" -n "SOGM Prediction" -hold \
             -e $sogm_command &
         # $sogm_command
     fi
 
     # Before going further wait for collider to be running
+    source "/opt/ros/$ROS_1_DISTRO/setup.bash"
+    . "../../catkin_ws/devel/setup.bash"
     echo ""
     echo "Waiting for SOGM predictions ..."
     until [ -n "$sogm_topic" ] 
