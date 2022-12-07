@@ -287,7 +287,6 @@ if [ $waypoints != "default_no_given" ]; then
     NOHUP_FILE="../../results/nohup_logs/nohup_waypoint.txt"
     waypoint_command="roslaunch follow_waypoints follow_waypoints.launch"
     waypoint_command="$waypoint_command waypoint_file:=$waypoints"
-    waypoint_command="$waypoint_command waypoint_file:=$waypoints"
     nohup roslaunch follow_waypoints follow_waypoints.launch waypoint_file:="$waypoints" > "$NOHUP_FILE" 2>&1 &
 
     # Check if the waypoint file exists
@@ -309,7 +308,7 @@ if [ $waypoints != "default_no_given" ]; then
 
         if [ "$new_waypoints" = true ] ; then
 
-            echo "New run saved. WAiting for user input to start run."
+            echo "New run saved. Waiting for user input to start run."
             rostopic pub /path_ready std_msgs/Empty -1
         else
             echo "Aborting run"
@@ -320,17 +319,8 @@ if [ $waypoints != "default_no_given" ]; then
     else
 
         echo "Using saved waypoints: $waypoints.csv"
-        rostopic pub /start_journey std_msgs/Empty -1
 
     fi
-
-
-
-
-
-
-
-
 
     # Wait for user to start experiment
     echo ""
@@ -340,6 +330,9 @@ if [ $waypoints != "default_no_given" ]; then
     case "$choice" in 
         * ) tmp=false;;
     esac
+    
+    # Start waypoints
+    rostopic pub /start_journey std_msgs/Empty -1
 
 
   
