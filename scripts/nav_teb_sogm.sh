@@ -330,7 +330,7 @@ if [ $waypoints != "default_no_given" ]; then
     case "$choice" in 
         * ) tmp=false;;
     esac
-    
+
     # Start waypoints
     rostopic pub /start_journey std_msgs/Empty -1
 
@@ -350,6 +350,7 @@ fi
 # Wait for user to stop experiment #
 ####################################
 
+
 # Optional record
 if [ "$record_bag" = true ] ; then
 
@@ -365,7 +366,6 @@ if [ "$record_bag" = true ] ; then
     nohup $ssh_command > "$NOHUP_RECORD_FILE" 2>&1 &
     echo "OK"
 fi
-
 
 echo ""
 read -p "Experiment running. Press any key to stop everything" choice
