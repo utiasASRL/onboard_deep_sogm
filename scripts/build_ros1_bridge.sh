@@ -21,10 +21,11 @@ echo ""
 echo $CMAKE_PREFIX_PATH
 echo ""
 
-#cd ../bridge_ws
-#colcon build --cmake-force-configure
+# Parallel build command
+# colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure --cmake-args -DCMAKE_BUILD_TYPE=Release
 
-colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure --cmake-args -DCMAKE_BUILD_TYPE=Release
+# If the exectution fails because computer is not powerful enough use this command instead :
+MAKEFLAGS="-j1 -l1" colcon build --executor sequential --symlink-install --packages-select ros1_bridge --cmake-force-configure --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 
 # Verify the custom types were recognized by the bridge, by printing all pairs of bridged types. 
