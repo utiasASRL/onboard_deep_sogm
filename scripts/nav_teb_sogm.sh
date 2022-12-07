@@ -36,13 +36,14 @@ echo "xterm*faceName: monospace:pixelsize=14" >> .Xresources
 nohup_mode=false
 show_rviz=false
 sogm=false
+waypoints="default_no_given"
 nav_without_sogm=false
 record_bag=false
 mapfile=""
 trained_session=""
 chkp_name=""
 
-while getopts nvstrm: option
+while getopts nvstrw:m: option
 do
 case "${option}"
 in
@@ -51,6 +52,7 @@ v) show_rviz=true;;
 s) sogm=true;;
 t) nav_without_sogm=true;;
 r) record_bag=true;;
+w) waypoints=${OPTARG};;
 m) mapfile=${OPTARG};;
 esac
 done
@@ -272,6 +274,83 @@ if [ "$sogm" = true ] ; then
 fi
 
 
+###########################
+# Start Waypoint follower #
+###########################
+
+# Start waypoint follower
+if [ $waypoints != "default_no_given" ]; then
+
+    echo " "
+    echo -e "\033[1;4;34mRunning follow_waypoints\033[0m"
+
+    NOHUP_FILE="../../results/nohup_logs/nohup_waypoint.txt"
+    waypoint_command="roslaunch follow_waypoints follow_waypoints.launch"
+    waypoint_command="$waypoint_command waypoint_file:=$waypoints"
+    waypoint_command="$waypoint_command waypoint_file:=$waypoints"
+    nohup roslaunch follow_waypoints follow_waypoints.launch waypoint_file:="$waypoints" > "$NOHUP_FILE" 2>&1 &
+
+    # Check if the waypoint file exists
+    if [ ! -f "../../catkin_ws/src/follow_waypoints/saved_path/$waypoints.csv" ]; then
+
+        echo " "
+        echo -e "\033[1;4;34mNew waypoints creation:\033[0m"
+        echo "New waypoints file: $waypoints.csv"
+        echo "Use rviz 2D Pose estimate tools to create a succession of waypoints."
+        echo "Are you satisfied with your waypoints? [y/n]"
+        read -p "Answer:" choice
+        echo ""
+        new_waypoints=false
+        case "$choice" in 
+            y|Y ) new_waypoints=true;;
+            n|N ) new_waypoints=false;;
+            * ) new_waypoints=false;;
+        esac
+
+        if [ "$new_waypoints" = true ] ; then
+
+            echo "New run saved. WAiting for user input to start run."
+            rostopic pub /path_ready std_msgs/Empty -1
+        else
+            echo "Aborting run"
+            ./stop_exp.sh
+            exit
+        fi
+
+    else
+
+        echo "Using saved waypoints: $waypoints.csv"
+        rostopic pub /start_journey std_msgs/Empty -1
+
+    fi
+
+
+
+
+
+
+
+
+
+    # Wait for user to start experiment
+    echo ""
+    read -p "When ready to run. Press any key" choice
+    echo ""
+    tmp=false
+    case "$choice" in 
+        * ) tmp=false;;
+    esac
+
+
+  
+else
+
+    echo ""
+    echo "No waypoint given. This tour wont be recorded"
+    echo "Use rviz 2D Nav goal or the controller to move the robot."
+    echo ""
+
+fi
 
 
 ####################################
