@@ -60,10 +60,14 @@ done
 # Which map are we using
 if [ "$mapfile" = "AppleMap" ] ; then
     mapfile="$PWD/../../results/maps/map_Apple1.ply"
-    # trained_session="Log_2022-03-23_21-08-49"
-    # chkp_name="chkp_0580.tar"
-    trained_session="Log_2022-05-27_16-46-35"
-    chkp_name="chkp_0300.tar"
+
+    # trained_session="Log_2022-05-27_16-46-35"     # old
+    # chkp_name="chkp_0300.tar"
+
+    trained_session="Log_2022-12-10_19-40-30"       # New
+    chkp_name="chkp_0240.tar"
+
+    
 fi
 
 # Model Full path
