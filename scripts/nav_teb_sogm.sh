@@ -16,7 +16,7 @@ echo "This scripts starts a navigatio session with TEB planner, and point_slam i
 # Global source
 ROS_1_DISTRO=noetic
 source "/opt/ros/$ROS_1_DISTRO/setup.bash"
-export ROS_HOSTNAME=polus-laptop
+export ROS_HOSTNAME=cpr-tor59-xav02
 export ROS_MASTER_URI=http://cpr-tor59-02:11311
 
 # Xterm variables
@@ -159,6 +159,7 @@ echo -e "\033[1;4;34mStarting point_slam\033[0m"
 
 # Command to start a simple slam node
 loc_launch="roslaunch point_slam point_slam.launch init_map_path:=$mapfile"
+
 
 if [ "$nohup_mode" = true ] ; then
 
